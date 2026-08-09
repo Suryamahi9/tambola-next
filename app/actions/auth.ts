@@ -21,7 +21,7 @@ export async function loginAction(_prev: AuthState, formData: FormData): Promise
   const next = safeNext(formData.get("next"));
 
   if (!email || !password) {
-    return { error: "Enter your email/username and password." };
+    return { error: "Enter your email and password." };
   }
 
   const member = getMemberByEmail(email);

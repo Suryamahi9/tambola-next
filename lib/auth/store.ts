@@ -101,10 +101,8 @@ export function addMember(input: {
 }): MemberPublic | { error: string } {
   const store = loadStore();
   const email = input.email.toLowerCase();
-  const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const isUsername = /^[a-z0-9._-]{2,32}$/.test(email);
-  if (!isEmail && !isUsername) {
-    return { error: "Enter a valid email address or username (2+ characters, no spaces)." };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return { error: "Enter a valid email address." };
   }
   if (input.password.length < 6) {
     return { error: "Password must be at least 6 characters." };
