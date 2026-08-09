@@ -14,10 +14,10 @@ const stats = [
 export default function Hero() {
   return (
     <section className="relative overflow-hidden">
-      {/* Background art */}
+      {/* Background art — soft veil so the 3D scene shows through */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-32 left-1/2 h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-gradient-to-r from-violet-600/25 via-fuchsia-600/20 to-amber-400/20 blur-3xl" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.6),transparent_60%)] dark:bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.04),transparent_60%)]" />
+        <div className="absolute -top-32 left-1/2 h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-gradient-to-r from-violet-600/20 via-fuchsia-600/15 to-amber-400/20 blur-3xl" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.9),rgba(255,255,255,0.5)_45%,transparent_72%)] dark:bg-[radial-gradient(circle_at_top,rgba(7,10,22,0.85),rgba(7,10,22,0.45)_45%,transparent_72%)]" />
       </div>
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-28">
@@ -111,6 +111,15 @@ export default function Hero() {
             <p className="text-xs font-semibold text-neutral-500">🎙️ Speaking</p>
             <p className="text-sm font-bold text-neutral-800 dark:text-neutral-100">छप्पन · ఏబై ఆరు</p>
           </div>
+        </div>
+      </div>
+
+      <div className="no-print relative flex justify-center pb-8">
+        <div className="flex animate-bounce flex-col items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">
+          Scroll to explore
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-4 w-4">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
         </div>
       </div>
     </section>

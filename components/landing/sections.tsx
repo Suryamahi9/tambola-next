@@ -145,7 +145,7 @@ export function Features() {
 
 export function HowItWorks() {
   return (
-    <section className="border-y border-neutral-200 bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900/40">
+    <section>
       <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <SectionHeading
           kicker="How it works"
@@ -234,7 +234,7 @@ export function Pricing() {
 
 export function Testimonials() {
   return (
-    <section className="border-y border-neutral-200 bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900/40">
+    <section>
       <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <SectionHeading kicker="Testimonials" title="Hosts love it" />
         <div className="mt-12 grid gap-5 md:grid-cols-3">
