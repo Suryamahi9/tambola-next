@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Caller from "@/components/game/Caller";
+import { requireMember } from "@/lib/auth/auth";
 
 export const metadata: Metadata = {
   title: "Game — Number Caller",
@@ -7,7 +8,10 @@ export const metadata: Metadata = {
     "Professional Tambola / Housie number caller with a 90-number board, manual & auto modes, and voice announcements in English, Hindi and Telugu.",
 };
 
-export default function GamePage() {
+export const dynamic = "force-dynamic";
+
+export default async function GamePage() {
+  await requireMember("/game");
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="max-w-2xl">

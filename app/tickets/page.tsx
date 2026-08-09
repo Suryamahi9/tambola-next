@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import TicketGenerator from "@/components/tickets/TicketGenerator";
+import { requireMember } from "@/lib/auth/auth";
 
 export const metadata: Metadata = {
   title: "Ticket Generator",
@@ -17,7 +18,10 @@ const checklist = [
   "No duplicate numbers on a ticket",
 ];
 
-export default function TicketsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function TicketsPage() {
+  await requireMember("/tickets");
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="max-w-2xl">

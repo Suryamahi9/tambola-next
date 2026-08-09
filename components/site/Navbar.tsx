@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { navLinks } from "@/lib/site";
 import Logo from "./Logo";
+import AuthNav from "./AuthNav";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -41,6 +42,7 @@ export default function Navbar() {
           >
             Play Now
           </Link>
+          <AuthNav variant="desktop" />
         </div>
 
         <div className="flex items-center gap-2 md:hidden">
@@ -76,6 +78,7 @@ export default function Navbar() {
           >
             Play Now
           </Link>
+          <AuthNav variant="mobile" />
         </div>
       )}
     </header>
