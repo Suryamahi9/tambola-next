@@ -134,21 +134,31 @@ function CameraRig({
 function makeTicketTexture(index: number) {
   const grid = generateTicket();
   const accent = ACCENTS[index % ACCENTS.length];
+  const brown = index % 2 === 1;
   const canvas = document.createElement("canvas");
   canvas.width = 480;
   canvas.height = 330;
   const ctx = canvas.getContext("2d")!;
 
+  const paper = brown
+    ? ["#a37240", "#87562d"]
+    : ["#fdfbf7", "#f1eadb"];
+  const header = brown
+    ? ["#4a2f17", "#684a26"]
+    : ["#5a3a1d", "#7a5530"];
+  const gridLine = brown ? "#e0c9a4" : "#a9845c";
+  const numColor = brown ? "#fbf3e2" : "#5a3a1d";
+
   const bgGrad = ctx.createLinearGradient(0, 0, 0, 330);
-  bgGrad.addColorStop(0, "#ffffff");
-  bgGrad.addColorStop(1, "#f4f4f5");
+  bgGrad.addColorStop(0, paper[0]);
+  bgGrad.addColorStop(1, paper[1]);
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, 480, 330);
 
-  const header = ctx.createLinearGradient(0, 0, 480, 0);
-  header.addColorStop(0, accent);
-  header.addColorStop(1, accent);
-  ctx.fillStyle = header;
+  const headerGrad = ctx.createLinearGradient(0, 0, 480, 0);
+  headerGrad.addColorStop(0, header[0]);
+  headerGrad.addColorStop(1, header[1]);
+  ctx.fillStyle = headerGrad;
   ctx.fillRect(0, 0, 480, 52);
   ctx.fillStyle = "#ffffff";
   ctx.font = "bold 24px 'Segoe UI', sans-serif";
@@ -162,14 +172,14 @@ function makeTicketTexture(index: number) {
   const y0 = 58;
   const cw = 52;
   const ch = 86;
-  ctx.strokeStyle = accent;
+  ctx.strokeStyle = gridLine;
   ctx.lineWidth = 2.5;
   for (let c = 0; c < 9; c++) {
     for (let r = 0; r < 3; r++) {
       ctx.strokeRect(x0 + c * cw, y0 + r * ch, cw, ch);
     }
   }
-  ctx.fillStyle = "#111827";
+  ctx.fillStyle = numColor;
   ctx.font = "bold 24px 'Segoe UI', sans-serif";
   grid.forEach((row, r) =>
     row.forEach((v, c) => {
