@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { navLinks } from "@/lib/site";
 import Logo from "./Logo";
-import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -36,7 +35,6 @@ export default function Navbar() {
             );
           })}
           <span className="mx-2 h-5 w-px bg-neutral-200 dark:bg-neutral-800" />
-          <ThemeToggle />
           <Link
             href="/game"
             className="ml-1 inline-flex items-center rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-violet-600/40 transition hover:brightness-110"
@@ -46,7 +44,6 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-2 md:hidden">
-          <ThemeToggle />
           <button
             type="button"
             aria-label="Toggle menu"
