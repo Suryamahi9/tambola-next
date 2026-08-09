@@ -6,9 +6,9 @@ import { verifyToken, SESSION_COOKIE } from "./session";
 
 export const getCurrentUser = cache(async (): Promise<MemberPublic | null> => {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
-  const payload = verifyToken(token);
+  const payload = await verifyToken(token);
   if (!payload) return null;
-  const member = getMemberById(payload.uid);
+  const member = await getMemberById(payload.uid);
   if (!member) return null;
   return {
     id: member.id,

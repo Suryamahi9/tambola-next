@@ -24,12 +24,12 @@ export async function loginAction(_prev: AuthState, formData: FormData): Promise
     return { error: "Enter your email and password." };
   }
 
-  const member = getMemberByEmail(email);
+  const member = await getMemberByEmail(email);
   if (!member || !verifyPassword(password, member.passwordHash, member.salt)) {
     return { error: "Invalid email or password." };
   }
 
-  const token = signToken(member.id, member.role);
+  const token = await signToken(member.id, member.role);
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE, token, {
     httpOnly: true,

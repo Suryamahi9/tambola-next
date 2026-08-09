@@ -14,25 +14,25 @@ function base64url(input: string | Buffer): string {
   return Buffer.from(input).toString("base64url");
 }
 
-function hmac(data: string): string {
-  return createHmac("sha256", getSessionSecret()).update(data).digest("base64url");
+async function hmac(data: string): Promise<string> {
+  return createHmac("sha256", await getSessionSecret()).update(data).digest("base64url");
 }
 
-export function signToken(uid: string, role: string): string {
+export async function signToken(uid: string, role: string): Promise<string> {
   const payload: SessionPayload = {
     uid,
     role,
     exp: Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000,
   };
   const body = base64url(JSON.stringify(payload));
-  return `${body}.${hmac(body)}`;
+  return `${body}.${await hmac(body)}`;
 }
 
-export function verifyToken(token: string | undefined | null): SessionPayload | null {
+export async function verifyToken(token: string | undefined | null): Promise<SessionPayload | null> {
   if (!token || !token.includes(".")) return null;
   const [body, sig] = token.split(".");
   if (!body || !sig) return null;
-  const expected = Buffer.from(hmac(body));
+  const expected = Buffer.from(await hmac(body));
   const actual = Buffer.from(sig);
   if (expected.length !== actual.length || !timingSafeEqual(expected, actual)) {
     return null;

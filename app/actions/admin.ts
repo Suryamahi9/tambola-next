@@ -21,7 +21,7 @@ export async function addMemberAction(
   const denied = await requireAdminOrError();
   if (denied) return denied;
 
-  const result = addMember({
+  const result = await addMember({
     name: String(formData.get("name") || ""),
     email: String(formData.get("email") || ""),
     password: String(formData.get("password") || ""),
@@ -36,7 +36,7 @@ export async function addMemberAction(
 export async function deleteMemberAction(id: string): Promise<AdminState> {
   const denied = await requireAdminOrError();
   if (denied) return denied;
-  const result = deleteMember(id);
+  const result = await deleteMember(id);
   if (result.error) return { error: result.error };
   revalidatePath("/admin");
   return { ok: true };
@@ -48,7 +48,7 @@ export async function resetPasswordAction(
 ): Promise<AdminState> {
   const denied = await requireAdminOrError();
   if (denied) return denied;
-  const result = setMemberPassword(id, password);
+  const result = await setMemberPassword(id, password);
   if (result.error) return { error: result.error };
   revalidatePath("/admin");
   return { ok: true };

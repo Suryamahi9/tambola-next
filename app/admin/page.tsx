@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
   const user = await requireAdmin("/admin");
-  const members = listMembers();
+  const members = await listMembers();
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
