@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { loginAction, type AuthState } from "@/app/actions/auth";
+import PasswordInput from "./PasswordInput";
 
 export default function LoginForm({ next }: { next: string }) {
   const [state, action, pending] = useActionState<AuthState, FormData>(
@@ -36,13 +37,11 @@ export default function LoginForm({ next }: { next: string }) {
         >
           Password
         </label>
-        <input
+        <PasswordInput
           id="password"
           name="password"
-          type="password"
           autoComplete="current-password"
           required
-          className="w-full rounded-xl border border-white/15 bg-[#0b0d1a] px-4 py-2.5 text-sm text-neutral-100 outline-none transition placeholder:text-neutral-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
           placeholder="••••••••"
         />
       </div>

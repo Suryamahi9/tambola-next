@@ -8,6 +8,7 @@ import {
   type AdminState,
 } from "@/app/actions/admin";
 import type { MemberPublic } from "@/lib/auth/store";
+import PasswordInput from "@/components/auth/PasswordInput";
 
 export default function AdminPanel({ members }: { members: MemberPublic[] }) {
   const [addState, addAction, pending] = useActionState<AdminState, FormData>(
@@ -98,14 +99,12 @@ export default function AdminPanel({ members }: { members: MemberPublic[] }) {
             >
               Password
             </label>
-            <input
+            <PasswordInput
               id="password"
               name="password"
-              type="text"
               autoComplete="off"
               minLength={6}
               required
-              className="w-full rounded-xl border border-white/15 bg-[#0b0d1a] px-4 py-2.5 text-sm text-neutral-100 outline-none transition placeholder:text-neutral-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
               placeholder="6+ characters"
             />
           </div>
@@ -231,15 +230,15 @@ export default function AdminPanel({ members }: { members: MemberPublic[] }) {
               Reset password for {resetTarget.name}
             </p>
             <div className="mt-3 flex flex-col gap-3 sm:flex-row">
-              <input
-                type="text"
+              <PasswordInput
+                id="reset-password"
                 autoComplete="off"
                 minLength={6}
                 required
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="New password (6+ characters)"
-                className="flex-1 rounded-xl border border-white/15 bg-[#0b0d1a] px-4 py-2.5 text-sm text-neutral-100 outline-none transition placeholder:text-neutral-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+                className="flex-1"
               />
               <div className="flex gap-2">
                 <button
