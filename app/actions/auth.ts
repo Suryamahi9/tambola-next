@@ -24,20 +24,27 @@ export async function loginAction(_prev: AuthState, formData: FormData): Promise
     return { error: "Enter your email and password." };
   }
 
-  const member = await getMemberByEmail(email);
-  if (!member || !verifyPassword(password, member.passwordHash, member.salt)) {
-    return { error: "Invalid email or password." };
-  }
+  try {
+    const member = await getMemberByEmail(email);
+    if (!member || !verifyPassword(password, member.passwordHash, member.salt)) {
+      return { error: "Invalid email or password." };
+    }
 
-  const token = await signToken(member.id, member.role);
-  const cookieStore = await cookies();
-  cookieStore.set(SESSION_COOKIE, token, {
-    httpOnly: true,
-    secure: process.env.COOKIE_SECURE === "true",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 7,
-  });
+    const token = await signToken(member.id, member.role);
+    const cookieStore = await cookies();
+    cookieStore.set(SESSION_COOKIE, token, {
+      httpOnly: true,
+      secure: process.env.COOKIE_SECURE === "true",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+  } catch {
+    return {
+      error:
+        "The member store is not writable. On Vercel, connect a Blob store to this project (Dashboard → Storage → Create Blob → Connect) so BLOB_READ_WRITE_TOKEN is available.",
+    };
+  }
 
   redirect(next);
 }
