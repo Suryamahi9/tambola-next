@@ -49,10 +49,10 @@ export default function FAQ() {
           return (
             <div
               key={faq.q}
-              className={`rounded-2xl border bg-white transition dark:bg-neutral-900 ${
+              className={`glass-subtle rounded-2xl border transition ${
                 isOpen
-                  ? "border-violet-500/50 dark:border-violet-500/40"
-                  : "border-neutral-200 dark:border-neutral-800"
+                  ? "border-violet-500/50"
+                  : "border-white/10"
               }`}
             >
               <button

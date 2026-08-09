@@ -120,14 +120,14 @@ export default function TicketGenerator() {
 
   return (
     <div>
-      <div className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm sm:p-6 dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="glass rounded-2xl border border-white/10 p-5 shadow-sm sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="grid flex-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="sm:col-span-2">
               <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
                 Mode
               </span>
-              <div className="flex rounded-full border border-neutral-200 p-1 dark:border-neutral-700">
+              <div className="flex rounded-full border border-white/15 bg-white/[0.04] p-1">
                 {(
                   [
                     ["random", "Random Tickets"],
@@ -160,7 +160,7 @@ export default function TicketGenerator() {
                 max={mode === "fullset" ? 5 : 30}
                 value={count}
                 onChange={(e) => handleCountChange(e.target.value)}
-                className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-2.5 text-sm font-semibold text-neutral-900 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-neutral-700 dark:bg-neutral-950 dark:text-white"
+                className="w-full rounded-xl border border-white/15 bg-[#0b0d1a] px-4 py-2.5 text-sm font-semibold text-neutral-100 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
               />
             </div>
 
@@ -173,7 +173,7 @@ export default function TicketGenerator() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Surya"
-                className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-2.5 text-sm text-neutral-900 outline-none transition placeholder:text-neutral-400 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-neutral-700 dark:bg-neutral-950 dark:text-white"
+                className="w-full rounded-xl border border-white/15 bg-[#0b0d1a] px-4 py-2.5 text-sm text-neutral-100 outline-none transition placeholder:text-neutral-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
               />
             </div>
           </div>
@@ -260,7 +260,7 @@ export default function TicketGenerator() {
               return (
                 <div
                   key={i}
-                  className="flex items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900"
+                  className="glass-subtle flex items-center justify-between gap-3 rounded-xl border border-white/10 p-4"
                 >
                   <div>
                     <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100">
@@ -273,7 +273,7 @@ export default function TicketGenerator() {
                   <button
                     type="button"
                     onClick={() => restore(batch)}
-                    className="shrink-0 rounded-full border border-neutral-300 px-4 py-1.5 text-xs font-semibold text-neutral-700 transition hover:border-violet-500 hover:text-violet-600 dark:border-neutral-700 dark:text-neutral-200"
+                    className="shrink-0 rounded-full border border-white/20 px-4 py-1.5 text-xs font-semibold text-neutral-200 transition hover:border-violet-400 hover:text-violet-200"
                   >
                     ↻ Reuse
                   </button>
@@ -285,7 +285,7 @@ export default function TicketGenerator() {
       </div>
 
       {toast && (
-        <div className="no-print fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-neutral-900 px-5 py-3 text-sm font-medium text-white shadow-lg dark:bg-white dark:text-neutral-900">
+        <div className="no-print fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-white px-5 py-3 text-sm font-medium text-neutral-900 shadow-lg">
           {toast}
         </div>
       )}

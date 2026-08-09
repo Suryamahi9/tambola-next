@@ -28,7 +28,7 @@ export default function GamePage() {
         <Caller />
       </div>
 
-      <div className="mt-12 grid gap-4 rounded-2xl border border-neutral-200 bg-white p-6 sm:grid-cols-3 dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="glass mt-12 grid gap-4 rounded-2xl border border-white/10 p-6 sm:grid-cols-3">
         <div className="flex gap-3">
           <span className="text-2xl">🎙️</span>
           <div>

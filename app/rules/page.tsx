@@ -98,7 +98,7 @@ export default function RulesPage() {
             {winPatterns.map((p) => (
               <div
                 key={p.name}
-                className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900"
+                className="glass rounded-2xl border border-white/10 p-5"
               >
                 <span className="text-2xl">{p.icon}</span>
                 <p className="mt-3 text-sm font-bold text-neutral-900 dark:text-white">{p.name}</p>
@@ -150,7 +150,7 @@ export default function RulesPage() {
             </Link>
             <Link
               href="/tickets"
-              className="rounded-full border border-neutral-300 px-6 py-3 text-sm font-semibold text-neutral-700 transition hover:border-violet-500 hover:text-violet-600 dark:border-neutral-700 dark:text-neutral-200"
+              className="rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-neutral-100 transition hover:border-violet-400 hover:text-violet-200"
             >
               Generate Tickets
             </Link>

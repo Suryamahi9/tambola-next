@@ -38,7 +38,7 @@ export default function TicketsPage() {
         <TicketGenerator />
       </div>
 
-      <div className="mt-12 rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="glass mt-12 rounded-2xl border border-white/10 p-6">
         <h2 className="font-display text-lg font-bold text-neutral-900 dark:text-white">
           Every ticket follows the official rules
         </h2>

@@ -14,19 +14,19 @@ export default function Home() {
     <>
       <TambolaSceneLoader />
       <Hero />
-      <div className="relative bg-white/80 backdrop-blur-md dark:bg-[#070a16]/80">
+      <div className="relative border-y border-white/10 bg-white/[0.03]">
         <Features />
       </div>
-      <div className="relative border-y border-neutral-200/70 bg-white/85 backdrop-blur-lg dark:border-neutral-800/70 dark:bg-[#070a16]/85">
+      <div className="relative bg-white/[0.04]">
         <HowItWorks />
       </div>
-      <div className="relative bg-white/80 backdrop-blur-md dark:bg-[#070a16]/80">
+      <div className="relative border-y border-white/10 bg-white/[0.03]">
         <Pricing />
       </div>
-      <div className="relative border-y border-neutral-200/70 bg-white/85 backdrop-blur-lg dark:border-neutral-800/70 dark:bg-[#070a16]/85">
+      <div className="relative bg-white/[0.04]">
         <Testimonials />
       </div>
-      <div className="relative bg-white/80 backdrop-blur-md dark:bg-[#070a16]/80">
+      <div className="relative border-y border-white/10 bg-white/[0.03]">
         <FAQ />
         <CTA />
       </div>

@@ -339,9 +339,9 @@ export default function Caller() {
     <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
       {/* LEFT: controls + last number + board */}
       <div>
-        <div className="rounded-2xl border border-neutral-200 bg-white p-5 sm:p-6 dark:border-neutral-800 dark:bg-neutral-900">
+        <div className="glass rounded-2xl border border-white/10 p-5 sm:p-6">
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex rounded-full border border-neutral-200 p-1 dark:border-neutral-700">
+            <div className="flex rounded-full border border-white/15 bg-white/[0.04] p-1">
               <button
                 type="button"
                 onClick={() => setState((p) => ({ ...p, mode: "manual" }))}
@@ -372,7 +372,7 @@ export default function Caller() {
                 <select
                   value={state.speed}
                   onChange={(e) => setState((p) => ({ ...p, speed: Number(e.target.value) }))}
-                  className="rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-sm font-semibold outline-none focus:border-violet-500 dark:border-neutral-700 dark:bg-neutral-950"
+                  className="rounded-lg border border-white/15 bg-[#0b0d1a] px-3 py-1.5 text-sm font-semibold text-neutral-100 outline-none focus:border-violet-500"
                 >
                   <option value={8000}>Slow (8s)</option>
                   <option value={6000}>Normal (6s)</option>
@@ -387,7 +387,7 @@ export default function Caller() {
               <select
                 value={state.language}
                 onChange={(e) => setState((p) => ({ ...p, language: e.target.value as AudioLang }))}
-                className="rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-sm font-semibold outline-none focus:border-violet-500 dark:border-neutral-700 dark:bg-neutral-950"
+                className="rounded-lg border border-white/15 bg-[#0b0d1a] px-3 py-1.5 text-sm font-semibold text-neutral-100 outline-none focus:border-violet-500"
               >
                 {audioLanguages.map((l) => (
                   <option key={l.value} value={l.value}>
@@ -506,12 +506,12 @@ export default function Caller() {
         </div>
 
         {/* BOARD */}
-        <div className="mt-6 rounded-2xl border border-neutral-200 bg-white p-4 sm:p-6 dark:border-neutral-800 dark:bg-neutral-900">
+        <div className="glass mt-6 rounded-2xl border border-white/10 p-4 sm:p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-display text-lg font-bold text-neutral-900 dark:text-white">
+            <h2 className="font-display text-lg font-bold text-neutral-100">
               Number Board
             </h2>
-            <span className="rounded-full bg-violet-600/10 px-3 py-1 text-xs font-semibold text-violet-600 dark:text-violet-300">
+            <span className="rounded-full bg-violet-600/20 px-3 py-1 text-xs font-semibold text-violet-300">
               {status}
             </span>
           </div>
@@ -524,7 +524,7 @@ export default function Caller() {
                   key={num}
                   className={`flex aspect-square items-center justify-center rounded-lg text-sm font-bold transition ${
                     isLast
-                      ? "bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white ring-2 ring-violet-400 ring-offset-1 ring-offset-white dark:ring-offset-neutral-900"
+                      ? "bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white ring-2 ring-violet-400 ring-offset-1 ring-offset-neutral-900"
                       : called
                         ? "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300"
                         : "bg-neutral-100 text-neutral-400 dark:bg-neutral-800 dark:text-neutral-500"
@@ -540,8 +540,8 @@ export default function Caller() {
 
       {/* RIGHT: history + hints */}
       <div className="space-y-6">
-        <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
-          <h3 className="font-display text-lg font-bold text-neutral-900 dark:text-white">
+        <div className="glass rounded-2xl border border-white/10 p-5">
+          <h3 className="font-display text-lg font-bold text-neutral-100">
             Last Called
           </h3>
           <div className="mt-4 flex flex-wrap gap-2">
@@ -569,8 +569,8 @@ export default function Caller() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
-          <h3 className="font-display text-lg font-bold text-neutral-900 dark:text-white">
+        <div className="glass rounded-2xl border border-white/10 p-5">
+          <h3 className="font-display text-lg font-bold text-neutral-100">
             Shortcuts
           </h3>
           <ul className="mt-4 space-y-3 text-sm text-neutral-600 dark:text-neutral-300">
@@ -592,24 +592,24 @@ export default function Caller() {
 
       {confirmReset && (
         <div
-          className="no-print fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+          className="no-print fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
           onClick={() => setConfirmReset(false)}
         >
           <div
-            className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl dark:bg-neutral-900"
+            className="glass w-full max-w-sm rounded-2xl border border-white/10 p-6 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="font-display text-xl font-bold text-neutral-900 dark:text-white">
+            <h3 className="font-display text-xl font-bold text-neutral-100">
               Reset the game?
             </h3>
-            <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
+            <p className="mt-2 text-sm text-neutral-400">
               This clears all called numbers and starts a fresh game. This cannot be undone.
             </p>
             <div className="mt-6 flex gap-3">
               <button
                 type="button"
                 onClick={() => setConfirmReset(false)}
-                className="flex-1 rounded-full border border-neutral-300 px-5 py-2.5 text-sm font-semibold text-neutral-700 dark:border-neutral-700 dark:text-neutral-200"
+                className="flex-1 rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold text-neutral-200 transition hover:border-violet-400 hover:text-violet-200"
               >
                 Cancel
               </button>
@@ -626,7 +626,7 @@ export default function Caller() {
       )}
 
       {toast && (
-        <div className="no-print fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-neutral-900 px-5 py-3 text-sm font-medium text-white shadow-lg dark:bg-white dark:text-neutral-900">
+        <div className="no-print fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-white px-5 py-3 text-sm font-medium text-neutral-900 shadow-lg">
           {toast}
         </div>
       )}

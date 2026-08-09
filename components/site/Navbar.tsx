@@ -11,7 +11,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="no-print sticky top-0 z-50 border-b border-neutral-200/70 bg-white/80 backdrop-blur-xl dark:border-neutral-800/70 dark:bg-neutral-950/80">
+    <header className="no-print sticky top-0 z-50 border-b border-white/10 bg-[#0b0d1a]/70">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" aria-label="Tambola Zone home" onClick={() => setOpen(false)}>
           <Logo />
@@ -48,7 +48,7 @@ export default function Navbar() {
             type="button"
             aria-label="Toggle menu"
             onClick={() => setOpen((o) => !o)}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 text-neutral-700 dark:border-neutral-700 dark:text-neutral-300"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-neutral-300 hover:text-white"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
               {open ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 6h16M4 12h16M4 18h16" />}
@@ -58,7 +58,7 @@ export default function Navbar() {
       </nav>
 
       {open && (
-        <div className="border-t border-neutral-200 bg-white px-4 pb-4 pt-2 md:hidden dark:border-neutral-800 dark:bg-neutral-950">
+        <div className="border-t border-white/10 bg-[#0b0d1a]/95 px-4 pb-4 pt-2 md:hidden">
           {navLinks.map((link) => (
             <Link
               key={link.href}

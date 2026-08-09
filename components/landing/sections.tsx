@@ -125,7 +125,7 @@ export function Features() {
         {features.map((f) => (
           <div
             key={f.title}
-            className="group rounded-2xl border border-neutral-200 bg-white p-6 transition hover:-translate-y-1 hover:border-violet-500/50 hover:shadow-lg hover:shadow-violet-900/5 dark:border-neutral-800 dark:bg-neutral-900"
+            className="glass group rounded-2xl border border-white/10 p-6 transition hover:-translate-y-1 hover:border-violet-500/50 hover:shadow-lg hover:shadow-violet-900/20"
           >
             <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-violet-600/10 text-xl transition group-hover:bg-violet-600 group-hover:text-white">
               {f.icon}
@@ -161,7 +161,7 @@ export function HowItWorks() {
                   className="absolute left-full top-8 hidden w-8 -translate-x-1/2 border-t-2 border-dashed border-violet-400 md:block"
                 />
               )}
-              <div className="rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+              <div className="glass rounded-2xl border border-white/10 p-6">
                 <span className="font-display text-4xl font-bold text-violet-600/20 dark:text-violet-500/30">
                   {s.num}
                 </span>
@@ -195,7 +195,7 @@ export function Pricing() {
             className={`relative flex flex-col rounded-3xl border p-7 ${
               p.highlight
                 ? "border-transparent bg-gradient-to-b from-violet-600 to-fuchsia-600 text-white shadow-xl shadow-violet-600/30"
-                : "border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900"
+                : "glass border-white/10"
             }`}
           >
             {p.highlight && (
@@ -220,7 +220,7 @@ export function Pricing() {
               className={`mt-6 rounded-full px-5 py-3 text-center text-sm font-bold transition ${
                 p.highlight
                   ? "bg-white text-violet-700 hover:bg-violet-50"
-                  : "border border-neutral-300 text-neutral-800 hover:border-violet-500 hover:text-violet-600 dark:border-neutral-700 dark:text-neutral-100"
+                  : "border border-white/20 text-neutral-100 hover:border-violet-400 hover:text-violet-200"
               }`}
             >
               {p.cta}
@@ -241,7 +241,7 @@ export function Testimonials() {
           {testimonials.map((t) => (
             <figure
               key={t.name}
-              className="rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900"
+              className="glass rounded-2xl border border-white/10 p-6"
             >
               <div className="flex gap-0.5 text-amber-400" aria-label="5 stars">
                 {"★★★★★".split("").map((s, i) => (

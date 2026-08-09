@@ -11,7 +11,7 @@ const featureLinks = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-950">
+    <footer className="border-t border-white/10 bg-[#0b0d1a]/60">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
@@ -64,7 +64,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-neutral-200 pt-6 sm:flex-row dark:border-neutral-800">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 sm:flex-row">
           <p className="text-xs text-neutral-500 dark:text-neutral-500">
             © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
           </p>

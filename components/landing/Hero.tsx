@@ -56,7 +56,7 @@ export default function Hero() {
             </Link>
             <Link
               href="/tickets"
-              className="inline-flex items-center gap-2 rounded-full border border-neutral-300 bg-white px-7 py-3.5 text-sm font-bold text-neutral-800 transition hover:border-violet-500 hover:text-violet-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
+              className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/[0.06] px-7 py-3.5 text-sm font-bold text-neutral-100 transition hover:border-violet-400 hover:text-violet-200"
             >
               Generate Tickets
             </Link>
@@ -74,15 +74,15 @@ export default function Hero() {
 
         {/* Visual: floating ticket + board chips */}
         <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-          <div className="rounded-3xl border border-neutral-200/80 bg-white/90 p-5 shadow-2xl shadow-violet-900/10 backdrop-blur dark:border-neutral-800 dark:bg-neutral-900/90">
+          <div className="glass rounded-3xl border border-white/15 p-5">
             <div className="flex items-center justify-between px-1 pb-3">
-              <span className="text-xs font-bold text-neutral-700 dark:text-neutral-200">🎫 Tambola Ticket</span>
+              <span className="text-xs font-bold text-neutral-200">🎫 Tambola Ticket</span>
               <span className="font-mono text-[11px] text-neutral-400">#01 / 15</span>
             </div>
-            <div className="ticket-grid text-neutral-800 dark:text-neutral-100">
+            <div className="ticket-grid text-neutral-100">
               {heroTicket.flatMap((row, r) =>
                 row.map((v, c) => (
-                  <div key={`${r}-${c}`} className={v === null ? "bg-transparent text-transparent" : "bg-white dark:bg-neutral-900"}>
+                  <div key={`${r}-${c}`} className={v === null ? "bg-transparent text-transparent" : "bg-white/10"}>
                     {v ?? ""}
                   </div>
                 ))
@@ -103,13 +103,13 @@ export default function Hero() {
             </p>
           </div>
 
-          <div className="absolute -left-4 -top-6 rounded-2xl border border-neutral-200 bg-white px-4 py-3 shadow-lg dark:border-neutral-700 dark:bg-neutral-800">
-            <p className="text-xs font-semibold text-neutral-500">Last called</p>
-            <p className="font-display text-2xl font-bold text-violet-600">56</p>
+          <div className="glass-subtle absolute -left-4 -top-6 rounded-2xl border border-white/15 px-4 py-3 shadow-lg">
+            <p className="text-xs font-semibold text-neutral-400">Last called</p>
+            <p className="font-display text-2xl font-bold text-violet-300">56</p>
           </div>
-          <div className="absolute -bottom-6 -right-2 rounded-2xl border border-neutral-200 bg-white px-4 py-3 shadow-lg dark:border-neutral-700 dark:bg-neutral-800">
-            <p className="text-xs font-semibold text-neutral-500">🎙️ Speaking</p>
-            <p className="text-sm font-bold text-neutral-800 dark:text-neutral-100">छप्पन · ఏబై ఆరు</p>
+          <div className="glass-subtle absolute -bottom-6 -right-2 rounded-2xl border border-white/15 px-4 py-3 shadow-lg">
+            <p className="text-xs font-semibold text-neutral-400">🎙️ Speaking</p>
+            <p className="text-sm font-bold text-neutral-100">छप्पन · ఏబై ఆరు</p>
           </div>
         </div>
       </div>
