@@ -46,10 +46,10 @@ export default function Hero() {
 
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
-              href="/game"
+              href="/play"
               className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-violet-600/30 transition hover:brightness-110"
             >
-              Start the Game
+              Play with Friends
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-4 w-4">
                 <path d="M5 12h14m-6-6 6 6-6 6" />
               </svg>

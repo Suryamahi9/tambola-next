@@ -37,7 +37,7 @@ export default function Navbar() {
           })}
           <span className="mx-2 h-5 w-px bg-neutral-200 dark:bg-neutral-800" />
           <Link
-            href="/game"
+            href="/play"
             className="ml-1 inline-flex items-center rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-violet-600/40 transition hover:brightness-110"
           >
             Play Now
@@ -72,7 +72,7 @@ export default function Navbar() {
             </Link>
           ))}
           <Link
-            href="/game"
+            href="/play"
             onClick={() => setOpen(false)}
             className="mt-2 block rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 py-2.5 text-center text-sm font-semibold text-white"
           >

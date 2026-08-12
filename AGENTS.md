@@ -22,13 +22,13 @@ Online Tambola/Housie app: landing page, live caller (`/game`), ticket generator
 ## Stack
 
 - Next 16.3.0 (breaking changes — see block above), React 19, TypeScript, Tailwind v4 (`@import "tailwindcss"` + `@theme inline` in `app/globals.css`).
-- `lib/ticket.ts` — pure ticket engine, no deps: `generateTicket`, `generateUniqueGrids`, `generateStrip`, `isValidTicket`, `gridKey`, `loadBatches`/`saveBatch` (localStorage). `lib/site.ts` — site config/metadata.
+- `lib/ticket.ts` — pure ticket engine, no deps: `generateTicket`, `generateUniqueGrids`, `generateStrip`, `generateSetTickets`, `isValidTicket`, `gridKey`, `loadBatches`/`saveBatch` (localStorage). `lib/site.ts` — site config/metadata.
 
 ## Design constraints (dark-only glassmorphism)
 
 - `<html>` carries a permanent `dark` class; body is `bg-neutral-950`. No ThemeToggle and no light mode — do not add theme switching.
 - Panels use `.glass` / `.glass-subtle` in `globals.css` (translucent gradient + inset highlight). Do NOT reintroduce `backdrop-blur` or the old solid `bg-white ... dark:bg-neutral-900` cards; on dark surfaces use `border-white/10` + `bg-white/[0.03–0.06]`.
-- `TicketCard.tsx` alternates white/brown shells by index parity (`SHELLS[0]` cream, `SHELLS[1]` brown). `TambolaScene.tsx` draws the same alternating shells on its canvas textures — keep both in sync.
+- `TicketCard.tsx` alternates white/brown shells by index parity (`SHELLS[0]` cream, `SHELLS[1]` brown) and takes an optional `called?: ReadonlySet<number>` to highlight drawn numbers (emerald cell). `TambolaScene.tsx` draws the same alternating shells on its canvas textures — keep both in sync. The party-room view and win popup render tickets through `TicketCard` so they keep the same shells + called marks.
 
 ## 3D scene gotchas (hard-won)
 
@@ -45,6 +45,19 @@ Online Tambola/Housie app: landing page, live caller (`/game`), ticket generator
 - `/login` uses a `useActionState` form; the Navbar `AuthNav.tsx` client component polls `GET /api/me` to show Sign in / name+Sign out / Admin link. `app/admin/page.tsx` is the member manager (add/remove/reset password) — `requireAdmin` bounces non-admins to `/`.
 - First-run bootstrap creates the admin from `ADMIN_EMAIL`/`ADMIN_PASSWORD` (fallback: `admin@tambola.local` + a random password printed to stdout) and only when no members blob/file exists. `.env.local` is gitignored — on Vercel, ADMIN_EMAIL/ADMIN_PASSWORD/AUTH_SECRET/COOKIE_SECURE must be set as **project env vars**. `AUTH_SECRET` pins the signing key; `COOKIE_SECURE=true` is required behind HTTPS.
 - Copy `.env.example` → `.env.local`. Members are invited via the admin panel, not self-registration.
+
+## Party Rooms (multiplayer)
+
+- Flow: `/play` (name + ticket count + optional room-code join) → Razorpay checkout (or test-mode auto-approve) → `/room/[id]` lobby → game **auto-starts at 15 paid tickets**. One player may buy 1–5 tickets. The **host (first player) can start early** via `POST /api/rooms/[id]/start` — no need to wait for 15.
+- **No WebSockets.** Next 16 has no socket support and Vercel serverless can't hold connections. Rooms sync by **2s polling** from `components/room/RoomView.tsx` (`GET /api/rooms/[id]`, `Cache-Control: no-store`); the caller auto-draws every 5s. Do NOT scaffold a socket server.
+- Room code lives in `lib/room/`: `types.ts` (`Room`, `Player`, `PublicRoom`, `Win`), `store.ts` (dual-backend `data/rooms.json` + Blob `tambola/rooms.json`, in-memory cache, per-room write queue via `withRoom()`), `engine.ts` (create/join/auto-start/start-now/call/takeover, `TICKETS_TO_START=15`, price via `ROOM_TICKET_PRICE` default ₹20), `wins.ts` (pure win detection).
+- **Win detection:** after every draw, `findWinner` (in `lib/room/wins.ts`) checks paid players' tickets against the called numbers. Pattern priority: Full House → Corners → Bottom/Middle/Top Line → Early Five. The first complete pattern sets `room.winner` and ends the game; everyone sees a win popup (winning ticket + all players + winner name) in `RoomView`. A room with no winner ends naturally at 90 numbers.
+- **`withRoom` always reloads the room fresh from the backend** before mutating (not from the in-memory cache) so concurrent serverless instances don't clobber each other; reads via `getRoomById` may use the cache.
+- Player identity = HMAC-signed `tambola_player` cookie (reuses `lib/auth/session.ts` `signToken`/`verifyToken` with role `player`), set by `POST /api/payments/create`. No signup. Each paid entry gets **fresh tickets from a unique full 90-number set** (`generateSetTickets` — a strip of 6 covering 1–90 exactly once, sliced to the bought count, so a player's numbers never repeat within their set) — if two devices appear to share a ticket, they're the same cookie/player in the same browser.
+- Payments: Razorpay orders via `POST /api/payments/create` + signature-verified `POST /api/payments/verify` (`lib`-side HMAC-SHA256 on `order_id|payment_id`). **Without `RAZORPAY_KEY_ID`/`RAZORPAY_KEY_SECRET` the flow runs in test mode** and verify auto-approves — keep that working when exercising the room locally.
+- The server draws numbers (`callNumber` picks at random from uncalled) so the board can't be tampered with; only `room.callerId` can call. `POST /api/rooms/[id]/caller` lets another player take over.
+- `GET /api/rooms/[id]` returns `{ room, me, myTickets }` — a player only ever sees their own grids. All room route handlers use `params: Promise` (must `await`) and `export const dynamic = "force-dynamic"`.
+- Next 16 gotcha: **do not set cookies via `NextResponse.cookies.set` in route handlers — the `Set-Cookie` header is silently dropped.** Use `(await cookies()).set(...)` from `next/headers` instead.
 
 ## Headless verification
 

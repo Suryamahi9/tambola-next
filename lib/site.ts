@@ -17,7 +17,7 @@ export const siteConfig = {
   ],
   links: [
     { href: "/", label: "Home" },
-    { href: "/game", label: "Game" },
+    { href: "/game", label: "Number Caller" },
     { href: "/tickets", label: "Tickets" },
     { href: "/rules", label: "Rules" },
   ],
@@ -25,7 +25,8 @@ export const siteConfig = {
 
 export const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/game", label: "Game" },
+  { href: "/play", label: "Play" },
+  { href: "/game", label: "Number Caller" },
   { href: "/tickets", label: "Tickets" },
   { href: "/rules", label: "Rules" },
 ];

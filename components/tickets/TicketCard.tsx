@@ -5,6 +5,7 @@ interface Props {
   name?: string;
   index: number;
   total: number;
+  called?: ReadonlySet<number>;
 }
 
 const SHELLS = [
@@ -15,6 +16,7 @@ const SHELLS = [
     metaText: "text-[#ddc9a8]",
     grid: "font-mono text-[#6b4a23]",
     filled: "bg-[#6b4a23]/[0.05]",
+    called: "bg-emerald-400/70 font-bold text-emerald-950",
     empty: "bg-transparent",
   },
   {
@@ -24,11 +26,12 @@ const SHELLS = [
     metaText: "text-[#e3cfa9]",
     grid: "font-mono text-[#fbf3e2]",
     filled: "bg-white/10",
+    called: "bg-emerald-400/70 font-bold text-emerald-950",
     empty: "bg-transparent",
   },
 ] as const;
 
-export default function TicketCard({ grid, name, index, total }: Props) {
+export default function TicketCard({ grid, name, index, total, called }: Props) {
   const s = SHELLS[index % 2 === 0 ? 0 : 1];
   return (
     <div
@@ -48,7 +51,7 @@ export default function TicketCard({ grid, name, index, total }: Props) {
             row.map((v, c) => (
               <div
                 key={`${r}-${c}`}
-                className={v === null ? s.empty : s.filled}
+                className={v === null ? s.empty : called?.has(v) ? s.called : s.filled}
               >
                 {v ?? ""}
               </div>

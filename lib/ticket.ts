@@ -170,6 +170,26 @@ export function generateUniqueGrids(count: number): Grid[] {
 }
 
 // ---------------------------------------------------------------------------
+// Party-room sets: a unique full 90-number book (strip of 6) sliced to size.
+// Every number from 1-90 appears exactly once across the strip, so a player's
+// tickets never repeat a number and every player's set is unique.
+// ---------------------------------------------------------------------------
+
+export function generateSetTickets(ticketCount: number): Grid[] {
+  const count = Math.max(1, Math.min(5, Math.floor(ticketCount)));
+  for (let attempt = 0; attempt < 25; attempt++) {
+    const strip = generateStrip();
+    if (!strip) continue;
+    // Shuffle which strip tickets are dealt so a purchase never always gets
+    // the "first" ticket of the book.
+    const order = shuffle([0, 1, 2, 3, 4, 5]);
+    return order.slice(0, count).map((i) => strip[i]);
+  }
+  // Should be unreachable in practice; fall back to plain unique grids.
+  return generateUniqueGrids(count);
+}
+
+// ---------------------------------------------------------------------------
 // Full-set 6-ticket book (all 90 numbers exactly once)
 // ---------------------------------------------------------------------------
 

@@ -280,7 +280,7 @@ export function CTA() {
         </p>
         <div className="relative mt-8 flex flex-wrap justify-center gap-3">
           <Link
-            href="/game"
+            href="/play"
             className="rounded-full bg-white px-8 py-3.5 text-sm font-bold text-violet-700 shadow-lg transition hover:bg-violet-50"
           >
             Play the Game
