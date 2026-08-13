@@ -196,7 +196,7 @@ export function generateSetTickets(ticketCount: number): Grid[] {
 // ---------------------------------------------------------------------------
 
 export function generateSetBatch(setCount: number): Grid[] | null {
-  const count = Math.max(1, Math.min(10, Math.floor(setCount)));
+  const count = Math.max(1, Math.min(20, Math.floor(setCount)));
   const seen = new Set<string>();
   const grids: Grid[] = [];
   for (let s = 0; s < count; s++) {
