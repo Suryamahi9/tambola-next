@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  generateStrip,
+  generateSetBatch,
   generateUniqueGrids,
   loadBatches,
   saveBatch,
@@ -13,7 +13,7 @@ import TicketCard from "./TicketCard";
 
 type Mode = "random" | "fullset";
 
-const SET_LABELS = ["A", "B", "C", "D", "E", "F", "G", "H"];
+const SET_LABELS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 
 export default function TicketGenerator() {
   const [mode, setMode] = useState<Mode>("random");
@@ -40,24 +40,16 @@ export default function TicketGenerator() {
 
   const generate = useCallback(() => {
     if (mode === "fullset") {
-      const sets = Math.max(1, Math.min(8, count));
-      const grids: Grid[] = [];
-      const labelsOut: (string | null)[] = [];
-      for (let s = 0; s < sets; s++) {
-        const strip = generateStrip();
-        if (!strip) {
-          showToast("Could not generate a full set — please try again");
-          return;
-        }
-        strip.forEach((g) => {
-          grids.push(g);
-          labelsOut.push(`Set ${SET_LABELS[s]}`);
-        });
+      const sets = Math.max(1, Math.min(10, count));
+      const batch = generateSetBatch(sets);
+      if (!batch) {
+        showToast("Could not generate unique full sets — please try again");
+        return;
       }
-      setTickets(grids);
-      setLabels(labelsOut);
-      setBatches(saveBatch(grids));
-      showToast(`Generated ${grids.length} tickets — full set, 1–90 exactly once`);
+      setTickets(batch);
+      setLabels(batch.map((_, i) => `Set ${SET_LABELS[Math.floor(i / 6)]}`));
+      setBatches(saveBatch(batch));
+      showToast(`Generated ${batch.length} unique tickets — full set, 1–90 exactly once`);
       return;
     }
 
@@ -105,7 +97,7 @@ export default function TicketGenerator() {
   const handleCountChange = (value: string) => {
     const parsed = parseInt(value, 10) || 1;
     if (mode === "fullset") {
-      setCount(Math.max(1, Math.min(8, parsed)));
+      setCount(Math.max(1, Math.min(10, parsed)));
     } else {
       setCount(Math.max(1, Math.min(30, parsed)));
     }
@@ -114,7 +106,7 @@ export default function TicketGenerator() {
   const switchMode = (m: Mode) => {
     setMode(m);
     if (m === "fullset") {
-      setCount((c) => Math.max(1, Math.min(8, Math.ceil(c / 6))));
+      setCount((c) => Math.max(1, Math.min(10, Math.ceil(c / 6))));
     }
   };
 
@@ -157,7 +149,7 @@ export default function TicketGenerator() {
               <input
                 type="number"
                 min={mode === "fullset" ? 1 : 1}
-                max={mode === "fullset" ? 8 : 30}
+                max={mode === "fullset" ? 10 : 30}
                 value={count}
                 onChange={(e) => handleCountChange(e.target.value)}
                 className="w-full rounded-xl border border-white/15 bg-[#0b0d1a] px-4 py-2.5 text-sm font-semibold text-neutral-100 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
@@ -208,8 +200,8 @@ export default function TicketGenerator() {
 
         {mode === "fullset" && (
           <p className="mt-4 rounded-lg bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-800 dark:bg-amber-500/10 dark:text-amber-300">
-            Full Set mode generates an official 6-ticket book where every number from 1 to 90
-            appears exactly once across the set. Choose 1–8 sets.
+            Full Set mode generates official 6-ticket books where every number from 1 to 90
+            appears exactly once across each set, and no ticket repeats. Choose 1–10 sets.
           </p>
         )}
       </div>

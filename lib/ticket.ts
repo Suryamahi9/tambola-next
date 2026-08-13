@@ -190,6 +190,33 @@ export function generateSetTickets(ticketCount: number): Grid[] {
 }
 
 // ---------------------------------------------------------------------------
+// Full-set batch for the ticket generator: `setCount` 6-ticket books covering
+// 1-90 exactly once each, with NO duplicate ticket across the whole batch.
+// Returns null if unique sets could not be found after retries.
+// ---------------------------------------------------------------------------
+
+export function generateSetBatch(setCount: number): Grid[] | null {
+  const count = Math.max(1, Math.min(10, Math.floor(setCount)));
+  const seen = new Set<string>();
+  const grids: Grid[] = [];
+  for (let s = 0; s < count; s++) {
+    let strip: Grid[] | null = null;
+    for (let attempt = 0; attempt < 25 && !strip; attempt++) {
+      const candidate = generateStrip();
+      if (candidate && candidate.every((g) => !seen.has(gridKey(g)))) {
+        strip = candidate;
+      }
+    }
+    if (!strip) return null;
+    strip.forEach((g) => {
+      seen.add(gridKey(g));
+      grids.push(g);
+    });
+  }
+  return grids;
+}
+
+// ---------------------------------------------------------------------------
 // Full-set 6-ticket book (all 90 numbers exactly once)
 // ---------------------------------------------------------------------------
 
