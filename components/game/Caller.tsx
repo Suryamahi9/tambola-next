@@ -45,12 +45,12 @@ function speakNumber(num: number, lang: AudioLang): boolean {
     return true;
   }
   if (!("speechSynthesis" in window)) return false;
-  speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(String(num));
   utterance.lang = lang;
   utterance.rate = 0.85;
   utterance.pitch = 1;
-  speechSynthesis.speak(utterance);
+  if (speechSynthesis.speaking) speechSynthesis.cancel();
+  window.setTimeout(() => speechSynthesis.speak(utterance), 200);
   return true;
 }
 

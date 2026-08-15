@@ -37,11 +37,11 @@ function playDing() {
 
 function speakNumber(num: number) {
   if (!("speechSynthesis" in window)) return;
-  speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(String(num));
   u.lang = "en-IN";
   u.rate = 0.9;
-  speechSynthesis.speak(u);
+  if (speechSynthesis.speaking) speechSynthesis.cancel();
+  window.setTimeout(() => speechSynthesis.speak(u), 200);
 }
 
 function waTicketText(grid: Grid, idx: number): string {
