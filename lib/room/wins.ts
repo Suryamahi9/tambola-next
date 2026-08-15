@@ -1,5 +1,5 @@
 import type { Grid } from "@/lib/ticket";
-import type { Room, Win } from "./types";
+import type { PatternId, Player, Prize, Room, Win } from "./types";
 
 export const PATTERNS = [
   { id: "fullhouse", label: "Full House", icon: "🏆" },
@@ -9,6 +9,16 @@ export const PATTERNS = [
   { id: "top", label: "Top Line", icon: "1️⃣" },
   { id: "early5", label: "Early Five", icon: "5️⃣" },
 ] as const;
+
+/** Award priority: full house first, early five last. */
+export const PATTERN_PRIORITY: Record<PatternId, number> = {
+  fullhouse: 0,
+  corners: 1,
+  bottom: 2,
+  middle: 3,
+  top: 4,
+  early5: 5,
+};
 
 export function ticketRowNums(grid: Grid, row: number): number[] {
   return grid[row].filter((v): v is number => v !== null);
@@ -79,4 +89,54 @@ export function findWinner(room: Room): Win | null {
     }
   }
   return null;
+}
+
+/** Every pattern a player's tickets currently complete (across all tickets). */
+export function playerCompletePatterns(
+  player: Player,
+  calledSet: Set<number>
+): { pattern: PatternId; label: string; ticketIndex: number; grid: Grid }[] {
+  const out: { pattern: PatternId; label: string; ticketIndex: number; grid: Grid }[] = [];
+  for (let ti = 0; ti < player.tickets.length; ti++) {
+    for (const hit of ticketWins(player.tickets[ti], calledSet)) {
+      out.push({
+        pattern: hit.id as PatternId,
+        label: hit.label,
+        ticketIndex: ti,
+        grid: player.tickets[ti],
+      });
+    }
+  }
+  return out;
+}
+
+/** Award one prize per pattern (first paid player in join order). Returns newly awarded prizes. */
+export function awardPrizes(room: Room): Prize[] {
+  const calledSet = new Set(room.calledNumbers);
+  const awarded = new Set(room.prizes.map((p) => p.pattern));
+  const newly: Prize[] = [];
+  for (const pattern of PATTERNS.map((p) => p.id)) {
+    if (awarded.has(pattern)) continue;
+    for (const player of room.players) {
+      if (!player.paid) continue;
+      const hits = playerCompletePatterns(player, calledSet);
+      const hit = hits.find((h) => h.pattern === pattern);
+      if (hit) {
+        const prize: Prize = {
+          pattern,
+          label: hit.label,
+          playerId: player.id,
+          playerName: player.name,
+          ticketIndex: hit.ticketIndex,
+          grid: hit.grid,
+          calledCount: room.calledNumbers.length,
+        };
+        room.prizes.push(prize);
+        newly.push(prize);
+        awarded.add(pattern);
+        break;
+      }
+    }
+  }
+  return newly;
 }

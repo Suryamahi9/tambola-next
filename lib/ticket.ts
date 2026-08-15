@@ -196,7 +196,7 @@ export function generateSetTickets(ticketCount: number): Grid[] {
 // ---------------------------------------------------------------------------
 
 export function generateSetBatch(setCount: number): Grid[] | null {
-  const count = Math.max(1, Math.min(20, Math.floor(setCount)));
+  const count = Math.max(1, Math.min(50, Math.floor(setCount)));
   const seen = new Set<string>();
   const grids: Grid[] = [];
   for (let s = 0; s < count; s++) {
@@ -209,6 +209,33 @@ export function generateSetBatch(setCount: number): Grid[] | null {
     }
     if (!strip) return null;
     strip.forEach((g) => {
+      seen.add(gridKey(g));
+      grids.push(g);
+    });
+  }
+  return grids;
+}
+
+// ---------------------------------------------------------------------------
+// Half-set batch: `setCount` 3-ticket half-books (45 unique numbers each),
+// every ticket unique across the whole batch.
+// ---------------------------------------------------------------------------
+
+export function generateHalfSetBatch(setCount: number): Grid[] | null {
+  const count = Math.max(1, Math.min(50, Math.floor(setCount)));
+  const seen = new Set<string>();
+  const grids: Grid[] = [];
+  for (let s = 0; s < count; s++) {
+    let half: Grid[] | null = null;
+    for (let attempt = 0; attempt < 30 && !half; attempt++) {
+      const strip = generateStrip();
+      if (!strip) continue;
+      const order = shuffle([0, 1, 2, 3, 4, 5]);
+      const three = order.slice(0, 3).map((i) => strip[i]);
+      if (three.every((g) => !seen.has(gridKey(g)))) half = three;
+    }
+    if (!half) return null;
+    half.forEach((g) => {
       seen.add(gridKey(g));
       grids.push(g);
     });

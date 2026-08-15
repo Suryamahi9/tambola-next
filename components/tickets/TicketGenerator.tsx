@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  generateHalfSetBatch,
   generateSetBatch,
   generateUniqueGrids,
   loadBatches,
@@ -11,9 +12,12 @@ import {
 } from "@/lib/ticket";
 import TicketCard from "./TicketCard";
 
-type Mode = "random" | "fullset";
-
-const SET_LABELS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"];
+type Mode = "random" | "fullset" | "halfset";
+const SET_LABELS = [
+  "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
+  "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", "AN",
+  "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV", "AW", "AX",
+];
 
 export default function TicketGenerator() {
   const [mode, setMode] = useState<Mode>("random");
@@ -21,9 +25,7 @@ export default function TicketGenerator() {
   const [name, setName] = useState("");
   const [tickets, setTickets] = useState<Grid[]>([]);
   const [labels, setLabels] = useState<(string | null)[]>([]);
-  const [batches, setBatches] = useState<Batch[]>(() =>
-    typeof window === "undefined" ? [] : loadBatches()
-  );
+  const [batches, setBatches] = useState<Batch[]>([]);
   const [toast, setToast] = useState<string | null>(null);
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -38,9 +40,15 @@ export default function TicketGenerator() {
     return () => window.clearTimeout(t);
   }, [toast]);
 
+  // Load saved batches after mount so server and client first renders match.
+  useEffect(() => {
+    const id = window.requestAnimationFrame(() => setBatches(loadBatches()));
+    return () => window.cancelAnimationFrame(id);
+  }, []);
+
   const generate = useCallback(() => {
     if (mode === "fullset") {
-      const sets = Math.max(1, Math.min(20, count));
+      const sets = Math.max(1, Math.min(50, count));
       const batch = generateSetBatch(sets);
       if (!batch) {
         showToast("Could not generate unique full sets — please try again");
@@ -50,6 +58,20 @@ export default function TicketGenerator() {
       setLabels(batch.map((_, i) => `Set ${SET_LABELS[Math.floor(i / 6)]}`));
       setBatches(saveBatch(batch));
       showToast(`Generated ${batch.length} unique tickets — full set, 1–90 exactly once`);
+      return;
+    }
+
+    if (mode === "halfset") {
+      const sets = Math.max(1, Math.min(50, count));
+      const batch = generateHalfSetBatch(sets);
+      if (!batch) {
+        showToast("Could not generate unique half sets — please try again");
+        return;
+      }
+      setTickets(batch);
+      setLabels(batch.map((_, i) => `Set ${SET_LABELS[Math.floor(i / 3)]}`));
+      setBatches(saveBatch(batch));
+      showToast(`Generated ${batch.length} unique tickets — half sets, 45 numbers each`);
       return;
     }
 
@@ -96,8 +118,8 @@ export default function TicketGenerator() {
 
   const handleCountChange = (value: string) => {
     const parsed = parseInt(value, 10) || 1;
-    if (mode === "fullset") {
-      setCount(Math.max(1, Math.min(20, parsed)));
+    if (mode === "fullset" || mode === "halfset") {
+      setCount(Math.max(1, Math.min(50, parsed)));
     } else {
       setCount(Math.max(1, Math.min(30, parsed)));
     }
@@ -106,9 +128,60 @@ export default function TicketGenerator() {
   const switchMode = (m: Mode) => {
     setMode(m);
     if (m === "fullset") {
-      setCount((c) => Math.max(1, Math.min(20, Math.ceil(c / 6))));
+      setCount((c) => Math.max(1, Math.min(50, Math.ceil(c / 6))));
+    } else if (m === "halfset") {
+      setCount((c) => Math.max(1, Math.min(50, Math.ceil(c / 3))));
     }
   };
+
+  const downloadPDF = useCallback(async () => {
+    if (tickets.length === 0) {
+      showToast("Generate tickets first");
+      return;
+    }
+    try {
+      const { jsPDF } = await import("jspdf");
+      const doc = new jsPDF();
+      tickets.forEach((grid, i) => {
+        if (i > 0) doc.addPage();
+        const label = labels[i] || "Tambola Ticket";
+        const w = 176;
+        const h = 100;
+        const x = 12;
+        const y = 30;
+        doc.setFillColor(i % 2 === 1 ? 138 : 253, i % 2 === 1 ? 90 : 251, i % 2 === 1 ? 46 : 247);
+        doc.roundedRect(x, y, w, h, 5, 5, "F");
+        doc.setFillColor(i % 2 === 1 ? 104 : 90, i % 2 === 1 ? 74 : 58, i % 2 === 1 ? 38 : 29);
+        doc.roundedRect(x, y, w, 12, 3, 3, "F");
+        doc.setTextColor(i % 2 === 1 ? 248 : 246, i % 2 === 1 ? 238 : 236, i % 2 === 1 ? 222 : 217);
+        doc.setFontSize(8);
+        doc.text(`${label}  ·  #${String(i + 1).padStart(2, "0")} / ${tickets.length}`, x + 2, y + 8);
+        const cw = w / 9;
+        const ch = (h - 14) / 3;
+        doc.setFontSize(9);
+        grid.forEach((row, r) =>
+          row.forEach((v, c) => {
+            const cx = x + c * cw;
+            const cy = y + 14 + r * ch;
+            doc.setDrawColor(i % 2 === 1 ? 201 : 224, i % 2 === 1 ? 154 : 210, i % 2 === 1 ? 99 : 180);
+            doc.setLineWidth(0.2);
+            doc.rect(cx, cy, cw, ch);
+            if (v !== null) {
+              doc.setTextColor(i % 2 === 1 ? 251 : 107, i % 2 === 1 ? 243 : 74, i % 2 === 1 ? 226 : 35);
+              doc.text(String(v), cx + cw / 2, cy + ch / 2 + 1.5, { align: "center" });
+            }
+          })
+        );
+        doc.setTextColor(120, 120, 120);
+        doc.setFontSize(8);
+        doc.text(`${label} — 15 numbers.  Generated ${new Date().toLocaleString()}`, x, y + h + 6);
+      });
+      doc.save(`tambola-tickets-${new Date().toISOString().slice(0, 10)}.pdf`);
+      showToast("PDF downloaded");
+    } catch {
+      showToast("PDF unavailable — use Print instead");
+    }
+  }, [tickets, labels, showToast]);
 
   return (
     <div>
@@ -124,6 +197,7 @@ export default function TicketGenerator() {
                   [
                     ["random", "Random Tickets"],
                     ["fullset", "Full Set (1–90)"],
+                    ["halfset", "Half Set (45)"],
                   ] as [Mode, string][]
                 ).map(([value, label]) => (
                   <button
@@ -144,12 +218,16 @@ export default function TicketGenerator() {
 
             <div>
               <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-                {mode === "fullset" ? "How many sets (6 each)" : "How many tickets"}
+                {mode === "fullset"
+                  ? "How many sets (6 each)"
+                  : mode === "halfset"
+                    ? "How many sets (3 each)"
+                    : "How many tickets"}
               </span>
               <input
                 type="number"
-                min={mode === "fullset" ? 1 : 1}
-                max={mode === "fullset" ? 20 : 30}
+                min={1}
+                max={mode === "random" ? 30 : 50}
                 value={count}
                 onChange={(e) => handleCountChange(e.target.value)}
                 className="w-full rounded-xl border border-white/15 bg-[#0b0d1a] px-4 py-2.5 text-sm font-semibold text-neutral-100 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
@@ -195,13 +273,27 @@ export default function TicketGenerator() {
             >
               Print
             </button>
+            <button
+              type="button"
+              onClick={() => void downloadPDF()}
+              disabled={tickets.length === 0}
+              className="inline-flex items-center gap-2 rounded-full border border-neutral-300 px-6 py-2.5 text-sm font-semibold text-neutral-700 transition hover:border-violet-500 hover:text-violet-600 disabled:opacity-40 dark:border-neutral-700 dark:text-neutral-200 dark:hover:border-violet-400"
+            >
+              ⬇ PDF
+            </button>
           </div>
         </div>
 
         {mode === "fullset" && (
           <p className="mt-4 rounded-lg bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-800 dark:bg-amber-500/10 dark:text-amber-300">
             Full Set mode generates official 6-ticket books where every number from 1 to 90
-            appears exactly once across each set, and no ticket repeats. Choose 1–20 sets.
+            appears exactly once across each set, and no ticket repeats. Choose 1–50 sets.
+          </p>
+        )}
+        {mode === "halfset" && (
+          <p className="mt-4 rounded-lg bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-800 dark:bg-amber-500/10 dark:text-amber-300">
+            Half Set mode deals 3-ticket half-books — 45 unique numbers each — and every ticket
+            in the batch is unique. Choose 1–50 half-sets.
           </p>
         )}
       </div>
@@ -220,13 +312,14 @@ export default function TicketGenerator() {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {tickets.map((grid, i) => (
-              <TicketCard
-                key={i}
-                grid={grid}
-                name={labels[i] || undefined}
-                index={i}
-                total={tickets.length}
-              />
+              <div key={i}>
+                <TicketCard
+                  grid={grid}
+                  name={labels[i] || undefined}
+                  index={i}
+                  total={tickets.length}
+                />
+              </div>
             ))}
           </div>
         )}

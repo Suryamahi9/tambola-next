@@ -2,6 +2,8 @@ import type { Grid } from "@/lib/ticket";
 
 export type RoomStatus = "waiting" | "live" | "finished";
 
+export type PatternId = "fullhouse" | "corners" | "bottom" | "middle" | "top" | "early5";
+
 export interface Player {
   id: string;
   name: string;
@@ -20,6 +22,25 @@ export interface Win {
   grid: Grid; // winning ticket
 }
 
+export interface Prize {
+  pattern: PatternId;
+  label: string;
+  playerId: string;
+  playerName: string;
+  ticketIndex: number;
+  grid: Grid;
+  calledCount: number;
+}
+
+export interface RoundSummary {
+  round: number;
+  finishedAt: string;
+  winnerId: string | null;
+  winnerName: string | null;
+  calledCount: number;
+  prizes: { label: string; playerName: string }[];
+}
+
 export interface Room {
   id: string;
   code: string;
@@ -33,6 +54,15 @@ export interface Room {
   startedAt: string | null;
   finishedAt: string | null;
   winner: Win | null;
+  prizes: Prize[];
+  round: number;
+  standings: Record<string, number>;
+  history: RoundSummary[];
+  // Ticket-deal cursor: the next strip (90-number book) and the next ticket
+  // index within it, so players joining in order share the same book. Books
+  // are cut across players — no number repeats within a book.
+  dealStrip: Grid[] | null;
+  dealOffset: number;
 }
 
 export interface PublicPlayer {
@@ -58,5 +88,9 @@ export interface PublicRoom {
   startedAt: string | null;
   finishedAt: string | null;
   winner: Win | null;
+  prizes: Prize[];
+  round: number;
+  standings: Record<string, number>;
+  history: RoundSummary[];
   ticketsNeeded: number;
 }
