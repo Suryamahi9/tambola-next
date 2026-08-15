@@ -143,20 +143,6 @@ export default function Caller() {
     if (!speakNumber(num, s.language)) setAudioOk(false);
   }, []);
 
-  const undoLast = useCallback(() => {
-    const s = stateRef.current;
-    if (s.calledNumbers.length === 0) {
-      showToast("Nothing to undo");
-      return;
-    }
-    setState((prev) => {
-      const called = [...prev.calledNumbers];
-      called.pop();
-      return { ...prev, calledNumbers: called, lastNumber: called[called.length - 1] ?? null };
-    });
-    showToast("Last call undone");
-  }, [showToast]);
-
   const toggleAuto = useCallback(() => {
     const s = stateRef.current;
     if (autoRunning) {
@@ -213,7 +199,6 @@ export default function Caller() {
         else callNext();
       }
       if (e.code === "KeyR") setConfirmReset(true);
-      if (e.code === "KeyU" || e.code === "KeyZ") undoLast();
       if (e.code === "KeyL") repeatLast();
     }
     window.addEventListener("keydown", onKey);
@@ -362,37 +347,6 @@ export default function Caller() {
 
   const calledSet = new Set(state.calledNumbers);
 
-  const decadeStats = (() => {
-    const buckets: { label: string; total: number; called: number; remaining: number[] }[] = [];
-    for (let b = 0; b <= 8; b++) {
-      const lo = b === 0 ? 1 : b * 10;
-      const hi = b === 8 ? 90 : b * 10 + 9;
-      const all: number[] = [];
-      for (let n = lo; n <= hi; n++) all.push(n);
-      const remaining = all.filter((n) => !calledSet.has(n));
-      buckets.push({
-        label: b === 0 ? "1–9" : `${lo}–${hi}`,
-        total: all.length,
-        called: all.length - remaining.length,
-        remaining,
-      });
-    }
-    return buckets;
-  })();
-  const hotDecade =
-    decadeStats.reduce((a, b) => (b.remaining.length < a.remaining.length ? b : a), decadeStats[0]);
-  const longestRun = (() => {
-    let best = 0;
-    let cur = 0;
-    for (let n = 1; n <= 90; n++) {
-      if (calledSet.has(n)) {
-        cur++;
-        best = Math.max(best, cur);
-      } else cur = 0;
-    }
-    return best;
-  })();
-
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
       {/* LEFT: controls + last number + board */}
@@ -517,14 +471,6 @@ export default function Caller() {
             )}
             <button
               type="button"
-              onClick={undoLast}
-              disabled={state.calledNumbers.length === 0}
-              className="rounded-full border border-neutral-300 px-5 py-3 text-sm font-semibold text-neutral-700 transition hover:border-violet-500 hover:text-violet-600 disabled:opacity-40 dark:border-neutral-700 dark:text-neutral-200"
-            >
-              ↩ Undo
-            </button>
-            <button
-              type="button"
               onClick={repeatLast}
               className="rounded-full border border-neutral-300 px-5 py-3 text-sm font-semibold text-neutral-700 transition hover:border-violet-500 hover:text-violet-600 dark:border-neutral-700 dark:text-neutral-200"
             >
@@ -639,77 +585,6 @@ export default function Caller() {
         </div>
 
         <div className="glass rounded-2xl border border-white/10 p-5">
-          <div className="flex items-center justify-between">
-            <h3 className="font-display text-lg font-bold text-neutral-100">
-              Numbers to Watch
-            </h3>
-            <span className="rounded-full bg-amber-500/15 px-2.5 py-0.5 text-[11px] font-semibold text-amber-300">
-              {hotDecade.label} · {hotDecade.remaining.length} left
-            </span>
-          </div>
-          <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-            The decade with the fewest numbers called so far — keep an eye on it.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-1.5">
-            {hotDecade.remaining.length === 0 ? (
-              <p className="text-sm text-neutral-500">All caught up — nothing to watch!</p>
-            ) : (
-              hotDecade.remaining.map((n) => (
-                <span
-                  key={n}
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 text-xs font-bold text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
-                >
-                  {n}
-                </span>
-              ))
-            )}
-          </div>
-        </div>
-
-        <div className="glass rounded-2xl border border-white/10 p-5">
-          <h3 className="font-display text-lg font-bold text-neutral-100">
-            Game Stats
-          </h3>
-          <div className="mt-4 space-y-3">
-            {decadeStats.map((b) => {
-              const pct = Math.round((b.called / b.total) * 100);
-              return (
-                <div key={b.label}>
-                  <div className="mb-1 flex items-center justify-between text-xs">
-                    <span className="font-semibold text-neutral-300">{b.label}</span>
-                    <span className="text-neutral-500">
-                      {b.called}/{b.total}
-                    </span>
-                  </div>
-                  <div className="h-1.5 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-800">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 transition-all"
-                      style={{ width: `${pct}%` }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <div className="rounded-xl bg-neutral-50 p-3 text-center dark:bg-neutral-800/60">
-              <p className="text-lg font-bold text-neutral-900 dark:text-white">{longestRun}</p>
-              <p className="text-[11px] font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-                Longest run
-              </p>
-            </div>
-            <div className="rounded-xl bg-neutral-50 p-3 text-center dark:bg-neutral-800/60">
-              <p className="text-lg font-bold text-neutral-900 dark:text-white">
-                {state.calledNumbers.length > 0 ? Math.round((state.calledNumbers.length / 90) * 100) : 0}%
-              </p>
-              <p className="text-[11px] font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-                Board covered
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="glass rounded-2xl border border-white/10 p-5">
           <h3 className="font-display text-lg font-bold text-neutral-100">
             Shortcuts
           </h3>
@@ -724,12 +599,6 @@ export default function Caller() {
               <span>Repeat last number</span>
               <kbd className="rounded-md border border-neutral-300 bg-neutral-50 px-2 py-1 text-xs font-semibold dark:border-neutral-700 dark:bg-neutral-800">
                 L
-              </kbd>
-            </li>
-            <li className="flex items-center justify-between">
-              <span>Undo last call</span>
-              <kbd className="rounded-md border border-neutral-300 bg-neutral-50 px-2 py-1 text-xs font-semibold dark:border-neutral-700 dark:bg-neutral-800">
-                U
               </kbd>
             </li>
             <li className="flex items-center justify-between">
