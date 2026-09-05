@@ -209,40 +209,6 @@ const CARNIVAL_CARD =
 const CARNIVAL_STAIN =
   "after:pointer-events-none after:absolute after:inset-0 after:z-[1] after:content-[''] after:bg-[radial-gradient(ellipse_at_14%_6%,rgba(120,88,38,0.13),transparent_46%),radial-gradient(ellipse_at_92%_94%,rgba(96,68,30,0.11),transparent_52%)]";
 
-function TomJerry({ className }: { className?: string }) {
-  return (
-    <svg viewBox="6 8 52 36" className={className} preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <path d="M11 26 L8 13 L21 21 Z" fill="#8e9aa8" />
-      <path d="M24 21 L28 10 L33 21 Z" fill="#8e9aa8" />
-      <ellipse cx="22" cy="34" rx="11.5" ry="10" fill="#8e9aa8" />
-      <path d="M18 25 q1 -3 2 -1 M23 24 q1 -3 2 -1" stroke="#6b7280" strokeWidth="1" fill="none" strokeLinecap="round" />
-      <ellipse cx="18" cy="32.5" rx="1.8" ry="2.2" fill="#1f2937" />
-      <ellipse cx="26" cy="32.5" rx="1.8" ry="2.2" fill="#1f2937" />
-      <circle cx="18.6" cy="31.6" r="0.6" fill="#fff" />
-      <circle cx="26.6" cy="31.6" r="0.6" fill="#fff" />
-      <ellipse cx="22" cy="38" rx="5.5" ry="4" fill="#fef3c7" />
-      <path d="M22 35.4 l1.4 1.6 -1.4 1.2 -1.4 -1.2 Z" fill="#fb7185" />
-      <path d="M22 38.2 q1.6 1.8 3.2 0" stroke="#374151" strokeWidth="0.9" fill="none" strokeLinecap="round" />
-      <path d="M13 36 l-4 1 M13 38.5 l-4 0.5" stroke="#9ca3af" strokeWidth="0.8" strokeLinecap="round" />
-      <path d="M31 36 l4 1 M31 38.5 l4 0.5" stroke="#9ca3af" strokeWidth="0.8" strokeLinecap="round" />
-      <circle cx="40" cy="28" r="3.4" fill="#b45309" />
-      <circle cx="40" cy="28" r="1.8" fill="#fda4af" />
-      <circle cx="50.5" cy="29" r="3.4" fill="#b45309" />
-      <circle cx="50.5" cy="29" r="1.8" fill="#fda4af" />
-      <circle cx="45" cy="35" r="8" fill="#b45309" />
-      <circle cx="42" cy="34" r="1.1" fill="#1f2937" />
-      <circle cx="48" cy="34" r="1.1" fill="#1f2937" />
-      <circle cx="42.4" cy="33.5" r="0.4" fill="#fff" />
-      <circle cx="48.4" cy="33.5" r="0.4" fill="#fff" />
-      <ellipse cx="45" cy="37.5" rx="3.4" ry="2.4" fill="#fef3c7" />
-      <circle cx="45" cy="36.2" r="1.3" fill="#881337" />
-      <path d="M45 37.8 q1.6 1.6 3 0" stroke="#374151" strokeWidth="0.8" fill="none" strokeLinecap="round" />
-      <path d="M36 36.5 l-3 .5 M36 38.5 l-3 .8" stroke="#9ca3af" strokeWidth="0.7" strokeLinecap="round" />
-      <path d="M54 36.5 l3 .5 M54 38.5 l3 .8" stroke="#9ca3af" strokeWidth="0.7" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 function CarnivalCard({ grid, name, index, total, called }: Omit<Props, "style">) {
   const a = ACCENTS[index % ACCENTS.length];
   const brand = name || "Tambola";
@@ -256,14 +222,8 @@ function CarnivalCard({ grid, name, index, total, called }: Omit<Props, "style">
           className="font-vintage-display whitespace-nowrap text-[22px] font-bold tracking-[0.22em] sm:text-[26px]"
           style={{ color: "rgba(90,60,25,0.13)" }}
         >
-          PITTAGODA
+          NAVEEN CHERRY
         </span>
-      </div>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-[1] flex items-center justify-center opacity-[0.06]"
-      >
-        <TomJerry className="h-full w-full" />
       </div>
       <div className={`relative z-[2] w-[14px] rounded-l-[5px] bg-gradient-to-b ${a.ramp}`} aria-hidden="true">
         <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[#fff7e6]">
@@ -277,7 +237,6 @@ function CarnivalCard({ grid, name, index, total, called }: Omit<Props, "style">
       </div>
       <div className="min-w-0 flex-1">
         <div className="relative z-[2] flex items-center gap-2 py-1.5 pl-2 pr-3">
-          <TomJerry className="h-8 w-auto shrink-0" />
           <span className="font-vintage-display min-w-0 flex-1 truncate text-[11px] font-bold uppercase leading-none tracking-[0.22em] text-[#3a2b1c]">
             ✦ {brand}
           </span>
@@ -313,7 +272,6 @@ function ThemedCard({ grid, name, index, total, called, style }: Props & { style
   const brand = name || "Tambola";
 const header = t.band ? (
     <div className={`flex items-center gap-2 px-3 py-1.5 ${t.band}`}>
-      <TomJerry className="h-7 w-auto shrink-0" />
       <span className={`font-vintage-display min-w-0 flex-1 truncate text-[11px] font-bold uppercase leading-none tracking-[0.22em] ${t.brand}`}>
         ✦ {brand}
       </span>
@@ -324,7 +282,6 @@ const header = t.band ? (
     </div>
   ) : (
     <div className="flex items-center gap-2 px-3 py-1.5">
-      <TomJerry className="h-7 w-auto shrink-0" />
       <span className={`font-vintage-display min-w-0 flex-1 truncate text-[11px] font-bold uppercase leading-none tracking-[0.22em] ${t.brand}`}>
         ✦ {brand}
       </span>
@@ -344,14 +301,8 @@ const header = t.band ? (
           className="font-vintage-display whitespace-nowrap text-[20px] font-bold tracking-[0.22em] sm:text-[24px]"
           style={{ color: t.watermark }}
         >
-          PITTAGODA
+          NAVEEN CHERRY
         </span>
-      </div>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center opacity-[0.06]"
-      >
-        <TomJerry className="h-full w-full" />
       </div>
       {header}
       {t.rule && <div className={`mx-3 mt-0 h-[3px] ${t.rule}`} />}
