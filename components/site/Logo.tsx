@@ -40,7 +40,7 @@ export default function Logo({ className = "" }: { className?: string }) {
           <path d="M42 28 L44 33 L49 35 L44 37 L42 42 L40 37 L35 35 L40 33 Z" fill="#FDE68A" />
         </svg>
       </span>
-      <span className="flex flex-col leading-none">
+      <span className="hidden flex-col leading-none sm:flex">
         <span className="font-display text-base font-extrabold tracking-tight text-on-surface">
           Grand <span className="text-primary">Tambola</span>
         </span>

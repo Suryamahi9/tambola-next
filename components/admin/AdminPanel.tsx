@@ -50,8 +50,8 @@ export default function AdminPanel({ members }: { members: MemberPublic[] }) {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-3">
-      <section className="glass rounded-3xl border border-white/10 p-6">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-3">
+      <section className="glass min-w-0 rounded-3xl border border-white/10 p-6">
         <h2 className="font-display text-lg font-bold text-on-surface">Add member</h2>
         <p className="mt-1 text-xs text-on-surface-variant">
           Create a sign-in for a new player or co-host.
@@ -147,7 +147,7 @@ export default function AdminPanel({ members }: { members: MemberPublic[] }) {
         </form>
       </section>
 
-      <section className="glass rounded-3xl border border-white/10 p-6 lg:col-span-2">
+      <section className="glass min-w-0 rounded-3xl border border-white/10 p-6 lg:col-span-2">
         <h2 className="font-display text-lg font-bold text-on-surface">
           Members <span className="ml-1 text-sm font-normal text-on-surface-variant">({members.length})</span>
         </h2>
@@ -158,7 +158,7 @@ export default function AdminPanel({ members }: { members: MemberPublic[] }) {
           </p>
         )}
 
-        <div className="mt-5 overflow-hidden rounded-2xl border border-white/10">
+        <div className="mt-5 min-w-0 overflow-x-auto rounded-2xl border border-white/10">
           <table className="w-full text-left text-sm">
             <thead className="bg-surface-container-low text-xs uppercase tracking-wider text-on-surface-variant">
               <tr>

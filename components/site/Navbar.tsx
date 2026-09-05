@@ -13,7 +13,7 @@ export default function Navbar() {
 
   return (
     <header className="no-print sticky top-0 z-50 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
-      <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 gap-6">
+      <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 gap-2 sm:gap-4">
         <Link href="/" aria-label="Grand Tambola home" onClick={() => setOpen(false)}>
           <Logo />
         </Link>
@@ -52,7 +52,7 @@ export default function Navbar() {
         <div className="flex items-center gap-2 xl:hidden">
           <Link
             href="/play"
-            className="mr-1 inline-flex items-center rounded-xl bg-gradient-to-r from-primary-container via-primary to-primary-fixed px-4 py-2 font-headline-sm text-headline-sm text-on-primary-container shadow-[0_0_20px_rgba(245,158,11,0.3)]"
+            className="mr-1 inline-flex items-center rounded-xl bg-gradient-to-r from-primary-container via-primary to-primary-fixed px-3 py-2 font-headline-sm text-headline-sm text-on-primary-container shadow-[0_0_20px_rgba(245,158,11,0.3)]"
           >
             Play
           </Link>

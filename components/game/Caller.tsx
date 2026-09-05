@@ -415,9 +415,9 @@ export default function Caller() {
   const recentNumbers = state.calledNumbers.slice(-5).reverse();
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[1fr_340px]">
       {/* LEFT: command deck + showcase + board */}
-      <div className="flex flex-col gap-6">
+      <div className="flex min-w-0 flex-col gap-6">
 
         {/* ── COMMAND DECK ── */}
         <section className="relative w-full bg-surface-container/90 backdrop-blur-2xl rounded-2xl p-5 shadow-2xl overflow-hidden">
@@ -425,7 +425,7 @@ export default function Caller() {
           <div className="absolute -top-24 -left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -bottom-24 right-1/4 w-80 h-80 bg-secondary/10 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-5">
+          <div className="relative z-10 flex min-w-0 flex-col xl:flex-row items-stretch xl:items-center justify-between gap-5">
 
             {/* Left: status + mode segmented control */}
             <div className="flex flex-wrap items-center gap-4">
@@ -491,12 +491,12 @@ export default function Caller() {
             </div>
 
             {/* Center: Draw button */}
-            <div className="flex items-center justify-center">
+            <div className="flex min-w-0 items-center justify-center">
               <button
                 type="button"
                 onClick={state.mode === "auto" ? toggleAuto : callNext}
                 disabled={state.mode === "manual" && state.calledNumbers.length >= 90}
-                className="relative group px-8 py-3.5 rounded-xl bg-gradient-to-r from-primary-container via-primary-fixed-dim to-primary text-on-primary-container font-headline-sm text-headline-sm font-bold shadow-2xl hover:brightness-110 active:scale-95 transition-all flex items-center gap-3 disabled:opacity-40"
+                className="relative group px-5 sm:px-8 py-3.5 rounded-xl bg-gradient-to-r from-primary-container via-primary-fixed-dim to-primary text-on-primary-container font-headline-sm text-headline-sm font-bold shadow-2xl hover:brightness-110 active:scale-95 transition-all flex items-center gap-2.5 disabled:opacity-40"
               >
                 <span className="absolute inset-0 rounded-xl bg-primary/40 blur-xl group-hover:blur-2xl transition-all -z-10" />
                 <span className="material-symbols-outlined text-2xl text-on-primary-container">
@@ -582,7 +582,7 @@ export default function Caller() {
           <div className="absolute -right-16 -top-16 w-60 h-60 bg-primary-container/10 rounded-full blur-3xl pointer-events-none" />
 
           {/* Left: glowing sphere */}
-          <div className="flex items-center gap-6">
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
             <div className="relative flex items-center justify-center">
               {/* Ripple rings */}
               <div className="absolute w-36 h-36 rounded-full bg-primary/20 animate-ping opacity-60 pointer-events-none" />
@@ -834,7 +834,7 @@ export default function Caller() {
       </div>
 
       {/* RIGHT: history + shortcuts */}
-      <div className="space-y-6">
+      <div className="space-y-6 min-w-0">
         <div className="w-full bg-surface-container/90 backdrop-blur-xl rounded-2xl p-5 shadow-xl">
           <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold flex items-center gap-2">
             <span className="material-symbols-outlined text-primary text-lg">history</span>

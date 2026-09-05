@@ -239,13 +239,13 @@ export default function Landing() {
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-gradient-to-tr from-primary-container/20 via-tertiary-container/15 to-transparent blur-[120px] pointer-events-none rounded-full"></div>
         <div className="absolute top-1/3 -left-48 w-96 h-96 bg-secondary/10 blur-[140px] pointer-events-none rounded-full"></div>
         <div className="absolute top-1/2 -right-48 w-96 h-96 bg-primary/10 blur-[130px] pointer-events-none rounded-full"></div>
-        <div className="relative max-w-7xl mx-auto flex flex-col items-center text-center">
-          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-surface-container-high/70 backdrop-blur-md shadow-md mb-8 cursor-default">
+        <div className="relative max-w-7xl w-full min-w-0 mx-auto flex flex-col items-center text-center">
+          <div className="inline-flex flex-wrap items-center justify-center gap-1.5 max-w-full px-3 sm:px-4 py-1.5 rounded-full bg-surface-container-high/70 backdrop-blur-md shadow-md mb-6 cursor-default">
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-            <span className="font-label-md text-label-md uppercase tracking-widest text-primary-fixed font-bold">✦ INDIA&apos;S #1 SOCIAL TAMBOLA EXPERIENCE</span>
+            <span className="font-label-md text-[10px] sm:text-label-md uppercase tracking-[0.14em] sm:tracking-widest text-primary-fixed font-bold">✦ INDIA&apos;S #1 SOCIAL TAMBOLA EXPERIENCE</span>
             <span className="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-mono">v4.8 VIP</span>
           </div>
-          <h1 className="font-display-hero text-display-hero md:text-[76px] md:leading-[82px] text-on-surface tracking-tight max-w-5xl font-extrabold">
+          <h1 className="font-display-hero w-full min-w-0 text-[2.5rem] leading-[1.05] sm:text-6xl sm:leading-[64px] md:text-[76px] md:leading-[82px] text-on-surface tracking-tight max-w-5xl font-extrabold">
             Classic Housie. <span className="bg-gradient-to-r from-primary-fixed via-primary to-primary-container bg-clip-text text-transparent">Midnight Thrills.</span> Real-Time Celebrations.
           </h1>
           <p className="mt-6 font-body-lg text-body-lg text-on-surface-variant max-w-3xl leading-relaxed">
@@ -334,7 +334,7 @@ export default function Landing() {
       </section>
 
       {/* ── FEATURES ────────────────────────────────────────── */}
-      <section className="w-full py-20 px-6 md:px-12 xl:px-20 bg-surface-container-lowest/60" id="features">
+      <section className="w-full overflow-hidden py-20 px-6 md:px-12 xl:px-20 bg-surface-container-lowest/60" id="features">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <SectionLabel>BUILT FOR PRO CLUB HOSTS & FESTIVALS</SectionLabel>
