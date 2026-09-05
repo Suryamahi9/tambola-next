@@ -115,30 +115,33 @@ export default function AnalyticsPanel({ rooms }: { rooms: Room[] }) {
     <div className="space-y-6">
       {/* Export toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+        <p className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
           Data exports
         </p>
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
             onClick={exportRooms}
-            className="rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-xs font-bold text-neutral-200 transition hover:border-violet-400 hover:text-violet-200"
+            className="flex items-center gap-1.5 rounded-full border border-white/15 bg-surface-container-high px-4 py-2 text-xs font-bold text-on-surface transition hover:border-primary hover:text-primary"
           >
-            ⬇ Rooms CSV
+            <span className="material-symbols-outlined text-sm">download</span>
+            Rooms CSV
           </button>
           <button
             type="button"
             onClick={exportPayments}
-            className="rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-xs font-bold text-neutral-200 transition hover:border-emerald-400 hover:text-emerald-200"
+            className="flex items-center gap-1.5 rounded-full border border-white/15 bg-surface-container-high px-4 py-2 text-xs font-bold text-on-surface transition hover:border-secondary hover:text-secondary"
           >
-            ⬇ Payments CSV
+            <span className="material-symbols-outlined text-sm">download</span>
+            Payments CSV
           </button>
           <button
             type="button"
             onClick={exportPrizes}
-            className="rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-xs font-bold text-neutral-200 transition hover:border-amber-400 hover:text-amber-200"
+            className="flex items-center gap-1.5 rounded-full border border-white/15 bg-surface-container-high px-4 py-2 text-xs font-bold text-on-surface transition hover:border-primary hover:text-primary"
           >
-            ⬇ Prizes CSV
+            <span className="material-symbols-outlined text-sm">download</span>
+            Prizes CSV
           </button>
         </div>
       </div>
@@ -146,16 +149,17 @@ export default function AnalyticsPanel({ rooms }: { rooms: Room[] }) {
       {/* Summary cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: "Total rooms", value: totalRooms, icon: "🏠" },
-          { label: "Total revenue", value: formatRupees(totalRevenue), icon: "💰" },
-          { label: "Tickets sold", value: totalTickets, icon: "🎟️" },
-          { label: "Paid players", value: paidPlayers.length, icon: "👥" },
+          { label: "Total rooms", value: totalRooms, icon: "home" },
+          { label: "Total revenue", value: formatRupees(totalRevenue), icon: "payments" },
+          { label: "Tickets sold", value: totalTickets, icon: "confirmation_number" },
+          { label: "Paid players", value: paidPlayers.length, icon: "groups" },
         ].map((card) => (
           <div key={card.label} className="glass rounded-2xl border border-white/10 p-5">
-            <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
-              {card.icon} {card.label}
+            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
+              <span className="material-symbols-outlined text-sm text-primary">{card.icon}</span>
+              {card.label}
             </p>
-            <p className="mt-2 font-display text-2xl font-bold text-white">{card.value}</p>
+            <p className="mt-2 font-display text-2xl font-bold text-on-surface">{card.value}</p>
           </div>
         ))}
       </div>
@@ -163,18 +167,18 @@ export default function AnalyticsPanel({ rooms }: { rooms: Room[] }) {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Status breakdown */}
         <section className="glass rounded-2xl border border-white/10 p-5">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
             Room status
           </h3>
           <div className="mt-3 space-y-2">
             {[
-              { label: "Live", count: live, color: "emerald" },
-              { label: "Waiting", count: waiting, color: "amber" },
-              { label: "Finished", count: finished, color: "neutral" },
+              { label: "Live", count: live, cls: "text-secondary" },
+              { label: "Waiting", count: waiting, cls: "text-primary" },
+              { label: "Finished", count: finished, cls: "text-on-surface-variant" },
             ].map((s) => (
               <div key={s.label} className="flex items-center justify-between text-sm">
-                <span className={`text-${s.color}-300 font-medium`}>{s.label}</span>
-                <span className="font-bold text-white">{s.count}</span>
+                <span className={`${s.cls} font-medium`}>{s.label}</span>
+                <span className="font-bold text-on-surface">{s.count}</span>
               </div>
             ))}
           </div>
@@ -182,27 +186,33 @@ export default function AnalyticsPanel({ rooms }: { rooms: Room[] }) {
 
         {/* Top players */}
         <section className="glass rounded-2xl border border-white/10 p-5 lg:col-span-2">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
             Top players
           </h3>
           {topPlayers.length === 0 ? (
-            <p className="mt-3 text-sm text-neutral-500">No data yet — play some games!</p>
+            <p className="mt-3 text-sm text-on-surface-variant">No data yet — play some games!</p>
           ) : (
             <ul className="mt-3 space-y-1.5">
               {topPlayers.map((p, i) => (
                 <li
                   key={p.name}
-                  className="flex items-center justify-between rounded-xl bg-white/[0.04] px-3 py-2 text-sm"
+                  className="flex items-center justify-between rounded-xl bg-surface-container-low/70 px-3 py-2 text-sm"
                 >
                   <div className="flex items-center gap-2">
-                    <span className="w-5 text-center text-xs">{i === 0 ? "👑" : `${i + 1}.`}</span>
-                    <span className="font-semibold text-neutral-200">{p.name}</span>
+                    <span className="w-5 text-center text-xs">
+                      {i === 0 ? (
+                        <span className="material-symbols-outlined text-base text-primary">workspace_premium</span>
+                      ) : (
+                        `${i + 1}.`
+                      )}
+                    </span>
+                    <span className="font-semibold text-on-surface">{p.name}</span>
                   </div>
                   <div className="flex items-center gap-2 text-[11px]">
-                    <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 font-bold text-emerald-300">
+                    <span className="rounded-full bg-secondary-container/20 px-2 py-0.5 font-bold text-secondary">
                       {p.wins} win{p.wins === 1 ? "" : "s"}
                     </span>
-                    <span className="text-neutral-500">{p.games} game{p.games === 1 ? "" : "s"}</span>
+                    <span className="text-on-surface-variant">{p.games} game{p.games === 1 ? "" : "s"}</span>
                   </div>
                 </li>
               ))}
@@ -213,32 +223,35 @@ export default function AnalyticsPanel({ rooms }: { rooms: Room[] }) {
 
       {/* Recent games */}
       <section className="glass rounded-2xl border border-white/10 p-5">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
           Recent games
         </h3>
         {recent.length === 0 ? (
-          <p className="mt-3 text-sm text-neutral-500">No finished games yet.</p>
+          <p className="mt-3 text-sm text-on-surface-variant">No finished games yet.</p>
         ) : (
           <ul className="mt-3 space-y-1.5">
             {recent.map((r) => (
               <li
                 key={r.id}
-                className="flex items-center justify-between rounded-xl bg-white/[0.04] px-3 py-2 text-sm"
+                className="flex items-center justify-between rounded-xl bg-surface-container-low/70 px-3 py-2 text-sm"
               >
                 <div className="flex items-center gap-3">
-                  <span className="font-mono text-xs font-bold text-violet-300">{r.code}</span>
-                  <span className="text-neutral-300">
+                  <span className="font-mono text-xs font-bold text-primary">{r.code}</span>
+                  <span className="text-on-surface-variant">
                     {r.players.filter((p) => p.paid).length} players
                   </span>
-                  <span className="text-neutral-500">
+                  <span className="text-on-surface-variant/70">
                     {r.calledNumbers.length} calls
                   </span>
                 </div>
                 <div className="flex items-center gap-3 text-[11px]">
                   {r.winner && (
-                    <span className="text-emerald-300">🏆 {r.winner.playerName}</span>
+                    <span className="flex items-center gap-1 text-secondary">
+                      <span className="material-symbols-outlined text-sm">emoji_events</span>
+                      {r.winner.playerName}
+                    </span>
                   )}
-                  <span className="text-neutral-500">{r.finishedAt ? timeAgo(r.finishedAt) : ""}</span>
+                  <span className="text-on-surface-variant">{r.finishedAt ? timeAgo(r.finishedAt) : ""}</span>
                 </div>
               </li>
             ))}

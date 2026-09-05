@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Space+Grotesk:wght@500;600;700&amp;family=Syne:wght@600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+        "surface-container": "#1d1f27",
+        "primary-fixed-dim": "#ffb95f",
+        "on-secondary-fixed-variant": "#005236",
+        "tertiary-fixed": "#e9ddff",
+        "secondary-container": "#00a572",
+        "surface-container-lowest": "#0b0e15",
+        "on-tertiary-fixed-variant": "#5516be",
+        "on-error-container": "#ffdad6",
+        "on-primary-container": "#613b00",
+        "secondary-fixed": "#6ffbbe",
+        "on-tertiary-fixed": "#23005c",
+        "error": "#ffb4ab",
+        "background": "#10131a",
+        "inverse-primary": "#855300",
+        "on-surface": "#e1e2ec",
+        "on-primary-fixed-variant": "#653e00",
+        "inverse-surface": "#e1e2ec",
+        "surface-container-high": "#272a32",
+        "tertiary-fixed-dim": "#d0bcff",
+        "on-background": "#e1e2ec",
+        "surface": "#10131a",
+        "outline": "#a08e7a",
+        "on-error": "#690005",
+        "tertiary-container": "#bda2ff",
+        "secondary": "#4edea3",
+        "secondary-fixed-dim": "#4edea3",
+        "tertiary": "#d5c3ff",
+        "surface-container-highest": "#32353d",
+        "primary-fixed": "#ffddb8",
+        "on-tertiary-container": "#520fbb",
+        "on-primary-fixed": "#2a1700",
+        "primary-container": "#f59e0b",
+        "inverse-on-surface": "#2d3038",
+        "on-secondary-fixed": "#002113",
+        "surface-tint": "#ffb95f",
+        "surface-container-low": "#191b23",
+        "primary": "#ffc174",
+        "on-primary": "#472a00",
+        "on-secondary-container": "#00311f",
+        "error-container": "#93000a",
+        "surface-variant": "#32353d",
+        "surface-bright": "#363941",
+        "outline-variant": "#534434",
+        "on-tertiary": "#3c0091",
+        "on-secondary": "#003824",
+        "surface-dim": "#10131a",
+        "on-surface-variant": "#d8c3ad"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "console-pad-lg": "2rem",
+        "board-cell-size-desktop": "2.75rem",
+        "grid-gutter": "1rem",
+        "board-cell-size-mobile": "1.875rem",
+        "ticket-gap": "0.375rem",
+        "console-pad-sm": "0.75rem",
+        "console-pad-md": "1.25rem"
+      },
+      "fontFamily": {
+        "caller-announcement-mobile": [
+          "Syne"
+        ],
+        "ticket-digit-mobile": [
+          "Space Grotesk"
+        ],
+        "display-hero": [
+          "Syne"
+        ],
+        "body-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg": [
+          "Syne"
+        ],
+        "caller-announcement": [
+          "Syne"
+        ],
+        "body-md": [
+          "Plus Jakarta Sans"
+        ],
+        "body-sm": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-md": [
+          "Syne"
+        ],
+        "headline-lg-mobile": [
+          "Syne"
+        ],
+        "ticket-digit": [
+          "Space Grotesk"
+        ],
+        "headline-sm": [
+          "Syne"
+        ],
+        "display-hero-mobile": [
+          "Syne"
+        ],
+        "label-lg": [
+          "Space Grotesk"
+        ],
+        "label-md": [
+          "Space Grotesk"
+        ],
+        "label-sm": [
+          "Space Grotesk"
+        ]
+      },
+      "fontSize": {
+        "caller-announcement-mobile": [
+          "48px",
+          {
+            "lineHeight": "48px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "800"
+          }
+        ],
+        "ticket-digit-mobile": [
+          "16px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "700"
+          }
+        ],
+        "display-hero": [
+          "64px",
+          {
+            "lineHeight": "72px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "800"
+          }
+        ],
+        "body-lg": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "500"
+          }
+        ],
+        "headline-lg": [
+          "36px",
+          {
+            "lineHeight": "44px",
+            "letterSpacing": "-0.015em",
+            "fontWeight": "700"
+          }
+        ],
+        "caller-announcement": [
+          "80px",
+          {
+            "lineHeight": "80px",
+            "letterSpacing": "-0.03em",
+            "fontWeight": "800"
+          }
+        ],
+        "body-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "fontWeight": "400"
+          }
+        ],
+        "body-sm": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "fontWeight": "400"
+          }
+        ],
+        "headline-md": [
+          "24px",
+          {
+            "lineHeight": "30px",
+            "fontWeight": "700"
+          }
+        ],
+        "headline-lg-mobile": [
+          "26px",
+          {
+            "lineHeight": "32px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "700"
+          }
+        ],
+        "ticket-digit": [
+          "22px",
+          {
+            "lineHeight": "22px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "700"
+          }
+        ],
+        "headline-sm": [
+          "20px",
+          {
+            "lineHeight": "26px",
+            "fontWeight": "600"
+          }
+        ],
+        "display-hero-mobile": [
+          "38px",
+          {
+            "lineHeight": "44px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "800"
+          }
+        ],
+        "label-lg": [
+          "14px",
+          {
+            "lineHeight": "18px",
+            "letterSpacing": "0.05em",
+            "fontWeight": "600"
+          }
+        ],
+        "label-md": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.06em",
+            "fontWeight": "600"
+          }
+        ],
+        "label-sm": [
+          "10px",
+          {
+            "lineHeight": "14px",
+            "letterSpacing": "0.08em",
+            "fontWeight": "700"
+          }
+        ]
+      }
+    }
+  }
+};</script></head><body class="bg-background font-body-md text-on-surface antialiased min-h-screen selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 left-0 right-0 w-full z-50 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-20 w-full px-8 flex items-center justify-between gap-6"><div class="flex items-center gap-8"><div class="flex items-center gap-3"><img alt="Midnight Grand Tambola Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UP0cV2S7IRz1Pt7ACdFUQ5VqfD5IruXGevnQR74GlzqhC4o7kmMUVKNehBxwE9Q28jq0yiD2CaS-mvjmKb2-umG-WBQfu27wheRii-gi_k9nyPqeEIunjrzsYdk8GolmHcvoYxhFloDd6BqeMgXo_r_JAx9KsxhJjeMtFad8oMW4ZyywfNR6X0flRMdVF3V_OFBOMrnWW81EAFYseR7bnVPlMMNNgCkI-fRoBSicpGP-3wxVOkHWffE_4"/><div class="flex flex-col"><div class="flex items-center gap-2"><span class="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface">GRAND TAMBOLA</span><span class="px-2 py-0.5 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm uppercase font-bold tracking-wider">LIVE HOUSIE</span></div><span class="font-label-sm text-label-sm text-on-surface-variant opacity-80 uppercase tracking-widest">High-Stakes VIP Salon</span></div></div><nav class="hidden xl:flex items-center gap-1 bg-surface-container-lowest/60 p-1 rounded-xl" data-active-classes="bg-surface-container-high text-primary font-semibold rounded-lg shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]"><a aria-current="page" class="px-4 py-2 transition-all duration-200 bg-surface-container-high text-primary font-semibold rounded-lg shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]" data-path="home" href="#">Home</a><a class="px-4 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="live-caller" href="#">Live Caller</a><a class="px-4 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="ticket-engine" href="#">Ticket Engine</a><a class="px-4 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="party-room-482" href="#">Party Room</a><a class="px-4 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="rules" href="#">Rules</a><a class="px-4 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="admin" href="#">Admin</a></nav></div><div class="flex items-center gap-4"><div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"><span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary"></span></span><span class="font-label-md text-label-md text-on-surface tracking-wider font-semibold">ROOM #482 LIVE</span><span class="font-label-sm text-label-sm text-secondary font-mono px-1.5 py-0.5 rounded bg-surface-container">24ms</span></div><div class="flex items-center gap-3 bg-surface-container-low px-3.5 py-1.5 rounded-xl"><div class="flex items-center gap-1.5 text-primary-fixed-dim"><span class="material-symbols-outlined text-primary text-lg">toll</span><div class="flex flex-col text-right"><span class="font-label-xs text-[10px] text-on-surface-variant uppercase tracking-wider leading-none">Credits</span><span class="font-label-md text-label-md font-bold text-primary font-mono leading-none">14,250</span></div></div><div class="w-px h-6 bg-surface-container-highest"></div><div class="flex items-center gap-1.5 text-secondary-fixed"><span class="material-symbols-outlined text-secondary text-lg">confirmation_number</span><div class="flex flex-col text-right"><span class="font-label-xs text-[10px] text-on-surface-variant uppercase tracking-wider leading-none">Active</span><span class="font-label-md text-label-md font-bold text-secondary font-mono leading-none">6 TIX</span></div></div></div><div class="relative flex items-center gap-3 pl-2 group cursor-pointer"><div class="flex flex-col text-right hidden sm:flex"><span class="font-label-md text-label-md font-bold text-on-surface leading-tight">Host Viktor Ross</span><span class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest font-semibold leading-tight">VIP MC</span></div><div class="relative"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary/40 group-hover:ring-primary transition-all" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4ZBPrN_CYcaqxyzTqw3sxi6Dlay4UaUU7WftvxgkHLP8IP4oxQqGkdutOeW8QpUgBlacIuTxxRHjxapwdQiJx-zAYLrLa9NeVyOHxUYnIxKjlvHYnHUVfK2FVWcM48w3rEVjg06KieZbwQU8OcXtNnLa94frQB_uNS7iCa-mit3L7-P6A2Lf81ra886mO-obw2PEKQCRua57qBBDUMKBO9bxSN3p3DHbY45Ix67re06LckbXIYofb"/><span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-secondary-container ring-2 ring-surface"></span></div><span class="material-symbols-outlined text-on-surface-variant group-hover:text-on-surface transition-colors text-sm">expand_more</span></div></div></div></header><main class="w-full pt-20 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<section class="relative w-full overflow-hidden bg-gradient-to-b from-surface via-surface-container-lowest to-surface pt-12 pb-24 px-6 md:px-12 xl:px-20">
+<div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-gradient-to-tr from-primary-container/20 via-tertiary-container/15 to-transparent blur-[120px] pointer-events-none rounded-full"></div>
+<div class="absolute top-1/3 -left-48 w-96 h-96 bg-secondary/10 blur-[140px] pointer-events-none rounded-full"></div>
+<div class="absolute top-1/2 -right-48 w-96 h-96 bg-primary/10 blur-[130px] pointer-events-none rounded-full"></div>
+<div class="relative max-w-7xl mx-auto flex flex-col items-center text-center">
+<div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-surface-container-high/70 backdrop-blur-md shadow-md mb-8 group cursor-default">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-md text-label-md uppercase tracking-widest text-primary-fixed font-bold">✦ INDIA'S #1 SOCIAL TAMBOLA EXPERIENCE</span>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-mono">v4.8 VIP</span>
+</div>
+<h1 class="font-display-hero text-display-hero md:text-[76px] md:leading-[82px] text-on-surface tracking-tight max-w-5xl font-extrabold">
+        Classic Housie. <span class="bg-gradient-to-r from-primary-fixed via-primary to-primary-container bg-clip-text text-transparent">Midnight Thrills.</span> Real-Time Celebrations.
+      </h1>
+<p class="mt-6 font-body-lg text-body-lg text-on-surface-variant max-w-3xl leading-relaxed">
+        Host live games with custom voice calling, generate 15 designer print tickets in 11 themes with custom watermarks, or launch synchronized 50-player Razorpay party rooms with instant automated pattern verification.
+      </p>
+<div class="mt-10 flex flex-wrap items-center justify-center gap-4 w-full max-w-3xl">
+<a class="group relative px-7 py-3.5 rounded-xl bg-gradient-to-r from-primary-container via-primary to-primary-fixed text-on-primary-container font-headline-sm text-headline-sm flex items-center gap-3 shadow-[0_0_32px_rgba(245,158,11,0.35)] hover:shadow-[0_0_42px_rgba(245,158,11,0.55)] transition-all duration-300 transform active:scale-95" href="#live-caller">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">campaign</span>
+<span>Launch Live Caller</span>
+<span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+<a class="px-7 py-3.5 rounded-xl bg-surface-container-high/90 hover:bg-surface-container-highest text-secondary-fixed font-headline-sm text-headline-sm flex items-center gap-2.5 backdrop-blur-xl shadow-lg transition-all duration-300" href="#party-room">
+<span class="material-symbols-outlined text-secondary text-xl">stadia_controller</span>
+<span>Enter Party Room (/play)</span>
+</a>
+<a class="px-6 py-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high text-on-surface font-body-lg text-body-lg flex items-center gap-2 shadow-md transition-all duration-200" href="#ticket-studio">
+<span class="material-symbols-outlined text-primary text-lg">local_activity</span>
+<span>Generate Designer Tickets</span>
+</a>
+<a class="px-5 py-3.5 rounded-xl bg-surface-container-lowest/80 hover:bg-surface-container-low text-on-surface-variant hover:text-on-surface font-label-lg text-label-lg flex items-center gap-2 transition-all duration-200" href="#rules-patterns">
+<span class="material-symbols-outlined text-base">rule</span>
+<span>View Rules &amp; Patterns</span>
+</a>
+</div>
+<div class="mt-14 w-full grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl p-4 rounded-2xl bg-surface-container-low/70 backdrop-blur-xl shadow-xl">
+<div class="flex flex-col items-center justify-center p-3 text-center">
+<span class="font-headline-lg text-headline-lg font-bold text-primary font-ticket-digit">250,000+</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant mt-1">Games Hosted</span>
+</div>
+<div class="flex flex-col items-center justify-center p-3 text-center">
+<span class="font-headline-lg text-headline-lg font-bold text-secondary font-ticket-digit">₹1.4 Cr</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant mt-1">Pools Awarded</span>
+</div>
+<div class="flex flex-col items-center justify-center p-3 text-center">
+<span class="font-headline-lg text-headline-lg font-bold text-tertiary-fixed font-ticket-digit">99.98%</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant mt-1">Sync Uptime</span>
+</div>
+<div class="flex flex-col items-center justify-center p-3 text-center">
+<span class="font-headline-lg text-headline-lg font-bold text-on-surface font-ticket-digit">0.02s</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant mt-1">Claim Verification</span>
+</div>
+</div>
+</div>
+</section>
+<section class="w-full px-6 md:px-12 xl:px-20 -mt-10 pb-20 z-10">
+<div class="max-w-7xl mx-auto">
+<div class="flex items-center justify-between mb-8">
+<div>
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-widest font-bold">LIVE STAGE ARCHITECTURE</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight mt-1">Engine Showcases in Action</h2>
+</div>
+<span class="hidden md:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container text-on-surface-variant font-label-md text-label-md">
+<span class="w-2 h-2 rounded-full bg-secondary"></span> Auto-Sync Cluster Active
+        </span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="group relative rounded-2xl bg-surface-container-low/90 backdrop-blur-2xl p-6 shadow-2xl flex flex-col justify-between overflow-hidden">
+<div class="absolute -right-12 -top-12 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none group-hover:bg-primary/20 transition-all duration-500"></div>
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-primary-fixed font-label-sm text-label-sm font-bold uppercase tracking-wider">Visual Engine</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">11 Gloss Themes</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold">Designer 3D Tambola Slips</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Alternating ticket shells rendered with deep iridescent finishes, crisp foil numbering, and responsive micro-dab animations.</p>
+<div class="mt-6 space-y-3">
+<div class="p-3.5 rounded-xl bg-surface-container-lowest/80 backdrop-blur-md shadow-inner">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm mb-2">
+<span class="text-primary font-bold">TICKET #TK-4821 • CREAM CARNIVAL</span>
+<span class="text-secondary font-mono">EARLY 5 READY</span>
+</div>
+<div class="grid grid-cols-9 gap-1.5">
+<div class="h-9 rounded-lg bg-surface-container-highest flex items-center justify-center font-ticket-digit text-ticket-digit text-on-surface font-bold">7</div>
+<div class="h-9 rounded-lg bg-surface-container/30 flex items-center justify-center text-outline/30">•</div>
+<div class="h-9 rounded-lg bg-surface-container-highest flex items-center justify-center font-ticket-digit text-ticket-digit text-on-surface font-bold">24</div>
+<div class="h-9 rounded-lg bg-surface-container/30 flex items-center justify-center text-outline/30">•</div>
+<div class="h-9 rounded-lg bg-surface-container-highest flex items-center justify-center font-ticket-digit text-ticket-digit text-on-surface font-bold">49</div>
+<div class="h-9 rounded-lg bg-surface-container/30 flex items-center justify-center text-outline/30">•</div>
+<div class="h-9 rounded-lg bg-surface-container/30 flex items-center justify-center text-outline/30">•</div>
+<div class="h-9 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center font-ticket-digit text-ticket-digit font-bold shadow-[0_0_14px_rgba(245,158,11,0.5)]">77</div>
+<div class="h-9 rounded-lg bg-surface-container-highest flex items-center justify-center font-ticket-digit text-ticket-digit text-on-surface font-bold">88</div>
+</div>
+</div>
+<div class="p-3.5 rounded-xl bg-surface-container-lowest/50 backdrop-blur-md shadow-inner opacity-85">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm mb-2">
+<span class="text-tertiary font-bold">TICKET #TK-4822 • ROSE GOLD VIP</span>
+<span class="text-on-surface-variant font-mono">1/5 DABBED</span>
+</div>
+<div class="grid grid-cols-9 gap-1.5">
+<div class="h-8 rounded-lg bg-surface-container/30 flex items-center justify-center text-outline/30">•</div>
+<div class="h-8 rounded-lg bg-secondary-container text-on-secondary-container flex items-center justify-center font-ticket-digit text-ticket-digit text-xs font-bold shadow-[0_0_10px_rgba(0,165,114,0.4)]">12</div>
+<div class="h-8 rounded-lg bg-surface-container/30 flex items-center justify-center text-outline/30">•</div>
+<div class="h-8 rounded-lg bg-surface-container-highest flex items-center justify-center font-ticket-digit text-ticket-digit text-xs text-on-surface">36</div>
+<div class="h-8 rounded-lg bg-surface-container/30 flex items-center justify-center text-outline/30">•</div>
+<div class="h-8 rounded-lg bg-surface-container-highest flex items-center justify-center font-ticket-digit text-ticket-digit text-xs text-on-surface">54</div>
+<div class="h-8 rounded-lg bg-surface-container-highest flex items-center justify-center font-ticket-digit text-ticket-digit text-xs text-on-surface">63</div>
+<div class="h-8 rounded-lg bg-surface-container/30 flex items-center justify-center text-outline/30">•</div>
+<div class="h-8 rounded-lg bg-surface-container-highest flex items-center justify-center font-ticket-digit text-ticket-digit text-xs text-on-surface">82</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>Watermark: NAVEEN CHERRY</span>
+<span class="text-primary font-semibold flex items-center gap-1">Custom Foil <span class="material-symbols-outlined text-sm">verified</span></span>
+</div>
+</div>
+<div class="group relative rounded-2xl bg-surface-container-low/90 backdrop-blur-2xl p-6 shadow-2xl flex flex-col justify-between overflow-hidden">
+<div class="absolute -left-12 -top-12 w-48 h-48 bg-secondary/10 rounded-full blur-3xl pointer-events-none group-hover:bg-secondary/20 transition-all duration-500"></div>
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-secondary-fixed font-label-sm text-label-sm font-bold uppercase tracking-wider">Live Caller HUD</span>
+<span class="flex items-center gap-1.5 font-label-sm text-label-sm text-secondary font-mono">
+<span class="w-2 h-2 rounded-full bg-secondary animate-ping"></span> AUTOCALL: 5.0s
+              </span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold">Dynamic 90-Ball Cage</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Real-time number flip with multi-lingual audio callouts (Hindi, English, Telugu) and automatic board lighting.</p>
+<div class="mt-6 p-4 rounded-xl bg-surface-container-lowest/90 backdrop-blur-md shadow-inner flex flex-col items-center">
+<div class="relative flex items-center justify-center my-2">
+<div class="w-28 h-28 rounded-full bg-gradient-to-tr from-primary via-primary-container to-primary-fixed p-1 shadow-[0_0_36px_rgba(245,158,11,0.4)] flex items-center justify-center">
+<div class="w-full h-full rounded-full bg-surface-container-lowest flex flex-col items-center justify-center">
+<span class="font-label-sm text-[10px] text-primary uppercase font-bold tracking-widest leading-none">CURRENT</span>
+<span class="font-caller-announcement text-caller-announcement text-primary-fixed leading-none mt-1">77</span>
+</div>
+</div>
+<div class="absolute -inset-2 rounded-full bg-primary/10 animate-pulse pointer-events-none"></div>
+</div>
+<div class="text-center mt-2">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">"Sunset Strip — Double Lucky 77"</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Telugu: "Ebbadi Yedu" • Hindi: "Satattar"</p>
+</div>
+<div class="w-full mt-4 flex items-center justify-between px-3 py-2 rounded-lg bg-surface-container-high text-on-surface">
+<span class="font-label-sm text-label-sm font-bold">Speed: 5s / Ball</span>
+<div class="flex items-center gap-2">
+<button class="px-2 py-0.5 rounded bg-surface-container text-xs font-mono hover:bg-surface-bright transition-colors">3s</button>
+<button class="px-2 py-0.5 rounded bg-primary-container text-on-primary-container text-xs font-mono font-bold">5s</button>
+<button class="px-2 py-0.5 rounded bg-surface-container text-xs font-mono hover:bg-surface-bright transition-colors">8s</button>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>Drawn: 42 / 90 Numbers</span>
+<span class="text-secondary font-mono">Last 5: 14, 82, 09, 33, 77</span>
+</div>
+</div>
+<div class="group relative rounded-2xl bg-surface-container-low/90 backdrop-blur-2xl p-6 shadow-2xl flex flex-col justify-between overflow-hidden">
+<div class="absolute -right-12 -bottom-12 w-48 h-48 bg-tertiary-container/15 rounded-full blur-3xl pointer-events-none group-hover:bg-tertiary-container/30 transition-all duration-500"></div>
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-tertiary-fixed font-label-sm text-label-sm font-bold uppercase tracking-wider">Multiplayer Sync</span>
+<span class="font-label-sm text-label-sm text-primary font-mono font-bold">ROOM #482</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold">Razorpay Party Arena</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Zero-stall 2-second HTTP polling cluster with automated instant prize payouts directly linked to game claims.</p>
+<div class="mt-6 p-4 rounded-xl bg-surface-container-lowest/90 backdrop-blur-md shadow-inner space-y-3.5">
+<div class="flex items-center justify-between">
+<div>
+<span class="font-label-sm text-[10px] uppercase text-on-surface-variant tracking-wider">Total Prize Pool</span>
+<div class="font-headline-md text-headline-md font-bold text-primary font-ticket-digit">₹12,500</div>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-[10px] uppercase text-on-surface-variant tracking-wider">Capacity</span>
+<div class="font-headline-sm text-headline-sm font-bold text-secondary font-ticket-digit">38 / 50 TIX</div>
+</div>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-2 overflow-hidden">
+<div class="bg-gradient-to-r from-secondary-container to-secondary h-full rounded-full w-[76%] transition-all"></div>
+</div>
+<div class="p-2.5 rounded-lg bg-surface-container-high/60 flex flex-col gap-1.5 font-body-sm text-body-sm">
+<div class="flex items-center justify-between text-xs">
+<span class="font-semibold text-tertiary-fixed">@HostViktor:</span>
+<span class="text-on-surface-variant font-mono">14:02:18</span>
+</div>
+<p class="text-on-surface text-xs leading-snug">"Call 77 locked. Any claims for Early 5? 3 players sitting at 4 numbers!"</p>
+<div class="flex items-center gap-1 text-[11px] text-secondary font-medium">
+<span class="material-symbols-outlined text-xs">bolt</span> Bot Announcer: Priya M. verified Early 5!
+                </div>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>Razorpay Fast Checkout</span>
+<span class="text-secondary font-semibold">100% Tamper Proof</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="w-full py-20 px-6 md:px-12 xl:px-20 bg-surface-container-lowest/60" id="features">
+<div class="max-w-7xl mx-auto">
+<div class="text-center max-w-3xl mx-auto mb-16">
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-widest font-bold">BUILT FOR PRO CLUB HOSTS &amp; FESTIVALS</span>
+<h2 class="font-headline-lg text-headline-lg md:text-[40px] md:leading-[48px] text-on-surface font-extrabold tracking-tight mt-2">
+          Engineered for High-Stakes Thrill. Perfected for Fair Play.
+        </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-3">
+          Every layer of the Grand Tambola stack was rebuilt from ground zero to eliminate caller confusion, duplicate claims, and ticket fraud.
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="p-8 rounded-2xl bg-surface-container-low shadow-xl flex flex-col justify-between group hover:bg-surface-container transition-colors duration-300">
+<div>
+<div class="w-14 h-14 rounded-2xl bg-primary-container/20 text-primary flex items-center justify-center mb-6 shadow-inner">
+<span class="material-symbols-outlined text-3xl">volume_up</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold uppercase tracking-wider">AUDIO SYNTHESIS SUITE</span>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold mt-1">1–90 Dynamic Caller Engine</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-3 leading-relaxed">
+              Crystal-clear synthetic Indian English, Hindi, and Telugu real-time caller voices. Select from 4 voice tones (Classic British Club, Mumbai Street Nicknames, Royal VIP Salon, and Fast Esports Announcer) with configurable tempo pacing from 3s to 12s per pull.
+            </p>
+</div>
+<div class="mt-8 pt-6 flex flex-wrap gap-2">
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-xs font-mono text-on-surface">3 Languages</span>
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-xs font-mono text-on-surface">4 Voice Tones</span>
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-xs font-mono text-on-surface">Traditional Slang HUD</span>
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-xs font-mono text-on-surface">Offline Voice Fallback</span>
+</div>
+</div>
+<div class="p-8 rounded-2xl bg-surface-container-low shadow-xl flex flex-col justify-between group hover:bg-surface-container transition-colors duration-300">
+<div>
+<div class="w-14 h-14 rounded-2xl bg-secondary-container/20 text-secondary flex items-center justify-center mb-6 shadow-inner">
+<span class="material-symbols-outlined text-3xl">print</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-bold uppercase tracking-wider">PRINT &amp; PDF EXPORTER</span>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold mt-1">Ticket Studio with Watermarking</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-3 leading-relaxed">
+              Generate 15 high-density, mathematical-certified unique tickets per batch across 11 designer themes (including Obsidian Noir, Royal Velvet, Emerald Glow, and Festival Gold). Stamp custom watermark identity signatures like "NAVEEN CHERRY" to completely halt counterfeit claims.
+            </p>
+</div>
+<div class="mt-8 pt-6 flex flex-wrap gap-2">
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-xs font-mono text-on-surface">15 Per PDF Sheet</span>
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-xs font-mono text-on-surface">11 Color Themes</span>
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-xs font-mono text-on-surface">Custom Club Brand Watermarks</span>
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-xs font-mono text-on-surface">Vector Print Quality</span>
+</div>
+</div>
+<div class="p-8 rounded-2xl bg-surface-container-low shadow-xl flex flex-col justify-between group hover:bg-surface-container transition-colors duration-300">
+<div>
+<div class="w-14 h-14 rounded-2xl bg-tertiary-container/20 text-tertiary flex items-center justify-center mb-6 shadow-inner">
+<span class="material-symbols-outlined text-3xl">groups</span>
+</div>
+<span class="font-label-sm text-label-sm text-tertiary font-bold uppercase tracking-wider">MULTIPLAYER RELIABILITY</span>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold mt-1">Tamper-Proof Party Rooms</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-3 leading-relaxed">
+              Our ultra-stable 2-second HTTP polling cluster delivers zero WebSocket socket-dropouts even on fluctuating 4G mobile links. Features synchronized 5-second automatic ball draws, server-side tamper verification, and integrated Razorpay cash entry ticketing for up to 50 concurrent players per salon.
+            </p>
+</div>
+<div class="mt-8 pt-6 flex flex-wrap gap-2">
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-xs font-mono text-on-surface">2s HTTP Polling Sync</span>
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-xs font-mono text-on-surface">50-Seat VIP Cap</span>
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-xs font-mono text-on-surface">Zero Dropped Draws</span>
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-xs font-mono text-on-surface">Razorpay Fast Settlement</span>
+</div>
+</div>
+<div class="p-8 rounded-2xl bg-surface-container-low shadow-xl flex flex-col justify-between group hover:bg-surface-container transition-colors duration-300">
+<div>
+<div class="w-14 h-14 rounded-2xl bg-error-container/20 text-primary-fixed flex items-center justify-center mb-6 shadow-inner">
+<span class="material-symbols-outlined text-3xl">verified_user</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary-fixed font-bold uppercase tracking-wider">ARBITRATION ENGINE</span>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold mt-1">Instant Auto-Claim Prizes</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-3 leading-relaxed">
+              Eliminate shouting and false claim debates. When a player hits Early 5, Top Line, Middle Line, Bottom Line, 4 Corners, Star, or Full House, our server-side engine validates the ticket against drawn history in 20 milliseconds. Valid claims trigger jewel fireworks; bad claims get flagged without stopping game flow.
+            </p>
+</div>
+<div class="mt-8 pt-6 flex flex-wrap gap-2">
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-xs font-mono text-on-surface">Early 5 / Jaldi 5</span>
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-xs font-mono text-on-surface">Top / Mid / Bottom Lines</span>
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-xs font-mono text-on-surface">Four Corners &amp; Star</span>
+<span class="px-3 py-1 rounded-full bg-surface-container-high text-xs font-mono text-on-surface">Full House 1st &amp; 2nd</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="w-full py-20 px-6 md:px-12 xl:px-20 bg-surface">
+<div class="max-w-7xl mx-auto">
+<div class="rounded-3xl bg-gradient-to-r from-surface-container-low via-surface-container to-surface-container-low p-8 md:p-12 shadow-2xl relative overflow-hidden">
+<div class="absolute -right-20 -bottom-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+<div class="lg:col-span-8">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-container/20 text-primary font-label-sm text-label-sm uppercase font-bold tracking-wider mb-4">
+<span class="material-symbols-outlined text-sm">lock_open</span> VIP HOST CLEARANCE
+            </div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-extrabold tracking-tight">
+              Host Live Clubs, Gated Tournaments &amp; Kitty Parties
+            </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-2 max-w-2xl">
+              Invite-only member access for authorized callers &amp; club hosts. Get access to customized branded ticket templates, auto-payout routing, audio voice customizers, and deep match analytical exports.
+            </p>
+</div>
+<div class="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3 justify-center">
+<button class="w-full px-6 py-4 rounded-xl bg-gradient-to-r from-primary via-primary-fixed-dim to-primary text-on-primary font-headline-sm text-headline-sm flex items-center justify-center gap-2 shadow-[0_0_24px_rgba(255,185,95,0.3)] hover:shadow-[0_0_32px_rgba(255,185,95,0.5)] transition-all" onclick="document.getElementById('member-modal').classList.remove('hidden')">
+<span class="material-symbols-outlined">badge</span>
+<span>Caller &amp; Host Sign In</span>
+</button>
+<a class="w-full px-6 py-3.5 rounded-xl bg-surface-container-highest/80 hover:bg-surface-bright text-on-surface font-body-md text-body-md flex items-center justify-center gap-2 transition-colors" href="#demo-room">
+<span class="material-symbols-outlined text-sm">play_circle</span>
+<span>Test Free Practice Caller</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="w-full pb-20 px-6 md:px-12 xl:px-20">
+<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="p-6 rounded-2xl bg-surface-container-lowest/80 shadow-lg flex items-start gap-4">
+<span class="material-symbols-outlined text-primary text-3xl">diversity_3</span>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold">100% Social Friendly</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Designed for family reunions, club kitty parties, corporate offsites, and community festival stages.</p>
+</div>
+</div>
+<div class="p-6 rounded-2xl bg-surface-container-lowest/80 shadow-lg flex items-start gap-4">
+<span class="material-symbols-outlined text-secondary text-3xl">verified</span>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold">RNG Algorithm Certified</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Non-repeating true random seeds prevent biased sequences. Independent shuffle ledger logged for every match.</p>
+</div>
+</div>
+<div class="p-6 rounded-2xl bg-surface-container-lowest/80 shadow-lg flex items-start gap-4">
+<span class="material-symbols-outlined text-tertiary text-3xl">devices</span>
+<div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold">Any Device Instant Play</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">No app installation required. Tap room invite link or scan QR code to immediately mark tickets on any mobile browser.</p>
+</div>
+</div>
+</div>
+</section>
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-container-lowest/80 backdrop-blur-xl hidden" id="member-modal">
+<div class="relative w-full max-w-md rounded-2xl bg-surface-container-low p-8 shadow-2xl">
+<button class="absolute top-5 right-5 text-on-surface-variant hover:text-on-surface" onclick="document.getElementById('member-modal').classList.add('hidden')">
+<span class="material-symbols-outlined">close</span>
+</button>
+<div class="flex items-center gap-3 mb-6">
+<div class="w-10 h-10 rounded-xl bg-primary-container text-on-primary-container flex items-center justify-center font-bold">GT</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Host VIP Portal</h3>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Authorized Caller Sign-in</span>
+</div>
+</div>
+<div class="space-y-4">
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1.5">Host Access Key / Passcode</label>
+<input class="w-full px-4 py-3 rounded-xl bg-surface-container-lowest text-on-surface font-mono focus:outline-none focus:ring-2 focus:ring-primary shadow-inner" placeholder="•••• •••• ••••" type="password"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-1.5">Salon Club ID</label>
+<input class="w-full px-4 py-3 rounded-xl bg-surface-container-lowest text-on-surface font-mono uppercase focus:outline-none focus:ring-2 focus:ring-primary shadow-inner" placeholder="e.g. VIP-DELHI-482" type="text"/>
+</div>
+<button class="w-full mt-2 py-3.5 rounded-xl bg-primary text-on-primary font-headline-sm text-headline-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,193,116,0.3)]" onclick="document.getElementById('member-modal').classList.add('hidden')">
+<span class="material-symbols-outlined text-sm">key</span>
+<span>Authenticate Console</span>
+</button>
+<p class="font-label-sm text-label-sm text-center text-on-surface-variant pt-2">
+          Require caller permissions? Contact <span class="text-primary font-semibold">club-desk@grandtambola.in</span>
+</p>
+</div>
+</div>
+</div>
+</div></main><footer class="w-full bg-surface-container-lowest py-12"><div class="w-full px-8 flex flex-col md:flex-row items-center justify-between gap-6"><div class="flex items-center gap-3"><img alt="Midnight Grand Tambola Logo" class="h-6 w-auto object-contain opacity-70" src="https://lh3.googleusercontent.com/aida/AEtjO1UP0cV2S7IRz1Pt7ACdFUQ5VqfD5IruXGevnQR74GlzqhC4o7kmMUVKNehBxwE9Q28jq0yiD2CaS-mvjmKb2-umG-WBQfu27wheRii-gi_k9nyPqeEIunjrzsYdk8GolmHcvoYxhFloDd6BqeMgXo_r_JAx9KsxhJjeMtFad8oMW4ZyywfNR6X0flRMdVF3V_OFBOMrnWW81EAFYseR7bnVPlMMNNgCkI-fRoBSicpGP-3wxVOkHWffE_4"/><span class="font-label-md text-label-md text-on-surface-variant">© 2024 Grand Tambola Salon. Real-Time Certified RNG Engine.</span></div><div class="flex items-center gap-6"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Fair Play Protocol v4.8</span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">WebSocket Engine Active</span><span class="font-label-sm text-label-sm text-secondary-fixed flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-secondary inline-block"></span> Systems Operational</span></div></div></footer></body></html>

@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Space+Grotesk:wght@500;600;700&amp;family=Syne:wght@600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+        "surface-container": "#1d1f27",
+        "primary-fixed-dim": "#ffb95f",
+        "on-secondary-fixed-variant": "#005236",
+        "tertiary-fixed": "#e9ddff",
+        "secondary-container": "#00a572",
+        "surface-container-lowest": "#0b0e15",
+        "on-tertiary-fixed-variant": "#5516be",
+        "on-error-container": "#ffdad6",
+        "on-primary-container": "#613b00",
+        "secondary-fixed": "#6ffbbe",
+        "on-tertiary-fixed": "#23005c",
+        "error": "#ffb4ab",
+        "background": "#10131a",
+        "inverse-primary": "#855300",
+        "on-surface": "#e1e2ec",
+        "on-primary-fixed-variant": "#653e00",
+        "inverse-surface": "#e1e2ec",
+        "surface-container-high": "#272a32",
+        "tertiary-fixed-dim": "#d0bcff",
+        "on-background": "#e1e2ec",
+        "surface": "#10131a",
+        "outline": "#a08e7a",
+        "on-error": "#690005",
+        "tertiary-container": "#bda2ff",
+        "secondary": "#4edea3",
+        "secondary-fixed-dim": "#4edea3",
+        "tertiary": "#d5c3ff",
+        "surface-container-highest": "#32353d",
+        "primary-fixed": "#ffddb8",
+        "on-tertiary-container": "#520fbb",
+        "on-primary-fixed": "#2a1700",
+        "primary-container": "#f59e0b",
+        "inverse-on-surface": "#2d3038",
+        "on-secondary-fixed": "#002113",
+        "surface-tint": "#ffb95f",
+        "surface-container-low": "#191b23",
+        "primary": "#ffc174",
+        "on-primary": "#472a00",
+        "on-secondary-container": "#00311f",
+        "error-container": "#93000a",
+        "surface-variant": "#32353d",
+        "surface-bright": "#363941",
+        "outline-variant": "#534434",
+        "on-tertiary": "#3c0091",
+        "on-secondary": "#003824",
+        "surface-dim": "#10131a",
+        "on-surface-variant": "#d8c3ad"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "console-pad-lg": "2rem",
+        "board-cell-size-desktop": "2.75rem",
+        "grid-gutter": "1rem",
+        "board-cell-size-mobile": "1.875rem",
+        "ticket-gap": "0.375rem",
+        "console-pad-sm": "0.75rem",
+        "console-pad-md": "1.25rem"
+      },
+      "fontFamily": {
+        "caller-announcement-mobile": [
+          "Syne"
+        ],
+        "ticket-digit-mobile": [
+          "Space Grotesk"
+        ],
+        "display-hero": [
+          "Syne"
+        ],
+        "body-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg": [
+          "Syne"
+        ],
+        "caller-announcement": [
+          "Syne"
+        ],
+        "body-md": [
+          "Plus Jakarta Sans"
+        ],
+        "body-sm": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-md": [
+          "Syne"
+        ],
+        "headline-lg-mobile": [
+          "Syne"
+        ],
+        "ticket-digit": [
+          "Space Grotesk"
+        ],
+        "headline-sm": [
+          "Syne"
+        ],
+        "display-hero-mobile": [
+          "Syne"
+        ],
+        "label-lg": [
+          "Space Grotesk"
+        ],
+        "label-md": [
+          "Space Grotesk"
+        ],
+        "label-sm": [
+          "Space Grotesk"
+        ]
+      },
+      "fontSize": {
+        "caller-announcement-mobile": [
+          "48px",
+          {
+            "lineHeight": "48px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "800"
+          }
+        ],
+        "ticket-digit-mobile": [
+          "16px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "700"
+          }
+        ],
+        "display-hero": [
+          "64px",
+          {
+            "lineHeight": "72px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "800"
+          }
+        ],
+        "body-lg": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "500"
+          }
+        ],
+        "headline-lg": [
+          "36px",
+          {
+            "lineHeight": "44px",
+            "letterSpacing": "-0.015em",
+            "fontWeight": "700"
+          }
+        ],
+        "caller-announcement": [
+          "80px",
+          {
+            "lineHeight": "80px",
+            "letterSpacing": "-0.03em",
+            "fontWeight": "800"
+          }
+        ],
+        "body-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "fontWeight": "400"
+          }
+        ],
+        "body-sm": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "fontWeight": "400"
+          }
+        ],
+        "headline-md": [
+          "24px",
+          {
+            "lineHeight": "30px",
+            "fontWeight": "700"
+          }
+        ],
+        "headline-lg-mobile": [
+          "26px",
+          {
+            "lineHeight": "32px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "700"
+          }
+        ],
+        "ticket-digit": [
+          "22px",
+          {
+            "lineHeight": "22px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "700"
+          }
+        ],
+        "headline-sm": [
+          "20px",
+          {
+            "lineHeight": "26px",
+            "fontWeight": "600"
+          }
+        ],
+        "display-hero-mobile": [
+          "38px",
+          {
+            "lineHeight": "44px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "800"
+          }
+        ],
+        "label-lg": [
+          "14px",
+          {
+            "lineHeight": "18px",
+            "letterSpacing": "0.05em",
+            "fontWeight": "600"
+          }
+        ],
+        "label-md": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.06em",
+            "fontWeight": "600"
+          }
+        ],
+        "label-sm": [
+          "10px",
+          {
+            "lineHeight": "14px",
+            "letterSpacing": "0.08em",
+            "fontWeight": "700"
+          }
+        ]
+      }
+    }
+  }
+};</script></head><body class="bg-background font-body-md text-on-surface antialiased min-h-screen selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 left-0 right-0 w-full z-50 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-20 w-full px-8 flex items-center justify-between gap-6"><div class="flex items-center gap-8"><div class="flex items-center gap-3"><img alt="Midnight Grand Tambola Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UP0cV2S7IRz1Pt7ACdFUQ5VqfD5IruXGevnQR74GlzqhC4o7kmMUVKNehBxwE9Q28jq0yiD2CaS-mvjmKb2-umG-WBQfu27wheRii-gi_k9nyPqeEIunjrzsYdk8GolmHcvoYxhFloDd6BqeMgXo_r_JAx9KsxhJjeMtFad8oMW4ZyywfNR6X0flRMdVF3V_OFBOMrnWW81EAFYseR7bnVPlMMNNgCkI-fRoBSicpGP-3wxVOkHWffE_4"/><div class="flex flex-col"><div class="flex items-center gap-2"><span class="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface">GRAND TAMBOLA</span><span class="px-2 py-0.5 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm uppercase font-bold tracking-wider">LIVE HOUSIE</span></div><span class="font-label-sm text-label-sm text-on-surface-variant opacity-80 uppercase tracking-widest">High-Stakes VIP Salon</span></div></div><nav class="hidden xl:flex items-center gap-1 bg-surface-container-lowest/60 p-1 rounded-xl" data-active-classes="bg-surface-container-high text-primary font-semibold rounded-lg shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]"><a class="px-4 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="home" href="#">Home</a><a aria-current="page" class="px-4 py-2 transition-all duration-200 bg-surface-container-high text-primary font-semibold rounded-lg shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]" data-path="live-caller" href="#">Live Caller</a><a class="px-4 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="ticket-engine" href="#">Ticket Engine</a><a class="px-4 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="party-room-482" href="#">Party Room</a><a class="px-4 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="rules" href="#">Rules</a><a class="px-4 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="admin" href="#">Admin</a></nav></div><div class="flex items-center gap-4"><div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"><span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary"></span></span><span class="font-label-md text-label-md text-on-surface tracking-wider font-semibold">ROOM #482 LIVE</span><span class="font-label-sm text-label-sm text-secondary font-mono px-1.5 py-0.5 rounded bg-surface-container">24ms</span></div><div class="flex items-center gap-3 bg-surface-container-low px-3.5 py-1.5 rounded-xl"><div class="flex items-center gap-1.5 text-primary-fixed-dim"><span class="material-symbols-outlined text-primary text-lg">toll</span><div class="flex flex-col text-right"><span class="font-label-xs text-[10px] text-on-surface-variant uppercase tracking-wider leading-none">Credits</span><span class="font-label-md text-label-md font-bold text-primary font-mono leading-none">14,250</span></div></div><div class="w-px h-6 bg-surface-container-highest"></div><div class="flex items-center gap-1.5 text-secondary-fixed"><span class="material-symbols-outlined text-secondary text-lg">confirmation_number</span><div class="flex flex-col text-right"><span class="font-label-xs text-[10px] text-on-surface-variant uppercase tracking-wider leading-none">Active</span><span class="font-label-md text-label-md font-bold text-secondary font-mono leading-none">6 TIX</span></div></div></div><div class="relative flex items-center gap-3 pl-2 group cursor-pointer"><div class="flex flex-col text-right hidden sm:flex"><span class="font-label-md text-label-md font-bold text-on-surface leading-tight">Host Viktor Ross</span><span class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest font-semibold leading-tight">VIP MC</span></div><div class="relative"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary/40 group-hover:ring-primary transition-all" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4ZBPrN_CYcaqxyzTqw3sxi6Dlay4UaUU7WftvxgkHLP8IP4oxQqGkdutOeW8QpUgBlacIuTxxRHjxapwdQiJx-zAYLrLa9NeVyOHxUYnIxKjlvHYnHUVfK2FVWcM48w3rEVjg06KieZbwQU8OcXtNnLa94frQB_uNS7iCa-mit3L7-P6A2Lf81ra886mO-obw2PEKQCRua57qBBDUMKBO9bxSN3p3DHbY45Ix67re06LckbXIYofb"/><span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-secondary-container ring-2 ring-surface"></span></div><span class="material-symbols-outlined text-on-surface-variant group-hover:text-on-surface transition-colors text-sm">expand_more</span></div></div></div></header><main class="w-full pt-20 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Dynamic Host Live Stage Layout -->
+<div class="w-full px-6 lg:px-10 py-6 flex flex-col gap-6">
+<!-- Top Host Control Bar (Frosted Command Deck) -->
+<section class="w-full bg-surface-container/90 backdrop-blur-2xl rounded-2xl p-5 shadow-2xl relative overflow-hidden">
+<!-- Glow ambient back-layer -->
+<div class="absolute -top-24 -left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute -bottom-24 right-1/4 w-80 h-80 bg-secondary/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-5">
+<!-- Left status pill + Mode switchers -->
+<div class="flex flex-wrap items-center gap-4">
+<div class="flex items-center gap-3 bg-surface-container-lowest/80 px-4 py-2.5 rounded-xl shadow-inner">
+<span class="flex h-3 w-3 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-secondary"></span>
+</span>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary uppercase tracking-tight">ROUND 3 ACTIVE</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm text-secondary">timer</span>
+<span class="text-secondary font-ticket-digit" id="countdown-display">00:04</span> to next auto-draw
+              </span>
+</div>
+</div>
+<!-- Draw Modes Segmented Control -->
+<div class="flex items-center bg-surface-container-low p-1.5 rounded-xl">
+<button class="px-3.5 py-1.5 rounded-lg font-label-md text-label-md text-on-primary-container bg-primary font-bold shadow-md transition-all flex items-center gap-1.5" id="btn-mode-auto" onclick="setMode('auto')">
+<span class="material-symbols-outlined text-base">autorenew</span> Auto Draw (5s)
+            </button>
+<button class="px-3.5 py-1.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all flex items-center gap-1.5" id="btn-mode-manual" onclick="setMode('manual')">
+<span class="material-symbols-outlined text-base">touch_app</span> Manual
+            </button>
+<button class="px-3.5 py-1.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all flex items-center gap-1.5" id="btn-mode-speed" onclick="setMode('speed')">
+<span class="material-symbols-outlined text-base">bolt</span> Speed (3s)
+            </button>
+</div>
+</div>
+<!-- Center Glowing Primary Trigger: DRAW NEXT NUMBER -->
+<div class="flex items-center justify-center">
+<button class="relative group px-8 py-3.5 rounded-xl bg-gradient-to-r from-primary-container via-primary-fixed-dim to-primary text-on-primary-container font-headline-sm text-headline-sm font-bold shadow-2xl hover:brightness-110 active:scale-95 transition-all flex items-center gap-3" id="draw-button" onclick="triggerDrawNumber()">
+<span class="absolute inset-0 rounded-xl bg-primary/40 blur-xl group-hover:blur-2xl transition-all -z-10"></span>
+<span class="material-symbols-outlined text-2xl animate-spin text-on-primary-container" id="ball-spinner" style="display:none;">rotate_right</span>
+<span class="material-symbols-outlined text-2xl text-on-primary-container" id="ball-icon">casino</span>
+<span>DRAW NEXT NUMBER</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest/40 font-label-sm text-label-sm text-on-primary-container tracking-wider uppercase">SPACE</span>
+</button>
+</div>
+<!-- Right Voice & Audio Suite -->
+<div class="flex flex-wrap items-center gap-3">
+<!-- Voice Selector -->
+<div class="flex items-center gap-2 bg-surface-container-lowest/80 px-3 py-2 rounded-xl">
+<span class="material-symbols-outlined text-tertiary text-lg">record_voice_over</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-widest">Caller Voice</span>
+<select class="bg-transparent font-label-md text-label-md text-on-surface focus:outline-none cursor-pointer" id="voice-select" onchange="switchVoice(this.value)">
+<option class="bg-surface-container text-on-surface" value="en-IN">Priya (en-IN)</option>
+<option class="bg-surface-container text-on-surface" value="hi-IN">Vikram (hi-IN)</option>
+<option class="bg-surface-container text-on-surface" value="te-IN">Kavya (te-IN)</option>
+<option class="bg-surface-container text-on-surface" value="uk-EN">Arthur - Royal (en-GB)</option>
+</select>
+</div>
+</div>
+<!-- Voice Tone Pills -->
+<div class="hidden sm:flex items-center gap-1 bg-surface-container-low p-1 rounded-xl">
+<button class="px-2 py-1 rounded bg-surface-container-high text-primary font-label-sm text-label-sm font-semibold" onclick="setVoiceTone(this)">Natural</button>
+<button class="px-2 py-1 rounded text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm" onclick="setVoiceTone(this)">Deep</button>
+<button class="px-2 py-1 rounded text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm" onclick="setVoiceTone(this)">Bright</button>
+<button class="px-2 py-1 rounded text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm" onclick="setVoiceTone(this)">Quick</button>
+</div>
+<!-- Utility Toggles -->
+<div class="flex items-center gap-1.5">
+<button class="w-10 h-10 rounded-xl bg-surface-container-low hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors" id="sound-btn" onclick="toggleMute()" title="Toggle Caller Audio">
+<span class="material-symbols-outlined text-xl text-secondary" id="sound-icon">volume_up</span>
+</button>
+<button class="w-10 h-10 rounded-xl bg-surface-container-low hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors" id="pause-btn" onclick="togglePauseGame()" title="Pause Game">
+<span class="material-symbols-outlined text-xl text-primary" id="pause-icon">pause_circle</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Grid: Stage Center (8 Cols) + Host Intel Sidebar (4 Cols) -->
+<div class="w-full grid grid-cols-1 xl:grid-cols-12 gap-6">
+<!-- Center Stage & Master Matrix: 8 Columns -->
+<div class="xl:col-span-8 flex flex-col gap-6">
+<!-- Center Showcase: Active Drawn Ball + Reel + Progress Bar -->
+<div class="w-full bg-surface-container-low rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+<div class="absolute -right-16 -top-16 w-60 h-60 bg-primary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+<!-- Left Ball Display (Giant 3D Glowing Sphere) -->
+<div class="flex items-center gap-6">
+<div class="relative flex items-center justify-center">
+<!-- Animated outer sonic wave ripple rings -->
+<div class="absolute w-36 h-36 rounded-full bg-primary/20 animate-ping opacity-60 pointer-events-none"></div>
+<div class="absolute w-44 h-44 rounded-full bg-primary-container/10 blur-md pointer-events-none"></div>
+<!-- 3D Sphere Card -->
+<div class="relative w-32 h-32 rounded-full bg-gradient-to-br from-primary-fixed via-primary-container to-amber-900 shadow-2xl flex flex-col items-center justify-center text-center p-2 transform hover:scale-105 transition-transform">
+<!-- Specular Highlight Shine -->
+<div class="absolute top-2 left-6 w-10 h-5 bg-white/40 rounded-full blur-[2px] transform -rotate-45"></div>
+<span class="font-caller-announcement text-caller-announcement text-on-primary-container font-black tracking-tight drop-shadow-md leading-none select-none" id="current-ball-num">42</span>
+<span class="font-label-sm text-[9px] font-bold text-on-primary-container/80 tracking-widest uppercase mt-0.5">BALL DRAWN</span>
+</div>
+</div>
+<!-- Nickname & Audio Announcement callout -->
+<div class="flex flex-col max-w-xs">
+<div class="flex items-center gap-2 mb-1">
+<span class="px-2.5 py-0.5 rounded-full bg-secondary/15 text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">campaign</span> Voice Readout
+                </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">#CALL-38</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg font-extrabold text-on-surface leading-tight tracking-tight" id="current-ball-nickname">
+                Herbie / Win a prize
+              </h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                Standard UK/Indian Housie call. "Four &amp; Two, Forty-Two."
+              </p>
+<div class="mt-3 flex items-center gap-2">
+<button class="px-3 py-1 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-label-sm text-label-sm flex items-center gap-1.5 transition-colors" onclick="replayVoiceCall()">
+<span class="material-symbols-outlined text-sm text-primary">replay</span> Repeat Audio
+                </button>
+<span class="flex items-center gap-0.5 text-secondary" id="audio-wave-anim">
+<span class="w-1 h-3 bg-secondary rounded animate-pulse"></span>
+<span class="w-1 h-5 bg-secondary rounded animate-pulse" style="animation-delay: 150ms;"></span>
+<span class="w-1 h-2 bg-secondary rounded animate-pulse" style="animation-delay: 300ms;"></span>
+<span class="w-1 h-4 bg-secondary rounded animate-pulse" style="animation-delay: 450ms;"></span>
+</span>
+</div>
+</div>
+</div>
+<!-- Right Showcase: Recent 5 Reel & Progress -->
+<div class="w-full md:w-auto flex flex-col items-start md:items-end gap-4 min-w-[280px]">
+<div class="flex flex-col w-full md:items-end">
+<div class="flex items-center justify-between md:justify-end gap-3 w-full mb-1.5">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Draw Reel (Last 5)</span>
+<span class="font-label-sm text-label-sm text-secondary font-mono font-semibold">T-minus 04s</span>
+</div>
+<!-- Recent 5 Balls row -->
+<div class="flex items-center gap-2" id="recent-balls-tray">
+<div class="w-11 h-11 rounded-xl bg-surface-container-highest shadow-md flex items-center justify-center font-ticket-digit text-ticket-digit text-primary font-bold">89</div>
+<div class="w-11 h-11 rounded-xl bg-surface-container-high shadow-md flex items-center justify-center font-ticket-digit text-ticket-digit text-on-surface font-bold">12</div>
+<div class="w-11 h-11 rounded-xl bg-surface-container-high shadow-md flex items-center justify-center font-ticket-digit text-ticket-digit text-on-surface font-bold">55</div>
+<div class="w-11 h-11 rounded-xl bg-surface-container-high shadow-md flex items-center justify-center font-ticket-digit text-ticket-digit text-on-surface font-bold">03</div>
+<div class="w-11 h-11 rounded-xl bg-surface-container-high shadow-md flex items-center justify-center font-ticket-digit text-ticket-digit text-on-surface-variant font-bold">67</div>
+</div>
+</div>
+<!-- Progress Meter -->
+<div class="w-full flex flex-col gap-1.5">
+<div class="flex items-center justify-between text-xs font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Board Saturation</span>
+<span class="text-primary font-bold font-mono" id="progress-text">38 / 90 (42.2%)</span>
+</div>
+<div class="w-full h-2.5 bg-surface-container-lowest rounded-full overflow-hidden p-0.5">
+<div class="h-full bg-gradient-to-r from-secondary via-primary to-primary-container rounded-full transition-all duration-500" id="progress-bar-fill" style="width: 42.2%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Master Tambola Board (10x9 Grid of 90 Numbers) -->
+<div class="w-full bg-surface-container/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl flex flex-col gap-4">
+<!-- Board Header & Quick Legend -->
+<div class="flex flex-wrap items-center justify-between gap-3 pb-2">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-xl">grid_on</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Master Tambola Board (1 – 90)</h3>
+</div>
+<!-- Legend Indicators -->
+<div class="flex items-center gap-4 text-xs font-label-sm text-label-sm">
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded bg-gradient-to-br from-primary via-primary-container to-amber-700 shadow-sm"></span>
+<span class="text-on-surface-variant">Active (Drawn)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded bg-secondary shadow-sm"></span>
+<span class="text-on-surface-variant">Current Call</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded bg-surface-container-highest"></span>
+<span class="text-on-surface-variant">Uncalled</span>
+</div>
+</div>
+</div>
+<!-- Interactive 10-column x 9-row Grid Container -->
+<div class="relative overflow-x-auto pb-2">
+<div class="grid grid-cols-10 gap-1.5 min-w-[620px] select-none" id="master-board-grid">
+<!-- Dynamically populated via script with 90 numbered cells -->
+</div>
+</div>
+<!-- Bottom Micro Board Toolbar -->
+<div class="flex flex-wrap items-center justify-between text-xs text-on-surface-variant pt-2">
+<div class="flex items-center gap-4">
+<span class="flex items-center gap-1"><span class="font-bold text-primary">52</span> Balls Remaining</span>
+<span class="w-1 h-1 rounded-full bg-surface-container-highest"></span>
+<span class="flex items-center gap-1"><span class="font-bold text-secondary">38</span> Drawn</span>
+<span class="w-1 h-1 rounded-full bg-surface-container-highest"></span>
+<span class="text-on-surface-variant font-mono">Last draw delta: 4.8s</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-2.5 py-1 rounded bg-surface-container-high hover:bg-surface-bright text-on-surface transition-colors" onclick="highlightUncalled()">
+                Flash Uncalled
+              </button>
+<button class="px-2.5 py-1 rounded bg-error-container/40 hover:bg-error-container text-error transition-colors flex items-center gap-1" onclick="resetBoardConfirmation()">
+<span class="material-symbols-outlined text-xs">restart_alt</span> Reset Stage
+              </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Sidebar: Host Intel, Pattern Claim Watcher & Action Center (4 Columns) -->
+<div class="xl:col-span-4 flex flex-col gap-6">
+<!-- Live Prizes & Pattern Claims Watcher -->
+<div class="w-full bg-surface-container/90 backdrop-blur-xl rounded-2xl p-5 shadow-xl flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">trophy</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Prizes &amp; Claims</h3>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-secondary/20 text-secondary font-label-sm text-label-sm font-semibold uppercase tracking-wider">
+              Pool: ₹9,300
+            </span>
+</div>
+<!-- Claims list -->
+<div class="flex flex-col gap-2.5">
+<!-- Claim Item: Early Five (Claimed) -->
+<div class="p-3 rounded-xl bg-surface-container-low flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-base">verified</span>
+<span class="font-label-md text-label-md font-bold text-on-surface">Early Five (5 Nos)</span>
+</div>
+<span class="font-label-md text-label-md font-bold text-primary font-mono">₹500</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<span class="text-on-surface-variant flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Rahul Sharma
+                  <span class="font-mono text-secondary-fixed opacity-90">(Tkt #04)</span>
+</span>
+<span class="px-2 py-0.5 rounded bg-secondary-container/40 text-secondary-fixed font-label-sm text-[10px] font-bold tracking-wide uppercase">VERIFIED ✓</span>
+</div>
+</div>
+<!-- Claim Item: Top Line (Claimed) -->
+<div class="p-3 rounded-xl bg-surface-container-low flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-base">verified</span>
+<span class="font-label-md text-label-md font-bold text-on-surface">Top Line</span>
+</div>
+<span class="font-label-md text-label-md font-bold text-primary font-mono">₹1,000</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<span class="text-on-surface-variant flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Ananya Kapoor
+                  <span class="font-mono text-secondary-fixed opacity-90">(Tkt #11)</span>
+</span>
+<span class="px-2 py-0.5 rounded bg-secondary-container/40 text-secondary-fixed font-label-sm text-[10px] font-bold tracking-wide uppercase">VERIFIED ✓</span>
+</div>
+</div>
+<!-- Claim Item: Middle Line (OPEN) -->
+<div class="p-3 rounded-xl bg-surface-container-high flex flex-col gap-1.5 relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary animate-pulse"></div>
+<div class="flex items-center justify-between pl-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-base">radio_button_unchecked</span>
+<span class="font-label-md text-label-md font-bold text-on-surface">Middle Line</span>
+</div>
+<span class="font-label-md text-label-md font-bold text-primary font-mono">₹1,000</span>
+</div>
+<div class="flex items-center justify-between text-xs pl-1">
+<span class="text-primary-fixed-dim italic flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span> 1 Player 1 number away
+                </span>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-primary font-label-sm text-[10px] font-bold uppercase tracking-wide">OPEN</span>
+</div>
+</div>
+<!-- Claim Item: Bottom Line (OPEN) -->
+<div class="p-3 rounded-xl bg-surface-container-low flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-base">radio_button_unchecked</span>
+<span class="font-label-md text-label-md font-bold text-on-surface">Bottom Line</span>
+</div>
+<span class="font-label-md text-label-md font-bold text-primary font-mono">₹1,000</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<span class="text-on-surface-variant italic">Waiting for calls...</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-label-sm text-[10px] font-bold uppercase tracking-wide">OPEN</span>
+</div>
+</div>
+<!-- Claim Item: Four Corners (Claimed) -->
+<div class="p-3 rounded-xl bg-surface-container-low flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-base">verified</span>
+<span class="font-label-md text-label-md font-bold text-on-surface">Four Corners</span>
+</div>
+<span class="font-label-md text-label-md font-bold text-primary font-mono">₹800</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<span class="text-on-surface-variant flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Vikram Malhotra
+                  <span class="font-mono text-secondary-fixed opacity-90">(Tkt #02)</span>
+</span>
+<span class="px-2 py-0.5 rounded bg-secondary-container/40 text-secondary-fixed font-label-sm text-[10px] font-bold tracking-wide uppercase">VERIFIED ✓</span>
+</div>
+</div>
+<!-- Claim Item: FULL HOUSE (Grand Prize) -->
+<div class="p-4 rounded-xl bg-gradient-to-br from-primary-container/20 via-surface-container to-surface-container-lowest flex flex-col gap-2 relative shadow-lg">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">stars</span>
+<span class="font-headline-sm text-headline-sm text-primary font-black">FULL HOUSE</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-primary font-extrabold font-mono">₹5,000</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<span class="text-primary-fixed-dim font-semibold flex items-center gap-1.5">
+<span class="flex h-2 w-2 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+                  High Alert: 2 players need 1 number!
+                </span>
+<span class="px-2.5 py-0.5 rounded-full bg-primary text-on-primary font-label-sm text-[10px] font-bold uppercase tracking-widest shadow-md">UNCLAIMED</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Host Action Log & Confetti Trigger Deck -->
+<div class="w-full bg-surface-container/90 backdrop-blur-xl rounded-2xl p-5 shadow-xl flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-lg">smart_toy</span> Host Special Actions
+            </h4>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">Live Sync</span>
+</div>
+<!-- Special Action Buttons -->
+<div class="grid grid-cols-2 gap-2.5">
+<button class="p-3 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface text-left transition-all flex flex-col gap-1 group" onclick="launchConfettiCelebration('Ananya K. won Top Line!')">
+<span class="material-symbols-outlined text-primary text-xl group-hover:scale-110 transition-transform">celebration</span>
+<span class="font-label-md text-label-md font-bold text-on-surface leading-tight">Winner Confetti</span>
+<span class="font-label-sm text-[11px] text-on-surface-variant">Blast celebration FX</span>
+</button>
+<button class="p-3 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface text-left transition-all flex flex-col gap-1 group" onclick="playSFX('bell')">
+<span class="material-symbols-outlined text-secondary text-xl group-hover:scale-110 transition-transform">notifications_active</span>
+<span class="font-label-md text-label-md font-bold text-on-surface leading-tight">Gong Sound Cue</span>
+<span class="font-label-sm text-[11px] text-on-surface-variant">Alert player salon</span>
+</button>
+<button class="p-3 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface text-left transition-all flex flex-col gap-1 group" onclick="transferCallerRole()">
+<span class="material-symbols-outlined text-tertiary text-xl group-hover:scale-110 transition-transform">swap_horiz</span>
+<span class="font-label-md text-label-md font-bold text-on-surface leading-tight">Transfer Host</span>
+<span class="font-label-sm text-[11px] text-on-surface-variant">Assign Co-Host</span>
+</button>
+<button class="p-3 rounded-xl bg-surface-container-high hover:bg-surface-bright text-on-surface text-left transition-all flex flex-col gap-1 group" onclick="broadcastAnnouncement()">
+<span class="material-symbols-outlined text-primary-fixed-dim text-xl group-hover:scale-110 transition-transform">volume_up</span>
+<span class="font-label-md text-label-md font-bold text-on-surface leading-tight">Push Banner</span>
+<span class="font-label-sm text-[11px] text-on-surface-variant">Broadcast to phones</span>
+</button>
+</div>
+<!-- Real-Time Activity Log Feed -->
+<div class="flex flex-col gap-2 pt-2">
+<span class="font-label-sm text-[10px] uppercase font-bold text-on-surface-variant tracking-widest">Live Salon Telemetry</span>
+<div class="flex flex-col gap-1.5 font-mono text-xs text-on-surface-variant max-h-36 overflow-y-auto pr-1" id="telemetry-feed">
+<div class="flex items-center justify-between p-1.5 rounded bg-surface-container-low">
+<span>[14:22:04] Ball #42 drawn (Auto)</span>
+<span class="text-secondary text-[10px]">VERIFIED</span>
+</div>
+<div class="flex items-center justify-between p-1.5 rounded bg-surface-container-low">
+<span>[14:21:59] Player #18 Bogey Tap Shake (#42)</span>
+<span class="text-error text-[10px]">REJECTED</span>
+</div>
+<div class="flex items-center justify-between p-1.5 rounded bg-surface-container-low">
+<span>[14:21:40] Top Line Claim Accepted (Tkt #11)</span>
+<span class="text-primary text-[10px]">PAYOUT</span>
+</div>
+<div class="flex items-center justify-between p-1.5 rounded bg-surface-container-low">
+<span>[14:21:22] Ball #89 drawn</span>
+<span class="text-secondary text-[10px]">OK</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Active Confetti / Winner Overlay Canvas Container -->
+<div class="fixed bottom-8 right-8 z-50 transform translate-y-32 opacity-0 transition-all duration-300 pointer-events-none" id="confetti-toast">
+<div class="flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-surface-container-high text-on-surface shadow-2xl backdrop-blur-xl">
+<span class="material-symbols-outlined text-2xl text-primary animate-bounce">celebration</span>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary font-bold">VIP CELEBRATION!</span>
+<span class="font-body-sm text-body-sm text-on-surface" id="confetti-text">Winner recognized</span>
+</div>
+</div>
+</div>
+<!-- Nickname Hover Tooltip floating div -->
+<div class="fixed hidden z-50 px-3 py-1.5 rounded-lg bg-surface-container-highest text-on-surface font-label-md text-label-md shadow-2xl pointer-events-none transform -translate-x-1/2 -translate-y-full mb-2" id="caller-tooltip">
+<span class="font-semibold text-primary" id="tooltip-text"></span>
+</div>
+</div>
+<!-- Micro-Interactivity Script -->
+<script>
+    const nicknames = {
+      1: "Kelly's Eye / Butter", 2: "One Little Duck", 3: "Cup of Tea", 4: "Knock at the Door", 5: "Fingers in your Hive",
+      6: "Tom Mix / In a Fix", 7: "Lucky Seven", 8: "Garden Gate / Golden State", 9: "Doctor's Orders", 10: "David's Den / Uncle Ben",
+      11: "Legs Eleven", 12: "One Dozen / Monkey on the Run", 13: "Unlucky for Some", 14: "Valentine's Day", 15: "Young and Keen",
+      16: "Sweet Sixteen", 17: "Dancing Queen", 18: "Coming of Age", 19: "Goodbye Teens", 20: "One Score",
+      21: "Royal Salute / Key to the Door", 22: "Two Little Ducks", 23: "The Lord is My Shepherd", 24: "Two Dozen", 25: "Silver Jubilee",
+      26: "Pick and Mix", 27: "Gateway to Heaven", 28: "Over Weight", 29: "Rise and Shine", 30: "Dirty Gertie",
+      31: "Get Up and Run", 32: "Buckle My Shoe", 33: "All the Threes", 34: "Ask for More", 35: "Jump and Jive",
+      36: "Three Dozen", 37: "More than Eleven", 38: "Christmas Cake", 39: "Steps / Watch the steps", 40: "Life Begins",
+      41: "Time for Fun", 42: "Herbie / Win a prize", 43: "Down on your Knees", 44: "Droopy Drawers", 45: "Halfway There",
+      46: "Up to Tricks", 47: "Four and Seven", 48: "Four Dozen", 49: "PC / Nick Nick", 50: "Half a Century",
+      51: "Tweak of the Thumb", 52: "Pack of Cards", 53: "Stuck in a Tree", 54: "Clean the Floor", 55: "All the Fives / Snakes",
+      56: "Was She Worth It?", 57: "Heinz Varieties", 58: "Make Them Wait", 59: "Brighton Line", 60: "Five Dozen",
+      61: "Bakers Bun", 62: "Turn the Screw", 63: "Tickle Me 63", 64: "Red Raw", 65: "Old Age Pension",
+      66: "Clickety Click", 67: "Made in Heaven", 68: "Saving Grace", 69: "Either Way Up", 70: "Three Score and Ten",
+      71: "Bang on the Drum", 72: "Six Dozen", 73: "Queen Bee", 74: "Candy Store", 75: "Strive and Strive",
+      76: "Trombones", 77: "Sunset Strip / Two Lucky 7s", 78: "Heaven's Gate", 79: "One More Time", 80: "Gandhi's Breakfast",
+      81: "Stop and Run", 82: "Fat Lady with a Duck", 83: "Time for Tea", 84: "Seven Dozen", 85: "Staying Alive",
+      86: "Between the Sticks", 87: "Torquay in Devon", 88: "Two Fat Ladies", 89: "Nearly There", 90: "Top of the Shop"
+    };
+
+    // Pre-drawn numbers to align with round state (38 drawn)
+    const initialDrawn = [
+      3, 7, 8, 12, 14, 16, 21, 22, 25, 28, 30, 31, 33, 36, 42, 45, 48, 50, 52, 55, 
+      57, 59, 62, 64, 67, 69, 71, 74, 76, 77, 80, 81, 83, 85, 87, 88, 89, 90
+    ];
+
+    let drawnSet = new Set(initialDrawn);
+    let currentBall = 42;
+    let autoInterval = null;
+    let timerCount = 4;
+    let isPaused = false;
+    let currentMode = 'auto';
+    let isMuted = false;
+
+    // Render Master 90 Board
+    function buildMasterBoard() {
+      const grid = document.getElementById('master-board-grid');
+      grid.innerHTML = '';
+      const tooltip = document.getElementById('caller-tooltip');
+      const tooltipText = document.getElementById('tooltip-text');
+
+      for (let i = 1; i <= 90; i++) {
+        const isDrawn = drawnSet.has(i);
+        const isCurrent = (i === currentBall);
+        
+        const cell = document.createElement('div');
+        cell.id = 'cell-' + i;
+        cell.className = 'group relative flex items-center justify-center h-10 rounded-lg font-ticket-digit text-ticket-digit font-bold cursor-pointer transition-all duration-200';
+        
+        if (isCurrent) {
+          cell.className += ' bg-secondary text-on-secondary-container shadow-lg shadow-secondary/30 scale-105 z-10 ring-2 ring-white/50';
+        } else if (isDrawn) {
+          cell.className += ' bg-gradient-to-br from-primary-fixed via-primary-container to-amber-700 text-on-primary-container shadow-sm';
+        } else {
+          cell.className += ' bg-surface-container-high/60 text-on-surface-variant/40 hover:bg-surface-container-highest hover:text-on-surface';
+        }
+
+        cell.textContent = i < 10 ? '0' + i : i;
+
+        // Tooltip event handlers
+        cell.addEventListener('mouseenter', (e) => {
+          const rect = cell.getBoundingClientRect();
+          tooltipText.textContent = `#${i}: ${nicknames[i] || 'Number ' + i}`;
+          tooltip.style.left = rect.left + (rect.width / 2) + 'px';
+          tooltip.style.top = rect.top - 8 + 'px';
+          tooltip.classList.remove('hidden');
+        });
+
+        cell.addEventListener('mouseleave', () => {
+          tooltip.classList.add('hidden');
+        });
+
+        // Click on uncalled triggers manual single call
+        cell.addEventListener('click', () => {
+          if (!drawnSet.has(i)) {
+            callSpecificNumber(i);
+          }
+        });
+
+        grid.appendChild(cell);
+      }
+    }
+
+    function triggerDrawNumber() {
+      if (drawnSet.size >= 90) {
+        alert("All 90 numbers have been called!");
+        return;
+      }
+
+      // Pick next random uncalled number
+      const uncalled = [];
+      for (let n = 1; n <= 90; n++) {
+        if (!drawnSet.has(n)) uncalled.push(n);
+      }
+      const picked = uncalled[Math.floor(Math.random() * uncalled.length)];
+      callSpecificNumber(picked);
+    }
+
+    function callSpecificNumber(num) {
+      // Add previous current to recent tray
+      const recentTray = document.getElementById('recent-balls-tray');
+      if (currentBall) {
+        const chip = document.createElement('div');
+        chip.className = 'w-11 h-11 rounded-xl bg-surface-container-high shadow-md flex items-center justify-center font-ticket-digit text-ticket-digit text-on-surface font-bold animate-pulse';
+        chip.textContent = currentBall < 10 ? '0' + currentBall : currentBall;
+        if (recentTray.firstChild) {
+          recentTray.insertBefore(chip, recentTray.firstChild);
+        } else {
+          recentTray.appendChild(chip);
+        }
+        if (recentTray.children.length > 5) {
+          recentTray.removeChild(recentTray.lastChild);
+        }
+      }
+
+      // Update state
+      currentBall = num;
+      drawnSet.add(num);
+
+      // Animate Center Sphere
+      const ballNumEl = document.getElementById('current-ball-num');
+      const nicknameEl = document.getElementById('current-ball-nickname');
+      ballNumEl.textContent = num < 10 ? '0' + num : num;
+      nicknameEl.textContent = nicknames[num] || `Number ${num}`;
+
+      // Update progress
+      const percent = ((drawnSet.size / 90) * 100).toFixed(1);
+      document.getElementById('progress-text').textContent = `${drawnSet.size} / 90 (${percent}%)`;
+      document.getElementById('progress-bar-fill').style.width = percent + '%';
+
+      // Log event
+      const logFeed = document.getElementById('telemetry-feed');
+      const now = new Date();
+      const timeStr = now.toTimeString().split(' ')[0];
+      const logEntry = document.createElement('div');
+      logEntry.className = 'flex items-center justify-between p-1.5 rounded bg-surface-container-low animate-fade-in';
+      logEntry.innerHTML = `<span>[${timeStr}] Ball #${num} drawn</span><span class="text-secondary text-[10px]">PULLED</span>`;
+      logFeed.insertBefore(logEntry, logFeed.firstChild);
+
+      // Re-render board highlights
+      buildMasterBoard();
+
+      // Reset auto timer countdown
+      timerCount = currentMode === 'speed' ? 3 : 5;
+      document.getElementById('countdown-display').textContent = '00:0' + timerCount;
+
+      // Audio simulation
+      if (!isMuted) {
+        simulateSpeech(num, nicknames[num]);
+      }
+    }
+
+    function simulateSpeech(num, nick) {
+      const wave = document.getElementById('audio-wave-anim');
+      wave.classList.remove('opacity-20');
+      setTimeout(() => {
+        wave.classList.add('opacity-20');
+      }, 1400);
+    }
+
+    function replayVoiceCall() {
+      simulateSpeech(currentBall, nicknames[currentBall]);
+      const btn = event.currentTarget;
+      btn.classList.add('scale-95');
+      setTimeout(() => btn.classList.remove('scale-95'), 150);
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+      const bAuto = document.getElementById('btn-mode-auto');
+      const bManual = document.getElementById('btn-mode-manual');
+      const bSpeed = document.getElementById('btn-mode-speed');
+
+      [bAuto, bManual, bSpeed].forEach(b => {
+        b.className = 'px-3.5 py-1.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all flex items-center gap-1.5';
+      });
+
+      if (mode === 'auto') {
+        bAuto.className = 'px-3.5 py-1.5 rounded-lg font-label-md text-label-md text-on-primary-container bg-primary font-bold shadow-md transition-all flex items-center gap-1.5';
+        timerCount = 5;
+      } else if (mode === 'manual') {
+        bManual.className = 'px-3.5 py-1.5 rounded-lg font-label-md text-label-md text-on-primary-container bg-primary font-bold shadow-md transition-all flex items-center gap-1.5';
+        timerCount = 0;
+        document.getElementById('countdown-display').textContent = 'PAUSED';
+        return;
+      } else if (mode === 'speed') {
+        bSpeed.className = 'px-3.5 py-1.5 rounded-lg font-label-md text-label-md text-on-primary-container bg-primary font-bold shadow-md transition-all flex items-center gap-1.5';
+        timerCount = 3;
+      }
+      document.getElementById('countdown-display').textContent = '00:0' + timerCount;
+    }
+
+    function setVoiceTone(btn) {
+      btn.parentElement.querySelectorAll('button').forEach(b => {
+        b.className = 'px-2 py-1 rounded text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm';
+      });
+      btn.className = 'px-2 py-1 rounded bg-surface-container-high text-primary font-label-sm text-label-sm font-semibold';
+    }
+
+    function switchVoice(lang) {
+      const logFeed = document.getElementById('telemetry-feed');
+      const now = new Date();
+      const timeStr = now.toTimeString().split(' ')[0];
+      const entry = document.createElement('div');
+      entry.className = 'flex items-center justify-between p-1.5 rounded bg-surface-container-low';
+      entry.innerHTML = `<span>[${timeStr}] Voice engine switched: ${lang}</span><span class="text-tertiary text-[10px]">VOICE</span>`;
+      logFeed.insertBefore(entry, logFeed.firstChild);
+    }
+
+    function toggleMute() {
+      isMuted = !isMuted;
+      const icon = document.getElementById('sound-icon');
+      if (isMuted) {
+        icon.textContent = 'volume_off';
+        icon.className = 'material-symbols-outlined text-xl text-error';
+      } else {
+        icon.textContent = 'volume_up';
+        icon.className = 'material-symbols-outlined text-xl text-secondary';
+      }
+    }
+
+    function togglePauseGame() {
+      isPaused = !isPaused;
+      const icon = document.getElementById('pause-icon');
+      if (isPaused) {
+        icon.textContent = 'play_circle';
+        icon.className = 'material-symbols-outlined text-xl text-secondary';
+        document.getElementById('countdown-display').textContent = 'HOLD';
+      } else {
+        icon.textContent = 'pause_circle';
+        icon.className = 'material-symbols-outlined text-xl text-primary';
+        timerCount = 4;
+      }
+    }
+
+    function launchConfettiCelebration(msg) {
+      const toast = document.getElementById('confetti-toast');
+      document.getElementById('confetti-text').textContent = msg || 'Pattern Claim Confirmed!';
+      toast.classList.remove('translate-y-32', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      
+      setTimeout(() => {
+        toast.classList.add('translate-y-32', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 4000);
+    }
+
+    function playSFX(type) {
+      launchConfettiCelebration('Host alerted the room with Bell chime');
+    }
+
+    function transferCallerRole() {
+      alert("Host Transfer Request queued. Room Moderator 'Viktor Ross' has been pinged.");
+    }
+
+    function broadcastAnnouncement() {
+      const msg = prompt("Enter Broadcast Banner Message for players:", "Reminder: Middle Line is 1 number away!");
+      if (msg) {
+        launchConfettiCelebration("Broadcast sent: " + msg);
+      }
+    }
+
+    function highlightUncalled() {
+      for (let i = 1; i <= 90; i++) {
+        if (!drawnSet.has(i)) {
+          const el = document.getElementById('cell-' + i);
+          el.classList.add('bg-primary/20', 'text-primary');
+          setTimeout(() => {
+            el.classList.remove('bg-primary/20', 'text-primary');
+          }, 1200);
+        }
+      }
+    }
+
+    function resetBoardConfirmation() {
+      if (confirm("Reset current game round and clear drawn board?")) {
+        drawnSet.clear();
+        currentBall = null;
+        document.getElementById('current-ball-num').textContent = '--';
+        document.getElementById('current-ball-nickname').textContent = 'Ready for First Ball';
+        document.getElementById('recent-balls-tray').innerHTML = '';
+        document.getElementById('progress-text').textContent = '0 / 90 (0.0%)';
+        document.getElementById('progress-bar-fill').style.width = '0%';
+        buildMasterBoard();
+      }
+    }
+
+    // Spacebar listener for Draw Action
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT') {
+        e.preventDefault();
+        triggerDrawNumber();
+      }
+    });
+
+    // Clock Interval
+    setInterval(() => {
+      if (currentMode === 'manual' || isPaused) return;
+      if (timerCount > 1) {
+        timerCount--;
+        document.getElementById('countdown-display').textContent = '00:0' + timerCount;
+      } else {
+        triggerDrawNumber();
+      }
+    }, 1000);
+
+    // Initial Board Render
+    buildMasterBoard();
+  </script>
+</div></main><footer class="w-full bg-surface-container-lowest py-12"><div class="w-full px-8 flex flex-col md:flex-row items-center justify-between gap-6"><div class="flex items-center gap-3"><img alt="Midnight Grand Tambola Logo" class="h-6 w-auto object-contain opacity-70" src="https://lh3.googleusercontent.com/aida/AEtjO1UP0cV2S7IRz1Pt7ACdFUQ5VqfD5IruXGevnQR74GlzqhC4o7kmMUVKNehBxwE9Q28jq0yiD2CaS-mvjmKb2-umG-WBQfu27wheRii-gi_k9nyPqeEIunjrzsYdk8GolmHcvoYxhFloDd6BqeMgXo_r_JAx9KsxhJjeMtFad8oMW4ZyywfNR6X0flRMdVF3V_OFBOMrnWW81EAFYseR7bnVPlMMNNgCkI-fRoBSicpGP-3wxVOkHWffE_4"/><span class="font-label-md text-label-md text-on-surface-variant">© 2024 Grand Tambola Salon. Real-Time Certified RNG Engine.</span></div><div class="flex items-center gap-6"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Fair Play Protocol v4.8</span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">WebSocket Engine Active</span><span class="font-label-sm text-label-sm text-secondary-fixed flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-secondary inline-block"></span> Systems Operational</span></div></div></footer></body></html>

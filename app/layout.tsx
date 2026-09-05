@@ -1,17 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Space_Grotesk, Playfair_Display, Lora } from "next/font/google";
+import { Syne, Plus_Jakarta_Sans, Space_Grotesk, Playfair_Display, Lora } from "next/font/google";
 import { siteConfig } from "@/lib/site";
 import Navbar from "@/components/site/Navbar";
 import Footer from "@/components/site/Footer";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const syne = Syne({
+  variable: "--font-syne",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const pjs = Plus_Jakarta_Sans({
+  variable: "--font-pjs",
   subsets: ["latin"],
 });
 
@@ -54,14 +55,16 @@ export const metadata: Metadata = {
     description: siteConfig.description,
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: [{ url: "/favicon.ico" }, { url: "/logo.svg", type: "image/svg+xml" }],
+    shortcut: "/favicon.ico",
+    apple: "/logo.svg",
   },
 };
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0d14" },
+    { media: "(prefers-color-scheme: light)", color: "#10131a" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -72,9 +75,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} ${playfair.variable} ${lora.variable} dark h-full antialiased`}
+      className={`${syne.variable} ${pjs.variable} ${spaceGrotesk.variable} ${playfair.variable} ${lora.variable} dark h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-neutral-950 font-sans text-neutral-100">
+      <head>
+        {/* eslint-disable-next-line @next/next/no-page-custom-font, @next/next/google-font-display */}
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+        />
+      </head>
+      <body className="flex min-h-full flex-col bg-[#0a0d14] font-sans text-on-surface">
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />

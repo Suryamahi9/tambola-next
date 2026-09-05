@@ -412,235 +412,339 @@ export default function Caller() {
 
   const calledSet = new Set(state.calledNumbers);
 
+  const recentNumbers = state.calledNumbers.slice(-5).reverse();
+
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
-      {/* LEFT: controls + last number + board */}
-      <div>
-        <div className="glass rounded-2xl border border-white/10 p-5 sm:p-6">
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex rounded-full border border-white/15 bg-white/[0.04] p-1">
+      {/* LEFT: command deck + showcase + board */}
+      <div className="flex flex-col gap-6">
+
+        {/* ── COMMAND DECK ── */}
+        <section className="relative w-full bg-surface-container/90 backdrop-blur-2xl rounded-2xl p-5 shadow-2xl overflow-hidden">
+          {/* ambient glow */}
+          <div className="absolute -top-24 -left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 right-1/4 w-80 h-80 bg-secondary/10 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="relative z-10 flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-5">
+
+            {/* Left: status + mode segmented control */}
+            <div className="flex flex-wrap items-center gap-4">
+              {/* Status pill */}
+              <div className="flex items-center gap-3 bg-surface-container-lowest/80 px-4 py-2.5 rounded-xl shadow-inner">
+                <span className="flex h-3 w-3 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75" />
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-secondary" />
+                </span>
+                <div className="flex flex-col">
+                  <span className="font-headline-sm text-headline-sm text-primary uppercase tracking-tight">
+                    {status}
+                  </span>
+                  <span className="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-sm text-secondary">timer</span>
+                    <span className="text-secondary font-ticket-digit">
+                      {state.calledNumbers.length}/90
+                    </span>
+                    called
+                  </span>
+                </div>
+              </div>
+
+              {/* Mode segmented control */}
+              <div className="flex items-center bg-surface-container-low p-1.5 rounded-xl">
+                <button
+                  type="button"
+                  onClick={() => setState((p) => ({ ...p, mode: "auto" }))}
+                  className={`px-3.5 py-1.5 rounded-lg font-label-md text-label-md transition-all flex items-center gap-1.5 ${
+                    state.mode === "auto"
+                      ? "bg-primary text-on-primary-container font-bold shadow-md"
+                      : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high"
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-base">autorenew</span>
+                  Auto Draw
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setState((p) => ({ ...p, mode: "manual" }))}
+                  className={`px-3.5 py-1.5 rounded-lg font-label-md text-label-md transition-all flex items-center gap-1.5 ${
+                    state.mode === "manual"
+                      ? "bg-primary text-on-primary-container font-bold shadow-md"
+                      : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high"
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-base">touch_app</span>
+                  Manual
+                </button>
+                {state.mode === "auto" && (
+                  <select
+                    value={state.speed}
+                    onChange={(e) => setState((p) => ({ ...p, speed: Number(e.target.value) }))}
+                    className="ml-2 rounded-lg border border-outline-variant/40 bg-surface-container-high px-3 py-1.5 text-sm font-semibold text-on-surface outline-none focus:border-primary font-label-md"
+                  >
+                    <option value={8000}>Slow (8s)</option>
+                    <option value={6000}>Normal (6s)</option>
+                    <option value={4000}>Fast (4s)</option>
+                    <option value={2500}>Turbo (2.5s)</option>
+                  </select>
+                )}
+              </div>
+            </div>
+
+            {/* Center: Draw button */}
+            <div className="flex items-center justify-center">
               <button
                 type="button"
-                onClick={() => setState((p) => ({ ...p, mode: "manual" }))}
-                className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
-                  state.mode === "manual"
-                    ? "bg-violet-600 text-white"
-                    : "text-neutral-600 dark:text-neutral-300"
-                }`}
+                onClick={state.mode === "auto" ? toggleAuto : callNext}
+                disabled={state.mode === "manual" && state.calledNumbers.length >= 90}
+                className="relative group px-8 py-3.5 rounded-xl bg-gradient-to-r from-primary-container via-primary-fixed-dim to-primary text-on-primary-container font-headline-sm text-headline-sm font-bold shadow-2xl hover:brightness-110 active:scale-95 transition-all flex items-center gap-3 disabled:opacity-40"
               >
-                Manual
-              </button>
-              <button
-                type="button"
-                onClick={() => setState((p) => ({ ...p, mode: "auto" }))}
-                className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
-                  state.mode === "auto"
-                    ? "bg-violet-600 text-white"
-                    : "text-neutral-600 dark:text-neutral-300"
-                }`}
-              >
-                Auto
+                <span className="absolute inset-0 rounded-xl bg-primary/40 blur-xl group-hover:blur-2xl transition-all -z-10" />
+                <span className="material-symbols-outlined text-2xl text-on-primary-container">
+                  {state.mode === "auto" && autoRunning ? "pause_circle" : "casino"}
+                </span>
+                <span>
+                  {state.mode === "auto"
+                    ? autoRunning
+                      ? "PAUSE AUTO"
+                      : "START AUTO"
+                    : "DRAW NEXT NUMBER"}
+                </span>
+                <span className="px-2 py-0.5 rounded bg-surface-container-lowest/40 font-label-sm text-label-sm text-on-primary-container tracking-wider uppercase">
+                  SPACE
+                </span>
               </button>
             </div>
 
-            {state.mode === "auto" && (
-              <label className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-300">
-                Speed
-                <select
-                  value={state.speed}
-                  onChange={(e) => setState((p) => ({ ...p, speed: Number(e.target.value) }))}
-                  className="rounded-lg border border-white/15 bg-[#0b0d1a] px-3 py-1.5 text-sm font-semibold text-neutral-100 outline-none focus:border-violet-500"
-                >
-                  <option value={8000}>Slow (8s)</option>
-                  <option value={6000}>Normal (6s)</option>
-                  <option value={4000}>Fast (4s)</option>
-                  <option value={2500}>Turbo (2.5s)</option>
-                </select>
-              </label>
-            )}
-
-            <label className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-300">
-              Voice
-              <select
-                value={state.language}
-                onChange={(e) => setState((p) => ({ ...p, language: e.target.value as AudioLang }))}
-                className="rounded-lg border border-white/15 bg-[#0b0d1a] px-3 py-1.5 text-sm font-semibold text-neutral-100 outline-none focus:border-violet-500"
-              >
-                {audioLanguages.map((l) => (
-                  <option key={l.value} value={l.value}>
-                    {l.flag} {l.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-300">
-              Tone
-              <select
-                value={state.tone}
-                onChange={(e) => setState((p) => ({ ...p, tone: e.target.value as VoiceTone }))}
-                className="rounded-lg border border-white/15 bg-[#0b0d1a] px-3 py-1.5 text-sm font-semibold text-neutral-100 outline-none focus:border-violet-500"
-                title="Change the caller voice pitch & speed"
-              >
-                {voiceTones.map((t) => (
-                  <option key={t.value} value={t.value}>
-                    {t.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <div className="mt-6 flex items-center gap-6">
-            <div className="relative flex-1 text-center">
-              <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-                Last Number
-              </p>
-              <div className="relative mt-1 inline-block">
-                {state.lastNumber !== null && particles.length > 0 && (
-                  <>
-                    <span className="animate-glow-ring pointer-events-none absolute inset-0 mx-auto my-auto block h-24 w-24 rounded-full border-2 border-fuchsia-400/80" />
-                    {particles.map((p) => (
-                      <span
-                        key={p.id}
-                        className="confetti-particle"
-                        style={
-                          {
-                            left: "50%",
-                            top: "50%",
-                            background: p.color,
-                            "--cx": p.cx,
-                            "--cy": p.cy,
-                            "--cr": p.cr,
-                            "--cd": p.cd,
-                          } as React.CSSProperties
-                        }
-                      />
+            {/* Right: voice + tone + utilities */}
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Voice selector */}
+              <div className="flex items-center gap-2 bg-surface-container-lowest/80 px-3 py-2 rounded-xl">
+                <span className="material-symbols-outlined text-tertiary text-lg">record_voice_over</span>
+                <div className="flex flex-col">
+                  <span className="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-widest">Caller Voice</span>
+                  <select
+                    value={state.language}
+                    onChange={(e) => setState((p) => ({ ...p, language: e.target.value as AudioLang }))}
+                    className="bg-transparent font-label-md text-label-md text-on-surface focus:outline-none cursor-pointer"
+                  >
+                    {audioLanguages.map((l) => (
+                      <option key={l.value} value={l.value} className="bg-surface-container text-on-surface">
+                        {l.flag} {l.label}
+                      </option>
                     ))}
-                  </>
-                )}
+                  </select>
+                </div>
+              </div>
+
+              {/* Tone pills */}
+              <div className="hidden sm:flex items-center gap-1 bg-surface-container-low p-1 rounded-xl">
+                {voiceTones.map((t) => (
+                  <button
+                    key={t.value}
+                    type="button"
+                    onClick={() => setState((p) => ({ ...p, tone: t.value }))}
+                    className={`px-2 py-1 rounded font-label-sm text-label-sm transition-all ${
+                      state.tone === t.value
+                        ? "bg-surface-container-high text-primary font-semibold"
+                        : "text-on-surface-variant hover:text-on-surface"
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Repeat last + Copy */}
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={repeatLast}
+                  className="w-10 h-10 rounded-xl bg-surface-container-low hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors"
+                  title="Repeat last number"
+                >
+                  <span className="material-symbols-outlined text-xl text-primary">replay</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={copyCalled}
+                  className="w-10 h-10 rounded-xl bg-surface-container-low hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors"
+                  title="Copy called numbers"
+                >
+                  <span className="material-symbols-outlined text-xl text-secondary">download</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── SHOWCASE: last number + stats + reel ── */}
+        <div className="w-full bg-surface-container-low rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="absolute -right-16 -top-16 w-60 h-60 bg-primary-container/10 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Left: glowing sphere */}
+          <div className="flex items-center gap-6">
+            <div className="relative flex items-center justify-center">
+              {/* Ripple rings */}
+              <div className="absolute w-36 h-36 rounded-full bg-primary/20 animate-ping opacity-60 pointer-events-none" />
+              <div className="absolute w-44 h-44 rounded-full bg-primary-container/10 blur-md pointer-events-none" />
+              {/* Particle burst */}
+              {state.lastNumber !== null && particles.length > 0 && (
+                <>
+                  <span className="animate-glow-ring pointer-events-none absolute inset-0 mx-auto my-auto block h-24 w-24 rounded-full border-2 border-primary/80" />
+                  {particles.map((p) => (
+                    <span
+                      key={p.id}
+                      className="confetti-particle"
+                      style={
+                        {
+                          left: "50%",
+                          top: "50%",
+                          background: p.color,
+                          "--cx": p.cx,
+                          "--cy": p.cy,
+                          "--cr": p.cr,
+                          "--cd": p.cd,
+                        } as React.CSSProperties
+                      }
+                    />
+                  ))}
+                </>
+              )}
+              {/* 3D sphere card */}
+              <div className="relative w-32 h-32 rounded-full bg-gradient-to-br from-primary-fixed via-primary-container to-amber-900 shadow-2xl flex flex-col items-center justify-center text-center p-2">
+                {/* specular highlight */}
+                <div className="absolute top-2 left-6 w-10 h-5 bg-white/40 rounded-full blur-[2px] transform -rotate-45" />
                 <p
                   key={state.lastNumber ?? "none"}
-                  className="animate-slot-flip mt-1 font-display text-6xl font-bold text-transparent sm:text-7xl"
-                  style={{
-                    backgroundImage: "linear-gradient(135deg, #7c3aed, #d946ef)",
-                    WebkitBackgroundClip: "text",
-                    backgroundClip: "text",
-                  }}
+                  className="animate-slot-flip font-caller-announcement text-caller-announcement text-on-primary-container font-black tracking-tight drop-shadow-md leading-none select-none"
                 >
                   {state.lastNumber ?? "–"}
                 </p>
+                <span className="font-label-sm text-[9px] font-bold text-on-primary-container/80 tracking-widest uppercase mt-0.5">
+                  BALL DRAWN
+                </span>
               </div>
             </div>
-            <div className="h-16 w-px bg-neutral-200 dark:bg-neutral-800" />
-            <div className="grid flex-1 grid-cols-2 gap-3">
-              <div className="rounded-xl bg-neutral-50 p-3 text-center dark:bg-neutral-800/60">
-                <p className="text-xl font-bold text-neutral-900 dark:text-white">
-                  {state.calledNumbers.length} / 90
-                </p>
-                <p className="text-[11px] font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-                  Called
-                </p>
+
+            {/* Stats + repeat */}
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="px-2.5 py-0.5 rounded-full bg-secondary/15 text-secondary font-label-sm text-label-sm font-bold uppercase tracking-wider flex items-center gap-1">
+                  <span className="material-symbols-outlined text-xs">campaign</span>
+                  Voice Readout
+                </span>
+                <span className="font-label-sm text-label-sm text-on-surface-variant font-mono">
+                  #{state.calledNumbers.length}
+                </span>
               </div>
-              <div className="rounded-xl bg-neutral-50 p-3 text-center dark:bg-neutral-800/60">
-                <p className="text-xl font-bold text-neutral-900 dark:text-white">
-                  {90 - state.calledNumbers.length}
-                </p>
-                <p className="text-[11px] font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-                  Remaining
-                </p>
+              <h2 className="font-headline-lg text-headline-lg font-extrabold text-on-surface leading-tight tracking-tight">
+                Last Number
+              </h2>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">
+                {state.lastNumber !== null
+                  ? `${LANG_NAMES[state.language]} · ${TONE_NAMES[state.tone]}`
+                  : "Ready for first ball"}
+              </p>
+              <div className="mt-1 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={repeatLast}
+                  className="px-3 py-1 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-label-sm text-label-sm flex items-center gap-1.5 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-sm text-primary">replay</span>
+                  Repeat Audio
+                </button>
+                <span className="flex items-center gap-0.5 text-secondary">
+                  <span className="w-1 h-3 bg-secondary rounded animate-pulse" />
+                  <span className="w-1 h-5 bg-secondary rounded animate-pulse" style={{ animationDelay: "150ms" }} />
+                  <span className="w-1 h-2 bg-secondary rounded animate-pulse" style={{ animationDelay: "300ms" }} />
+                  <span className="w-1 h-4 bg-secondary rounded animate-pulse" style={{ animationDelay: "450ms" }} />
+                </span>
               </div>
             </div>
           </div>
 
-          <div className="mt-6 flex flex-wrap gap-2.5">
-            {state.mode === "manual" ? (
-              <button
-                type="button"
-                onClick={callNext}
-                disabled={state.calledNumbers.length >= 90}
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-6 py-3 text-sm font-bold text-white shadow-sm shadow-violet-600/40 transition hover:brightness-110 disabled:opacity-40"
-              >
-                <kbd className="rounded border border-white/30 px-1.5 text-[10px]">SPACE</kbd>
-                Next Number
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={toggleAuto}
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-6 py-3 text-sm font-bold text-white shadow-sm shadow-violet-600/40 transition hover:brightness-110"
-              >
-                <kbd className="rounded border border-white/30 px-1.5 text-[10px]">SPACE</kbd>
-                {autoRunning ? "⏸ Pause Auto" : "⏵ Start Auto"}
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={repeatLast}
-              className="rounded-full border border-neutral-300 px-5 py-3 text-sm font-semibold text-neutral-700 transition hover:border-violet-500 hover:text-violet-600 dark:border-neutral-700 dark:text-neutral-200"
-            >
-              🔁 Repeat
-            </button>
-            <button
-              type="button"
-              onClick={copyCalled}
-              className="rounded-full border border-neutral-300 px-5 py-3 text-sm font-semibold text-neutral-700 transition hover:border-violet-500 hover:text-violet-600 dark:border-neutral-700 dark:text-neutral-200"
-            >
-              📋 Copy
-            </button>
-          </div>
+          {/* Right: draw reel + progress */}
+          <div className="w-full md:w-auto flex flex-col items-start md:items-end gap-4 min-w-[280px]">
+            <div className="flex flex-col w-full md:items-end">
+              <div className="flex items-center justify-between md:justify-end gap-3 w-full mb-1.5">
+                <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
+                  Draw Reel (Last 5)
+                </span>
+                <span className="font-label-sm text-label-sm text-secondary font-mono font-semibold">
+                  {state.calledNumbers.length}/90
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                {recentNumbers.length === 0 ? (
+                  <p className="text-sm text-on-surface-variant/60 font-body-sm">
+                    No draws yet
+                  </p>
+                ) : (
+                  recentNumbers.map((num, i) => (
+                    <div
+                      key={`${num}-${i}`}
+                      className={`w-11 h-11 rounded-xl shadow-md flex items-center justify-center font-ticket-digit text-ticket-digit font-bold transition-all ${
+                        i === 0
+                          ? "bg-surface-container-highest text-primary"
+                          : "bg-surface-container-high text-on-surface"
+                      }`}
+                    >
+                      {num}
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
 
-          <div className="mt-4 flex flex-wrap gap-2.5">
-            <button
-              type="button"
-              onClick={downloadTxt}
-              className="rounded-full border border-neutral-300 px-5 py-2.5 text-xs font-semibold text-neutral-700 transition hover:border-violet-500 hover:text-violet-600 dark:border-neutral-700 dark:text-neutral-200"
-            >
-              ⬇ Report (.txt)
-            </button>
-            <button
-              type="button"
-              onClick={downloadPdf}
-              className="rounded-full border border-neutral-300 px-5 py-2.5 text-xs font-semibold text-neutral-700 transition hover:border-violet-500 hover:text-violet-600 dark:border-neutral-700 dark:text-neutral-200"
-            >
-              ⬇ Report (PDF)
-            </button>
-            <button
-              type="button"
-              onClick={() => setConfirmReset(true)}
-              className="rounded-full border border-red-300 px-5 py-2.5 text-xs font-semibold text-red-600 transition hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950"
-            >
-              Reset Game
-            </button>
+            {/* Progress bar */}
+            <div className="w-full flex flex-col gap-1.5">
+              <div className="flex items-center justify-between text-xs font-label-sm text-label-sm">
+                <span className="text-on-surface-variant">Board Saturation</span>
+                <span className="text-primary font-bold font-mono">
+                  {state.calledNumbers.length} / 90 ({((state.calledNumbers.length / 90) * 100).toFixed(1)}%)
+                </span>
+              </div>
+              <div className="w-full h-2.5 bg-surface-container-lowest rounded-full overflow-hidden p-0.5">
+                <div
+                  className="h-full bg-gradient-to-r from-secondary via-primary to-primary-container rounded-full transition-all duration-500"
+                  style={{ width: `${(state.calledNumbers.length / 90) * 100}%` }}
+                />
+              </div>
+            </div>
           </div>
-
-          {!audioOk && (
-            <p className="mt-4 rounded-lg bg-amber-50 px-4 py-3 text-xs text-amber-800 dark:bg-amber-500/10 dark:text-amber-300">
-              ⚠️ Audio unavailable on this device. English voice and Hindi/Telugu
-              recordings need a modern browser.
-            </p>
-          )}
         </div>
 
-        {/* BOARD */}
-        <div className="glass mt-6 rounded-2xl border border-white/10 p-4 sm:p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-display text-lg font-bold text-neutral-100">
-              Number Board
-            </h2>
-            <span className="rounded-full bg-violet-600/20 px-3 py-1 text-xs font-semibold text-violet-300">
-              {status}
-            </span>
+        {/* ── MASTER BOARD ── */}
+        <div className="w-full bg-surface-container/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl flex flex-col gap-4">
+          {/* Header */}
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-2">
+            <div className="flex items-center gap-3">
+              <span className="material-symbols-outlined text-primary text-xl">grid_on</span>
+              <h2 className="font-headline-sm text-headline-sm text-on-surface font-bold">
+                Master Tambola Board (1 – 90)
+              </h2>
+            </div>
+            <div className="flex items-center gap-4 text-xs font-label-sm text-label-sm">
+              <div className="flex items-center gap-1.5">
+                <span className="w-3 h-3 rounded bg-gradient-to-br from-primary via-primary-container to-amber-700 shadow-sm" />
+                <span className="text-on-surface-variant">Drawn</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-3 h-3 rounded bg-secondary shadow-sm" />
+                <span className="text-on-surface-variant">Current</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-3 h-3 rounded bg-surface-container-highest" />
+                <span className="text-on-surface-variant">Uncalled</span>
+              </div>
+            </div>
           </div>
-          <div className="mb-4 h-1.5 overflow-hidden rounded-full bg-neutral-800">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 transition-[width] duration-700 ease-out"
-              style={{ width: `${(state.calledNumbers.length / 90) * 100}%` }}
-            />
-          </div>
+
+          {/* Grid */}
           <div
             key={lastKey}
-            className="grid grid-cols-6 gap-1.5 sm:grid-cols-9 sm:gap-2 lg:grid-cols-10"
+            className="grid grid-cols-6 gap-1.5 sm:grid-cols-9 sm:gap-2 lg:grid-cols-10 min-w-0 select-none"
           >
             {Array.from({ length: 90 }, (_, i) => i + 1).map((num) => {
               const called = calledSet.has(num);
@@ -648,12 +752,12 @@ export default function Caller() {
               return (
                 <div
                   key={num}
-                  className={`flex aspect-square items-center justify-center rounded-lg text-sm font-bold transition ${
+                  className={`flex aspect-square items-center justify-center rounded-lg font-ticket-digit text-ticket-digit font-bold transition-all duration-200 ${
                     isLast
-                      ? "animate-board-pop bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white ring-2 ring-violet-400 ring-offset-1 ring-offset-neutral-900"
+                      ? "animate-board-pop bg-secondary text-on-secondary-container shadow-lg shadow-secondary/30 scale-105 z-10 ring-2 ring-white/50"
                       : called
-                        ? "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300"
-                        : "bg-neutral-100 text-neutral-400 dark:bg-neutral-800 dark:text-neutral-500"
+                        ? "bg-gradient-to-br from-primary-fixed via-primary-container to-amber-700 text-on-primary-container shadow-sm"
+                        : "bg-surface-container-high/60 text-on-surface-variant/40 hover:bg-surface-container-highest hover:text-on-surface"
                   }`}
                 >
                   {num}
@@ -661,19 +765,85 @@ export default function Caller() {
               );
             })}
           </div>
+
+          {/* Micro toolbar */}
+          <div className="flex flex-wrap items-center justify-between text-xs text-on-surface-variant pt-2">
+            <div className="flex items-center gap-4">
+              <span className="flex items-center gap-1">
+                <span className="font-bold text-primary">{90 - state.calledNumbers.length}</span> Balls Remaining
+              </span>
+              <span className="w-1 h-1 rounded-full bg-surface-container-highest" />
+              <span className="flex items-center gap-1">
+                <span className="font-bold text-secondary">{state.calledNumbers.length}</span> Drawn
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const uncalledEls = document.querySelectorAll<HTMLElement>("[data-uncalled-flash]");
+                  uncalledEls.forEach((el) => {
+                    el.classList.add("bg-primary/20", "text-primary");
+                    setTimeout(() => el.classList.remove("bg-primary/20", "text-primary"), 1200);
+                  });
+                }}
+                className="px-2.5 py-1 rounded bg-surface-container-high hover:bg-surface-bright text-on-surface transition-colors"
+              >
+                Flash Uncalled
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* ── AUDIO WARNING ── */}
+        {!audioOk && (
+          <p className="rounded-xl bg-error-container/20 px-4 py-3 text-xs text-error font-body-sm flex items-center gap-2">
+            <span className="material-symbols-outlined text-sm">volume_off</span>
+            Audio unavailable on this device. English voice and Hindi/Telugu
+            recordings need a modern browser.
+          </p>
+        )}
+
+        {/* ── REPORT ROW ── */}
+        <div className="flex flex-wrap gap-2.5">
+          <button
+            type="button"
+            onClick={downloadTxt}
+            className="rounded-full border border-outline-variant/40 px-5 py-2.5 text-xs font-semibold text-on-surface-variant transition hover:border-primary hover:text-primary flex items-center gap-1.5"
+          >
+            <span className="material-symbols-outlined text-sm">download</span>
+            Report (.txt)
+          </button>
+          <button
+            type="button"
+            onClick={downloadPdf}
+            className="rounded-full border border-outline-variant/40 px-5 py-2.5 text-xs font-semibold text-on-surface-variant transition hover:border-primary hover:text-primary flex items-center gap-1.5"
+          >
+            <span className="material-symbols-outlined text-sm">download</span>
+            Report (PDF)
+          </button>
+          <button
+            type="button"
+            onClick={() => setConfirmReset(true)}
+            className="rounded-full border border-error/40 px-5 py-2.5 text-xs font-semibold text-error transition hover:bg-error-container/20 flex items-center gap-1.5"
+          >
+            <span className="material-symbols-outlined text-sm">refresh</span>
+            Reset Game
+          </button>
         </div>
       </div>
 
-      {/* RIGHT: history + hints */}
+      {/* RIGHT: history + shortcuts */}
       <div className="space-y-6">
-        <div className="glass rounded-2xl border border-white/10 p-5">
-          <h3 className="font-display text-lg font-bold text-neutral-100">
+        <div className="w-full bg-surface-container/90 backdrop-blur-xl rounded-2xl p-5 shadow-xl">
+          <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold flex items-center gap-2">
+            <span className="material-symbols-outlined text-primary text-lg">history</span>
             Last Called
           </h3>
           <div className="mt-4 flex flex-wrap gap-2">
             {state.calledNumbers.length === 0 ? (
-              <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                No numbers called yet. Press Next Number to start!
+              <p className="text-sm text-on-surface-variant font-body-sm">
+                No numbers called yet. Press Draw to start!
               </p>
             ) : (
               state.calledNumbers
@@ -685,10 +855,10 @@ export default function Caller() {
                     type="button"
                     onClick={() => announceNumber(num)}
                     title={`Announce ${num} again`}
-                    className={`animate-chip-in inline-flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold transition hover:scale-105 ${
+                    className={`animate-chip-in inline-flex h-9 w-9 items-center justify-center rounded-lg font-ticket-digit text-ticket-digit font-bold transition hover:scale-105 ${
                       i === 0
-                        ? "bg-violet-600 text-white"
-                        : "bg-neutral-100 text-neutral-700 hover:bg-violet-100 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-violet-900/40"
+                        ? "bg-primary text-on-primary-container"
+                        : "bg-surface-container-high text-on-surface hover:bg-primary/20 hover:text-primary"
                     }`}
                   >
                     {num}
@@ -698,26 +868,27 @@ export default function Caller() {
           </div>
         </div>
 
-        <div className="glass rounded-2xl border border-white/10 p-5">
-          <h3 className="font-display text-lg font-bold text-neutral-100">
+        <div className="w-full bg-surface-container/90 backdrop-blur-xl rounded-2xl p-5 shadow-xl">
+          <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold flex items-center gap-2">
+            <span className="material-symbols-outlined text-secondary text-lg">keyboard</span>
             Shortcuts
           </h3>
-          <ul className="mt-4 space-y-3 text-sm text-neutral-600 dark:text-neutral-300">
+          <ul className="mt-4 space-y-3 text-sm text-on-surface-variant">
             <li className="flex items-center justify-between">
               <span>Next number / start-pause auto</span>
-              <kbd className="rounded-md border border-neutral-300 bg-neutral-50 px-2 py-1 text-xs font-semibold dark:border-neutral-700 dark:bg-neutral-800">
+              <kbd className="rounded-md border border-outline-variant/40 bg-surface-container-high px-2 py-1 text-xs font-semibold font-label-sm text-on-surface">
                 Space
               </kbd>
             </li>
             <li className="flex items-center justify-between">
               <span>Repeat last number</span>
-              <kbd className="rounded-md border border-neutral-300 bg-neutral-50 px-2 py-1 text-xs font-semibold dark:border-neutral-700 dark:bg-neutral-800">
+              <kbd className="rounded-md border border-outline-variant/40 bg-surface-container-high px-2 py-1 text-xs font-semibold font-label-sm text-on-surface">
                 L
               </kbd>
             </li>
             <li className="flex items-center justify-between">
               <span>Reset game</span>
-              <kbd className="rounded-md border border-neutral-300 bg-neutral-50 px-2 py-1 text-xs font-semibold dark:border-neutral-700 dark:bg-neutral-800">
+              <kbd className="rounded-md border border-outline-variant/40 bg-surface-container-high px-2 py-1 text-xs font-semibold font-label-sm text-on-surface">
                 R
               </kbd>
             </li>
@@ -725,33 +896,34 @@ export default function Caller() {
         </div>
       </div>
 
+      {/* ── RESET MODAL ── */}
       {confirmReset && (
         <div
           className="no-print fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
           onClick={() => setConfirmReset(false)}
         >
           <div
-            className="glass w-full max-w-sm rounded-2xl border border-white/10 p-6 shadow-xl"
+            className="glass w-full max-w-sm rounded-2xl p-6 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="font-display text-xl font-bold text-neutral-100">
+            <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold">
               Reset the game?
             </h3>
-            <p className="mt-2 text-sm text-neutral-400">
+            <p className="mt-2 text-sm text-on-surface-variant">
               This clears all called numbers and starts a fresh game. This cannot be undone.
             </p>
             <div className="mt-6 flex gap-3">
               <button
                 type="button"
                 onClick={() => setConfirmReset(false)}
-                className="flex-1 rounded-full border border-white/20 px-5 py-2.5 text-sm font-semibold text-neutral-200 transition hover:border-violet-400 hover:text-violet-200"
+                className="flex-1 rounded-full border border-outline-variant/40 px-5 py-2.5 text-sm font-semibold text-on-surface-variant transition hover:border-primary hover:text-primary"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={resetGame}
-                className="flex-1 rounded-full bg-red-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-red-500"
+                className="flex-1 rounded-full bg-error-container px-5 py-2.5 text-sm font-semibold text-on-error-container transition hover:brightness-110"
               >
                 Reset
               </button>
@@ -760,8 +932,9 @@ export default function Caller() {
         </div>
       )}
 
+      {/* ── TOAST ── */}
       {toast && (
-        <div className="no-print fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-white px-5 py-3 text-sm font-medium text-neutral-900 shadow-lg">
+        <div className="no-print fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-surface-container-high px-5 py-3 text-sm font-medium text-on-surface shadow-2xl backdrop-blur-xl border border-outline-variant/30">
           {toast}
         </div>
       )}

@@ -107,13 +107,17 @@ export default function ChatPanel({
   }
 
   return (
-    <div className="glass-subtle flex flex-col rounded-2xl border border-white/10 p-4">
+    <div className="flex flex-col rounded-2xl bg-surface-container-low/95 backdrop-blur-xl p-5 shadow-xl">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
-          Room chat
-        </p>
-        <span className="flex items-center gap-1.5 text-[11px] font-medium text-neutral-500">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400/80" />
+        <div className="flex items-center gap-2.5">
+          <span className="material-symbols-outlined text-secondary text-xl">forum</span>
+          <div className="flex flex-col">
+            <p className="font-headline-sm text-base font-bold leading-tight text-on-surface">Salon chat &amp; bot</p>
+            <span className="font-label-sm text-[10px] text-on-surface-variant font-mono">Room {room.code} • {room.players.length} connected</span>
+          </div>
+        </div>
+        <span className="flex items-center gap-1.5 font-label-sm text-[10px] font-medium text-on-surface-variant uppercase tracking-wider">
+          <span className="h-1.5 w-1.5 rounded-full bg-secondary animate-pulse" />
           live · 2s sync
         </span>
       </div>
@@ -124,7 +128,7 @@ export default function ChatPanel({
         className="mt-3 flex max-h-72 min-h-40 flex-col gap-2 overflow-y-auto pr-1 [scrollbar-width:thin]"
       >
         {messages.length === 0 && (
-          <p className="my-auto py-6 text-center text-xs text-neutral-500">
+          <p className="my-auto py-6 text-center text-xs text-on-surface-variant">
             No messages yet — say hi to the room!
           </p>
         )}
@@ -134,11 +138,11 @@ export default function ChatPanel({
             return (
               <p
                 key={m.id}
-                className="flex items-center gap-2 text-center text-[11px] font-medium text-neutral-500"
+                className="flex items-center gap-2 text-center text-[11px] font-medium text-on-surface-variant"
               >
-                <span className="h-px flex-1 bg-white/10" />
+                <span className="h-px flex-1 bg-outline-variant/50" />
                 {m.text}
-                <span className="h-px flex-1 bg-white/10" />
+                <span className="h-px flex-1 bg-outline-variant/50" />
               </p>
             );
           }
@@ -152,15 +156,15 @@ export default function ChatPanel({
                 }`}
               >
                 {isBot ? (
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-neutral-800 text-xs">
-                    🤖
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary-container text-on-primary-container">
+                    <span className="material-symbols-outlined text-sm">bolt</span>
                   </span>
                 ) : (
                   <span
                     className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${
                       mine
-                        ? "bg-gradient-to-br from-violet-500 to-fuchsia-600 text-white"
-                        : "bg-white/10 text-neutral-300"
+                        ? "bg-gradient-to-br from-primary-container to-primary text-on-primary-container"
+                        : "bg-surface-container-high text-on-surface"
                     }`}
                   >
                     {initials(m.playerName)}
@@ -169,14 +173,14 @@ export default function ChatPanel({
                 <div
                   className={`rounded-2xl px-3 py-1.5 text-sm ${
                     isBot
-                      ? "rounded-bl-sm border border-white/10 bg-white/[0.05] text-neutral-200"
+                      ? "rounded-bl-sm border border-tertiary-container/30 bg-tertiary-container/15 text-on-surface"
                       : mine
-                        ? "rounded-br-sm bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white"
-                        : "rounded-bl-sm bg-white/[0.06] text-neutral-200"
+                        ? "rounded-br-sm bg-gradient-to-r from-primary-container via-primary to-primary-fixed text-on-primary-container"
+                        : "rounded-bl-sm bg-surface-container-high text-on-surface"
                   }`}
                 >
                   {!mine && !isBot && (
-                    <p className="mb-0.5 text-[10px] font-semibold text-violet-300">
+                    <p className="mb-0.5 text-[10px] font-semibold text-primary-fixed-dim">
                       {m.playerName}
                     </p>
                   )}
@@ -185,7 +189,7 @@ export default function ChatPanel({
                   </p>
                   <p
                     className={`mt-0.5 text-right text-[9px] ${
-                      mine ? "text-white/60" : "text-neutral-500"
+                      mine ? "text-on-primary-container/70" : "text-on-surface-variant/70"
                     }`}
                   >
                     {timeLabel(m.createdAt)}
@@ -201,14 +205,14 @@ export default function ChatPanel({
         <button
           type="button"
           onClick={jumpToLatest}
-          className="mx-auto -mt-2 mb-1 rounded-full border border-violet-400/40 bg-violet-500/20 px-3 py-0.5 text-[11px] font-bold text-violet-200"
+          className="mx-auto -mt-2 mb-1 rounded-full border border-primary/40 bg-primary-container/20 px-3 py-0.5 text-[11px] font-bold text-primary"
         >
           {unread} new
         </button>
       )}
 
       {error && (
-        <p className="mt-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-[11px] text-amber-300">
+        <p className="mt-2 rounded-lg border border-error/30 bg-error-container/15 px-3 py-1.5 text-[11px] text-error">
           {error}
         </p>
       )}
@@ -227,25 +231,25 @@ export default function ChatPanel({
               }}
               placeholder="Type a message… (@bot for help)"
               maxLength={MAX_CHAT_LENGTH}
-              className="min-w-0 flex-1 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-neutral-100 placeholder-neutral-500 outline-none transition focus:border-violet-400/60"
+              className="min-w-0 flex-1 rounded-xl border border-outline-variant/50 bg-surface-container px-4 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/60 outline-none transition focus:border-primary/60"
             />
             <button
               type="button"
               onClick={() => void send()}
               disabled={sending || !draft.trim()}
-              className="shrink-0 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 py-2 text-sm font-bold text-white transition hover:brightness-110 disabled:opacity-40"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary-container text-on-primary-container transition hover:bg-primary disabled:opacity-40"
             >
-              {sending ? "…" : "Send"}
+              <span className="material-symbols-outlined text-base">send</span>
             </button>
           </div>
-          <p className="mt-1.5 text-[10px] text-neutral-500">
+          <p className="mt-1.5 text-[10px] text-on-surface-variant">
             {draft.length}/{MAX_CHAT_LENGTH} · try{" "}
-            <span className="font-mono text-neutral-400">/rules</span> or{" "}
-            <span className="font-mono text-neutral-400">@bot</span> for the AI announcer
+            <span className="font-mono text-primary-fixed-dim">/rules</span> or{" "}
+            <span className="font-mono text-primary-fixed-dim">@bot</span> for the AI announcer
           </p>
         </>
       ) : (
-        <p className="mt-3 text-center text-[11px] text-neutral-500">
+        <p className="mt-3 text-center text-[11px] text-on-surface-variant">
           Join the room to chat.
         </p>
       )}

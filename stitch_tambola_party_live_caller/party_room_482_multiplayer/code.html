@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Space+Grotesk:wght@500;600;700&amp;family=Syne:wght@600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+        "surface-container": "#1d1f27",
+        "primary-fixed-dim": "#ffb95f",
+        "on-secondary-fixed-variant": "#005236",
+        "tertiary-fixed": "#e9ddff",
+        "secondary-container": "#00a572",
+        "surface-container-lowest": "#0b0e15",
+        "on-tertiary-fixed-variant": "#5516be",
+        "on-error-container": "#ffdad6",
+        "on-primary-container": "#613b00",
+        "secondary-fixed": "#6ffbbe",
+        "on-tertiary-fixed": "#23005c",
+        "error": "#ffb4ab",
+        "background": "#10131a",
+        "inverse-primary": "#855300",
+        "on-surface": "#e1e2ec",
+        "on-primary-fixed-variant": "#653e00",
+        "inverse-surface": "#e1e2ec",
+        "surface-container-high": "#272a32",
+        "tertiary-fixed-dim": "#d0bcff",
+        "on-background": "#e1e2ec",
+        "surface": "#10131a",
+        "outline": "#a08e7a",
+        "on-error": "#690005",
+        "tertiary-container": "#bda2ff",
+        "secondary": "#4edea3",
+        "secondary-fixed-dim": "#4edea3",
+        "tertiary": "#d5c3ff",
+        "surface-container-highest": "#32353d",
+        "primary-fixed": "#ffddb8",
+        "on-tertiary-container": "#520fbb",
+        "on-primary-fixed": "#2a1700",
+        "primary-container": "#f59e0b",
+        "inverse-on-surface": "#2d3038",
+        "on-secondary-fixed": "#002113",
+        "surface-tint": "#ffb95f",
+        "surface-container-low": "#191b23",
+        "primary": "#ffc174",
+        "on-primary": "#472a00",
+        "on-secondary-container": "#00311f",
+        "error-container": "#93000a",
+        "surface-variant": "#32353d",
+        "surface-bright": "#363941",
+        "outline-variant": "#534434",
+        "on-tertiary": "#3c0091",
+        "on-secondary": "#003824",
+        "surface-dim": "#10131a",
+        "on-surface-variant": "#d8c3ad"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "console-pad-lg": "2rem",
+        "board-cell-size-desktop": "2.75rem",
+        "grid-gutter": "1rem",
+        "board-cell-size-mobile": "1.875rem",
+        "ticket-gap": "0.375rem",
+        "console-pad-sm": "0.75rem",
+        "console-pad-md": "1.25rem"
+      },
+      "fontFamily": {
+        "caller-announcement-mobile": [
+          "Syne"
+        ],
+        "ticket-digit-mobile": [
+          "Space Grotesk"
+        ],
+        "display-hero": [
+          "Syne"
+        ],
+        "body-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg": [
+          "Syne"
+        ],
+        "caller-announcement": [
+          "Syne"
+        ],
+        "body-md": [
+          "Plus Jakarta Sans"
+        ],
+        "body-sm": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-md": [
+          "Syne"
+        ],
+        "headline-lg-mobile": [
+          "Syne"
+        ],
+        "ticket-digit": [
+          "Space Grotesk"
+        ],
+        "headline-sm": [
+          "Syne"
+        ],
+        "display-hero-mobile": [
+          "Syne"
+        ],
+        "label-lg": [
+          "Space Grotesk"
+        ],
+        "label-md": [
+          "Space Grotesk"
+        ],
+        "label-sm": [
+          "Space Grotesk"
+        ]
+      },
+      "fontSize": {
+        "caller-announcement-mobile": [
+          "48px",
+          {
+            "lineHeight": "48px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "800"
+          }
+        ],
+        "ticket-digit-mobile": [
+          "16px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "700"
+          }
+        ],
+        "display-hero": [
+          "64px",
+          {
+            "lineHeight": "72px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "800"
+          }
+        ],
+        "body-lg": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "500"
+          }
+        ],
+        "headline-lg": [
+          "36px",
+          {
+            "lineHeight": "44px",
+            "letterSpacing": "-0.015em",
+            "fontWeight": "700"
+          }
+        ],
+        "caller-announcement": [
+          "80px",
+          {
+            "lineHeight": "80px",
+            "letterSpacing": "-0.03em",
+            "fontWeight": "800"
+          }
+        ],
+        "body-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "fontWeight": "400"
+          }
+        ],
+        "body-sm": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "fontWeight": "400"
+          }
+        ],
+        "headline-md": [
+          "24px",
+          {
+            "lineHeight": "30px",
+            "fontWeight": "700"
+          }
+        ],
+        "headline-lg-mobile": [
+          "26px",
+          {
+            "lineHeight": "32px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "700"
+          }
+        ],
+        "ticket-digit": [
+          "22px",
+          {
+            "lineHeight": "22px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "700"
+          }
+        ],
+        "headline-sm": [
+          "20px",
+          {
+            "lineHeight": "26px",
+            "fontWeight": "600"
+          }
+        ],
+        "display-hero-mobile": [
+          "38px",
+          {
+            "lineHeight": "44px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "800"
+          }
+        ],
+        "label-lg": [
+          "14px",
+          {
+            "lineHeight": "18px",
+            "letterSpacing": "0.05em",
+            "fontWeight": "600"
+          }
+        ],
+        "label-md": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.06em",
+            "fontWeight": "600"
+          }
+        ],
+        "label-sm": [
+          "10px",
+          {
+            "lineHeight": "14px",
+            "letterSpacing": "0.08em",
+            "fontWeight": "700"
+          }
+        ]
+      }
+    }
+  }
+};</script></head><body class="bg-background font-body-md text-on-surface antialiased min-h-screen selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 left-0 right-0 w-full z-50 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-20 w-full px-8 flex items-center justify-between gap-6"><div class="flex items-center gap-8"><div class="flex items-center gap-3"><img alt="Midnight Grand Tambola Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UP0cV2S7IRz1Pt7ACdFUQ5VqfD5IruXGevnQR74GlzqhC4o7kmMUVKNehBxwE9Q28jq0yiD2CaS-mvjmKb2-umG-WBQfu27wheRii-gi_k9nyPqeEIunjrzsYdk8GolmHcvoYxhFloDd6BqeMgXo_r_JAx9KsxhJjeMtFad8oMW4ZyywfNR6X0flRMdVF3V_OFBOMrnWW81EAFYseR7bnVPlMMNNgCkI-fRoBSicpGP-3wxVOkHWffE_4"/><div class="flex flex-col"><div class="flex items-center gap-2"><span class="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface">GRAND TAMBOLA</span><span class="px-2 py-0.5 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm uppercase font-bold tracking-wider">LIVE HOUSIE</span></div><span class="font-label-sm text-label-sm text-on-surface-variant opacity-80 uppercase tracking-widest">High-Stakes VIP Salon</span></div></div><nav class="hidden xl:flex items-center gap-1 bg-surface-container-lowest/60 p-1 rounded-xl" data-active-classes="bg-surface-container-high text-primary font-semibold rounded-lg shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]"><a class="px-4 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="home" href="#">Home</a><a class="px-4 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="live-caller" href="#">Live Caller</a><a class="px-4 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="ticket-engine" href="#">Ticket Engine</a><a aria-current="page" class="px-4 py-2 transition-all duration-200 bg-surface-container-high text-primary font-semibold rounded-lg shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]" data-path="party-room-482" href="#">Party Room</a><a class="px-4 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="rules" href="#">Rules</a><a class="px-4 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="admin" href="#">Admin</a></nav></div><div class="flex items-center gap-4"><div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"><span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary"></span></span><span class="font-label-md text-label-md text-on-surface tracking-wider font-semibold">ROOM #482 LIVE</span><span class="font-label-sm text-label-sm text-secondary font-mono px-1.5 py-0.5 rounded bg-surface-container">24ms</span></div><div class="flex items-center gap-3 bg-surface-container-low px-3.5 py-1.5 rounded-xl"><div class="flex items-center gap-1.5 text-primary-fixed-dim"><span class="material-symbols-outlined text-primary text-lg">toll</span><div class="flex flex-col text-right"><span class="font-label-xs text-[10px] text-on-surface-variant uppercase tracking-wider leading-none">Credits</span><span class="font-label-md text-label-md font-bold text-primary font-mono leading-none">14,250</span></div></div><div class="w-px h-6 bg-surface-container-highest"></div><div class="flex items-center gap-1.5 text-secondary-fixed"><span class="material-symbols-outlined text-secondary text-lg">confirmation_number</span><div class="flex flex-col text-right"><span class="font-label-xs text-[10px] text-on-surface-variant uppercase tracking-wider leading-none">Active</span><span class="font-label-md text-label-md font-bold text-secondary font-mono leading-none">6 TIX</span></div></div></div><div class="relative flex items-center gap-3 pl-2 group cursor-pointer"><div class="flex flex-col text-right hidden sm:flex"><span class="font-label-md text-label-md font-bold text-on-surface leading-tight">Host Viktor Ross</span><span class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest font-semibold leading-tight">VIP MC</span></div><div class="relative"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary/40 group-hover:ring-primary transition-all" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4ZBPrN_CYcaqxyzTqw3sxi6Dlay4UaUU7WftvxgkHLP8IP4oxQqGkdutOeW8QpUgBlacIuTxxRHjxapwdQiJx-zAYLrLa9NeVyOHxUYnIxKjlvHYnHUVfK2FVWcM48w3rEVjg06KieZbwQU8OcXtNnLa94frQB_uNS7iCa-mit3L7-P6A2Lf81ra886mO-obw2PEKQCRua57qBBDUMKBO9bxSN3p3DHbY45Ix67re06LckbXIYofb"/><span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-secondary-container ring-2 ring-surface"></span></div><span class="material-symbols-outlined text-on-surface-variant group-hover:text-on-surface transition-colors text-sm">expand_more</span></div></div></div></header><main class="w-full pt-20 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Dynamic Glow Background Anchor -->
+<div class="relative w-full overflow-hidden">
+<!-- Ambient Radial Flares -->
+<div class="absolute -top-40 left-1/4 w-[600px] h-[600px] bg-primary-container/10 rounded-full blur-[140px] pointer-events-none"></div>
+<div class="absolute top-1/3 right-10 w-[500px] h-[500px] bg-tertiary-container/10 rounded-full blur-[160px] pointer-events-none"></div>
+<div class="absolute -bottom-20 left-10 w-[450px] h-[450px] bg-secondary-container/10 rounded-full blur-[120px] pointer-events-none"></div>
+<!-- MAIN COCKPIT WRAPPER -->
+<div class="w-full px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6 max-w-[1720px] mx-auto relative z-10">
+<!-- 1. VIP ROOM HEADER & REAL-TIME POLLING ENGINE BAR -->
+<div class="w-full bg-surface-container-low/95 backdrop-blur-xl rounded-2xl p-4 sm:p-5 shadow-2xl flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-5">
+<!-- Room Identity -->
+<div class="flex items-center gap-4 flex-wrap">
+<div class="w-12 h-12 rounded-xl bg-primary-container/20 flex items-center justify-center text-primary-fixed-dim">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">stars</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-3">
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface tracking-tight">Royal Diwali Tambola #482</h1>
+<span class="px-2.5 py-0.5 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm uppercase tracking-wider font-extrabold shadow-sm">VIP POOL ₹10,000</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant font-label-md text-label-md flex-wrap mt-0.5">
+<span class="flex items-center gap-1.5 text-secondary">
+<span class="w-2 h-2 rounded-full bg-secondary animate-ping inline-block"></span>
+<span>Polling (2s Sync Interval)</span>
+</span>
+<span class="text-surface-variant">•</span>
+<span class="font-mono text-on-surface font-semibold">Server-Authoritative RNG v4.8</span>
+<span class="text-surface-variant">•</span>
+<span class="text-primary-fixed-dim flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">alarm</span> Next Draw: <strong class="font-mono text-on-surface tracking-wider ml-1" id="next-draw-timer">00:03</strong>
+</span>
+</div>
+</div>
+</div>
+<!-- Meta Indicators & Financial Verification Badges -->
+<div class="flex items-center gap-3 flex-wrap justify-between xl:justify-end">
+<!-- Razorpay Verified Badge -->
+<div class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-surface-container shadow-inner">
+<div class="w-7 h-7 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-lg">verified_user</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider leading-none">Razorpay Webhook</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+</div>
+<span class="font-label-md text-label-md font-bold text-on-surface font-mono">Paid: 3 Tickets (₹600 Verified)</span>
+</div>
+</div>
+<!-- Room Capacity Meter -->
+<div class="flex items-center gap-3 px-3.5 py-2 rounded-xl bg-surface-container">
+<div class="flex flex-col text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Tickets Booked</span>
+<div class="flex items-center gap-1.5 font-label-md text-label-md font-bold text-primary font-mono">
+<span>42 / 50 Sold</span>
+</div>
+</div>
+<!-- Circular Progress Ring (84%) -->
+<div class="relative w-9 h-9">
+<svg class="w-full h-full -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-container-high" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+<path class="text-primary-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="84, 100" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+<span class="absolute inset-0 flex items-center justify-center font-label-sm text-[10px] font-bold text-on-surface">84%</span>
+</div>
+</div>
+<!-- Host / Player Status Pill & Action Button -->
+<div class="flex items-center gap-2">
+<div class="px-3.5 py-2 rounded-xl bg-surface-container-high flex flex-col justify-center">
+<span class="font-label-sm text-[10px] text-secondary-fixed uppercase tracking-wider leading-none">Game Phase</span>
+<span class="font-label-md text-label-md font-bold text-on-surface leading-tight mt-0.5">Round 2 : Live Call</span>
+</div>
+<button class="px-4 py-2.5 rounded-xl bg-primary-container hover:bg-primary transition-all duration-200 text-on-primary-container font-headline-sm text-sm font-bold flex items-center gap-2 shadow-lg shadow-primary-container/25 active:scale-95 cursor-pointer" id="host-action-btn">
+<span class="material-symbols-outlined text-lg">play_arrow</span>
+<span>Host Console</span>
+</button>
+</div>
+</div>
+</div>
+<!-- 2. MAIN BATTLEGROUND (ASYMMETRIC MULTI-COLUMN SALON LAYOUT) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- ==============================================
+             LEFT + CENTER STAGE (8 COLS): TICKETS & MASTER BOARD
+             ============================================== -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<!-- LIVE CALL SPOTLIGHT HUD (SUPERCHARGED DRAW DISPLAY) -->
+<div class="w-full bg-surface-container-low/90 backdrop-blur-xl rounded-2xl p-5 sm:p-6 shadow-xl relative overflow-hidden">
+<div class="absolute -right-16 -top-16 w-60 h-60 bg-primary-container/15 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+<!-- Spotlight Active Ball Orb -->
+<div class="flex items-center gap-5 w-full md:w-auto">
+<div class="relative flex-shrink-0">
+<!-- Wave Pulses -->
+<div class="absolute -inset-2.5 rounded-full bg-primary-container/30 blur-md animate-pulse"></div>
+<div class="absolute -inset-4 rounded-full bg-primary-container/10 blur-xl"></div>
+<!-- The Ball -->
+<div class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-tr from-primary-fixed to-primary-container flex flex-col items-center justify-center shadow-2xl shadow-primary-container/40">
+<span class="font-label-sm text-xs font-black text-on-primary-container tracking-widest uppercase opacity-85 leading-none">DRAW #24</span>
+<span class="font-caller-announcement text-caller-announcement-mobile sm:text-headline-lg font-black text-on-primary-container leading-none tracking-tighter my-0.5" id="active-spotlight-ball">64</span>
+<span class="font-label-sm text-[10px] font-bold text-on-primary-container uppercase tracking-wider leading-none">Almost Retired</span>
+</div>
+</div>
+<!-- Voice Announcer Phrase & Meta -->
+<div class="flex flex-col">
+<div class="flex items-center gap-2 mb-1">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-primary-fixed font-mono font-bold text-xs tracking-wider">CALL 24 / 90</span>
+<span class="flex items-center gap-1 text-secondary text-xs font-semibold">
+<span class="material-symbols-outlined text-sm">volume_up</span> Synthetic Voice Live
+                    </span>
+</div>
+<h2 class="font-headline-md text-xl sm:text-2xl font-black text-on-surface tracking-tight">"Almost Retired — Six and Four, Sixty-Four!"</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Server broadcast validated at 19:42:08.204 UTC. Auto-dabbing in sync.</p>
+</div>
+</div>
+<!-- Previous Calls Reel -->
+<div class="flex flex-col md:items-end w-full md:w-auto">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Previous 4 Calls</span>
+<div class="flex items-center gap-2.5">
+<!-- Ball 23 -->
+<div class="w-11 h-11 rounded-full bg-surface-container-high flex flex-col items-center justify-center text-primary-fixed shadow-md">
+<span class="font-ticket-digit text-ticket-digit-mobile font-bold leading-none">19</span>
+<span class="text-[8px] text-on-surface-variant leading-none mt-0.5">#23</span>
+</div>
+<!-- Ball 22 -->
+<div class="w-11 h-11 rounded-full bg-surface-container-high flex flex-col items-center justify-center text-secondary-fixed shadow-md">
+<span class="font-ticket-digit text-ticket-digit-mobile font-bold leading-none">88</span>
+<span class="text-[8px] text-on-surface-variant leading-none mt-0.5">#22</span>
+</div>
+<!-- Ball 21 -->
+<div class="w-11 h-11 rounded-full bg-surface-container-high flex flex-col items-center justify-center text-tertiary-fixed shadow-md">
+<span class="font-ticket-digit text-ticket-digit-mobile font-bold leading-none">07</span>
+<span class="text-[8px] text-on-surface-variant leading-none mt-0.5">#21</span>
+</div>
+<!-- Ball 20 -->
+<div class="w-11 h-11 rounded-full bg-surface-container-high flex flex-col items-center justify-center text-on-surface-variant shadow-md">
+<span class="font-ticket-digit text-ticket-digit-mobile font-bold leading-none">42</span>
+<span class="text-[8px] text-on-surface-variant leading-none mt-0.5">#20</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- COMPACT 90-BALL MASTER CALL BOARD -->
+<div class="w-full bg-surface-container-low/95 backdrop-blur-xl rounded-2xl p-5 shadow-xl">
+<div class="flex items-center justify-between pb-3 mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-fixed text-lg">grid_on</span>
+<span class="font-headline-sm text-base font-bold text-on-surface">Master Call Board</span>
+<span class="font-label-sm text-xs text-on-surface-variant">(90 Numbers • 24 Struck)</span>
+</div>
+<div class="flex items-center gap-4 text-xs font-mono">
+<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-primary-container"></span> Called</span>
+<span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-surface-container-highest"></span> In Machine</span>
+</div>
+</div>
+<!-- Dynamic 10x9 Grid Generator Target -->
+<div class="grid grid-cols-10 sm:grid-cols-15 md:grid-cols-18 gap-1 sm:gap-1.5" id="master-board">
+<!-- Dynamically populated via script with 90 balls -->
+</div>
+</div>
+<!-- PLAYER'S ACTIVE TICKETS SECTION -->
+<div class="w-full flex flex-col gap-4">
+<div class="flex items-center justify-between flex-wrap gap-2">
+<div class="flex items-center gap-2.5">
+<div class="w-3 h-3 rounded-full bg-secondary animate-pulse"></div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Your Active Deck (2 of 3 Shown)</h3>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-xs font-mono text-secondary-fixed">Ticket #8410 &amp; #8411</span>
+</div>
+<!-- Interactive Mode Switcher -->
+<div class="flex items-center gap-2 bg-surface-container p-1 rounded-xl">
+<button class="px-3 py-1 rounded-lg bg-secondary-container text-on-secondary-container font-label-sm text-xs font-bold transition-all" id="autodab-toggle">
+                  Auto-Dab: ON
+                </button>
+<button class="px-3 py-1 rounded-lg text-on-surface-variant hover:text-on-surface font-label-sm text-xs transition-all">
+                  Sound: FX High
+                </button>
+</div>
+</div>
+<!-- 2 SIDE-BY-SIDE 9x3 TICKETS -->
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+<!-- TICKET A: #8410 -->
+<div class="relative bg-surface-container/90 backdrop-blur-2xl rounded-2xl p-4 shadow-xl overflow-hidden group">
+<!-- Watermark Layer -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5 select-none rotate-[-15deg]">
+<span class="font-display-hero text-5xl md:text-6xl font-black tracking-widest text-on-surface">NAVEEN CHERRY</span>
+</div>
+<!-- Ticket Header Strip -->
+<div class="flex items-center justify-between pb-3 mb-2.5">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-base">confirmation_number</span>
+<span class="font-label-md text-label-md font-bold text-primary font-mono">TKT #8410</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-container-highest text-[10px] font-mono text-on-surface-variant">SERIAL 992-AK</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded-full bg-primary-container/20 text-primary-fixed-dim text-[10px] font-bold">1 AWAY JALDI-5</span>
+</div>
+</div>
+<!-- The 9x3 Tambola Matrix -->
+<div class="grid grid-rows-3 gap-1.5 bg-surface-container-lowest/80 p-2 rounded-xl shadow-inner">
+<!-- Row 1 -->
+<div class="grid grid-cols-9 gap-1.5">
+<div class="dab-cell dabbed flex items-center justify-center h-11 rounded-lg bg-primary-container text-on-primary-container font-ticket-digit text-ticket-digit font-bold shadow-md cursor-pointer transition-transform active:scale-90" data-val="4">4</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell flex items-center justify-center h-11 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-ticket-digit text-ticket-digit font-bold cursor-pointer transition-transform active:scale-90" data-val="23">23</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell dabbed flex items-center justify-center h-11 rounded-lg bg-primary-container text-on-primary-container font-ticket-digit text-ticket-digit font-bold shadow-md cursor-pointer transition-transform active:scale-90" data-val="42">42</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell dabbed flex items-center justify-center h-11 rounded-lg bg-primary-container text-on-primary-container font-ticket-digit text-ticket-digit font-bold shadow-md cursor-pointer transition-transform active:scale-90" data-val="64">64</div>
+<div class="dab-cell flex items-center justify-center h-11 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-ticket-digit text-ticket-digit font-bold cursor-pointer transition-transform active:scale-90" data-val="71">71</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+</div>
+<!-- Row 2 -->
+<div class="grid grid-cols-9 gap-1.5">
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell flex items-center justify-center h-11 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-ticket-digit text-ticket-digit font-bold cursor-pointer transition-transform active:scale-90" data-val="14">14</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell flex items-center justify-center h-11 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-ticket-digit text-ticket-digit font-bold cursor-pointer transition-transform active:scale-90" data-val="35">35</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell dabbed flex items-center justify-center h-11 rounded-lg bg-primary-container text-on-primary-container font-ticket-digit text-ticket-digit font-bold shadow-md cursor-pointer transition-transform active:scale-90" data-val="58">58</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell dabbed flex items-center justify-center h-11 rounded-lg bg-primary-container text-on-primary-container font-ticket-digit text-ticket-digit font-bold shadow-md cursor-pointer transition-transform active:scale-90" data-val="88">88</div>
+</div>
+<!-- Row 3 -->
+<div class="grid grid-cols-9 gap-1.5">
+<div class="dab-cell dabbed flex items-center justify-center h-11 rounded-lg bg-primary-container text-on-primary-container font-ticket-digit text-ticket-digit font-bold shadow-md cursor-pointer transition-transform active:scale-90" data-val="7">7</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell flex items-center justify-center h-11 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-ticket-digit text-ticket-digit font-bold cursor-pointer transition-transform active:scale-90" data-val="29">29</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell flex items-center justify-center h-11 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-ticket-digit text-ticket-digit font-bold cursor-pointer transition-transform active:scale-90" data-val="49">49</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell flex items-center justify-center h-11 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-ticket-digit text-ticket-digit font-bold cursor-pointer transition-transform active:scale-90" data-val="69">69</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell flex items-center justify-center h-11 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-ticket-digit text-ticket-digit font-bold cursor-pointer transition-transform active:scale-90" data-val="90">90</div>
+</div>
+</div>
+<!-- Ticket Status Bar -->
+<div class="flex items-center justify-between pt-2.5 mt-1 text-xs text-on-surface-variant font-mono">
+<span>Dabbed: 6/15</span>
+<span class="text-secondary flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Auto-Sync Verified</span>
+</div>
+</div>
+<!-- TICKET B: #8411 -->
+<div class="relative bg-surface-container/90 backdrop-blur-2xl rounded-2xl p-4 shadow-xl overflow-hidden group">
+<!-- Watermark Layer -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5 select-none rotate-[-15deg]">
+<span class="font-display-hero text-5xl md:text-6xl font-black tracking-widest text-on-surface">NAVEEN CHERRY</span>
+</div>
+<!-- Ticket Header Strip -->
+<div class="flex items-center justify-between pb-3 mb-2.5">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-base">confirmation_number</span>
+<span class="font-label-md text-label-md font-bold text-secondary font-mono">TKT #8411</span>
+<span class="px-1.5 py-0.2 rounded bg-surface-container-highest text-[10px] font-mono text-on-surface-variant">SERIAL 993-BK</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary-fixed text-[10px] font-bold">MIDDLE LINE CONTENDER</span>
+</div>
+</div>
+<!-- The 9x3 Tambola Matrix -->
+<div class="grid grid-rows-3 gap-1.5 bg-surface-container-lowest/80 p-2 rounded-xl shadow-inner">
+<!-- Row 1 -->
+<div class="grid grid-cols-9 gap-1.5">
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell dabbed flex items-center justify-center h-11 rounded-lg bg-secondary-container text-on-secondary-container font-ticket-digit text-ticket-digit font-bold shadow-md cursor-pointer transition-transform active:scale-90" data-val="12">12</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell flex items-center justify-center h-11 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-ticket-digit text-ticket-digit font-bold cursor-pointer transition-transform active:scale-90" data-val="31">31</div>
+<div class="dab-cell flex items-center justify-center h-11 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-ticket-digit text-ticket-digit font-bold cursor-pointer transition-transform active:scale-90" data-val="44">44</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell flex items-center justify-center h-11 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-ticket-digit text-ticket-digit font-bold cursor-pointer transition-transform active:scale-90" data-val="63">63</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell dabbed flex items-center justify-center h-11 rounded-lg bg-secondary-container text-on-secondary-container font-ticket-digit text-ticket-digit font-bold shadow-md cursor-pointer transition-transform active:scale-90" data-val="85">85</div>
+</div>
+<!-- Row 2 -->
+<div class="grid grid-cols-9 gap-1.5">
+<div class="dab-cell flex items-center justify-center h-11 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-ticket-digit text-ticket-digit font-bold cursor-pointer transition-transform active:scale-90" data-val="2">2</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell dabbed flex items-center justify-center h-11 rounded-lg bg-secondary-container text-on-secondary-container font-ticket-digit text-ticket-digit font-bold shadow-md cursor-pointer transition-transform active:scale-90" data-val="25">25</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell dabbed flex items-center justify-center h-11 rounded-lg bg-secondary-container text-on-secondary-container font-ticket-digit text-ticket-digit font-bold shadow-md cursor-pointer transition-transform active:scale-90" data-val="51">51</div>
+<div class="dab-cell dabbed flex items-center justify-center h-11 rounded-lg bg-secondary-container text-on-secondary-container font-ticket-digit text-ticket-digit font-bold shadow-md cursor-pointer transition-transform active:scale-90" data-val="64">64</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell flex items-center justify-center h-11 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-ticket-digit text-ticket-digit font-bold cursor-pointer transition-transform active:scale-90" data-val="89">89</div>
+</div>
+<!-- Row 3 -->
+<div class="grid grid-cols-9 gap-1.5">
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell dabbed flex items-center justify-center h-11 rounded-lg bg-secondary-container text-on-secondary-container font-ticket-digit text-ticket-digit font-bold shadow-md cursor-pointer transition-transform active:scale-90" data-val="19">19</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell flex items-center justify-center h-11 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-ticket-digit text-ticket-digit font-bold cursor-pointer transition-transform active:scale-90" data-val="38">38</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell flex items-center justify-center h-11 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-ticket-digit text-ticket-digit font-bold cursor-pointer transition-transform active:scale-90" data-val="59">59</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+<div class="dab-cell flex items-center justify-center h-11 rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-ticket-digit text-ticket-digit font-bold cursor-pointer transition-transform active:scale-90" data-val="78">78</div>
+<div class="empty-cell flex items-center justify-center h-11 rounded-lg bg-surface-container/30 text-surface-container-highest">•</div>
+</div>
+</div>
+<!-- Ticket Status Bar -->
+<div class="flex items-center justify-between pt-2.5 mt-1 text-xs text-on-surface-variant font-mono">
+<span>Dabbed: 5/15</span>
+<span class="text-secondary-fixed flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Synchronized</span>
+</div>
+</div>
+</div>
+<!-- GIANT FLOATING PRIZE CLAIM BUTTON & CLAIM CONSOLE -->
+<div class="w-full bg-surface-container-high/90 backdrop-blur-2xl rounded-2xl p-5 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-primary-container/30 flex items-center justify-center text-primary-fixed-dim">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-base font-bold text-on-surface">Claim Eligibility Radar</span>
+<div class="flex items-center gap-2 text-xs font-mono text-on-surface-variant">
+<span class="text-secondary flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-secondary"></span> Instant Server Verified Claim</span>
+<span>• Latency 24ms</span>
+</div>
+</div>
+</div>
+<!-- The Claim Action Button with Glow -->
+<div class="flex items-center gap-3 w-full md:w-auto">
+<select class="bg-surface-container-lowest text-on-surface font-label-md text-sm px-4 py-3 rounded-xl focus:outline-none cursor-pointer" id="claim-pattern-select">
+<option value="middle-line">Middle Line (₹1,000)</option>
+<option value="bottom-line">Bottom Line (₹1,000)</option>
+<option value="full-house">Full House (₹5,000)</option>
+</select>
+<button class="flex-1 md:flex-none px-8 py-3.5 rounded-xl bg-gradient-to-r from-primary to-primary-container text-on-primary-container font-headline-sm text-lg font-black tracking-wider uppercase shadow-xl hover:shadow-primary-container/50 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer" id="bingo-claim-btn">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">celebration</span>
+<span>BINGO! CLAIM PRIZE</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- ==============================================
+             RIGHT COLUMN (4 COLS): LIVE PRIZE MATRIX & GPT BOT CHAT
+             ============================================== -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<!-- 1. LIVE WINNING PATTERNS TRACKER -->
+<div class="w-full bg-surface-container-low/95 backdrop-blur-xl rounded-2xl p-5 shadow-xl">
+<div class="flex items-center justify-between pb-3 mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-fixed text-xl" style="font-variation-settings: 'FILL' 1;">emoji_events</span>
+<h3 class="font-headline-sm text-base font-bold text-on-surface">Prize Leaderboard</h3>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-xs font-mono text-primary font-bold">₹10,000 Pool</span>
+</div>
+<!-- Pattern List Cards -->
+<div class="flex flex-col gap-2.5">
+<!-- Pattern: Early 5 (CLAIMED) -->
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container opacity-70">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-lg">check_circle</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-bold text-on-surface leading-tight">Jaldi 5 (Early Five)</span>
+<span class="text-xs text-on-surface-variant">Won by <strong class="text-on-surface">Rohan K.</strong> (Tkt #12)</span>
+</div>
+</div>
+<div class="flex flex-col text-right">
+<span class="font-label-md text-label-md font-mono text-on-surface-variant font-bold line-through">₹1,000</span>
+<span class="text-[10px] text-secondary font-mono uppercase">Claimed</span>
+</div>
+</div>
+<!-- Pattern: Corners (CLAIMED) -->
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container opacity-70">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-lg">check_circle</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-bold text-on-surface leading-tight">Four Corners</span>
+<span class="text-xs text-on-surface-variant">Won by <strong class="text-on-surface">Sanya V.</strong> (Tkt #05)</span>
+</div>
+</div>
+<div class="flex flex-col text-right">
+<span class="font-label-md text-label-md font-mono text-on-surface-variant font-bold line-through">₹1,000</span>
+<span class="text-[10px] text-secondary font-mono uppercase">Claimed</span>
+</div>
+</div>
+<!-- Pattern: Top Line (CLAIMED) -->
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container opacity-70">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-lg">check_circle</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-bold text-on-surface leading-tight">Top Line</span>
+<span class="text-xs text-on-surface-variant">Won by <strong class="text-on-surface">Arjun Nair</strong> (Tkt #33)</span>
+</div>
+</div>
+<div class="flex flex-col text-right">
+<span class="font-label-md text-label-md font-mono text-on-surface-variant font-bold line-through">₹1,000</span>
+<span class="text-[10px] text-secondary font-mono uppercase">Claimed</span>
+</div>
+</div>
+<!-- Pattern: Middle Line (ACTIVE) -->
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-high shadow-md">
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-secondary animate-ping"></div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-bold text-on-surface leading-tight">Middle Line</span>
+<span class="text-xs text-secondary-fixed">Live • 4 players 1-away</span>
+</div>
+</div>
+<div class="flex flex-col text-right">
+<span class="font-label-md text-label-md font-mono text-secondary font-extrabold">₹1,000</span>
+<span class="text-[10px] text-on-surface-variant font-mono uppercase">Open</span>
+</div>
+</div>
+<!-- Pattern: Bottom Line (ACTIVE) -->
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-high shadow-md">
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-secondary animate-ping"></div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-bold text-on-surface leading-tight">Bottom Line</span>
+<span class="text-xs text-secondary-fixed">Live • Open for claims</span>
+</div>
+</div>
+<div class="flex flex-col text-right">
+<span class="font-label-md text-label-md font-mono text-secondary font-extrabold">₹1,000</span>
+<span class="text-[10px] text-on-surface-variant font-mono uppercase">Open</span>
+</div>
+</div>
+<!-- Pattern: Grand Full House (MEGA ACTIVE) -->
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-primary-container/20 shadow-lg">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">crown</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-sm font-bold text-primary-fixed-dim leading-tight">Full House (Royal Trophy)</span>
+<span class="text-xs text-primary-fixed flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span> 3 Players 1-Away!
+                    </span>
+</div>
+</div>
+<div class="flex flex-col text-right">
+<span class="font-headline-sm text-lg font-mono text-primary font-black">₹5,000</span>
+<span class="text-[10px] text-primary-fixed uppercase tracking-wider font-bold">GRAND BOGEY</span>
+</div>
+</div>
+</div>
+<!-- Winner Popup Demo Trigger Dock -->
+<button class="w-full mt-3 py-2 px-3 rounded-xl bg-surface-container hover:bg-surface-container-highest transition-colors text-on-surface text-xs font-label-md flex items-center justify-center gap-2 cursor-pointer" id="trigger-win-modal-btn">
+<span class="material-symbols-outlined text-sm text-primary">visibility</span>
+<span>Preview Full House Winner Showcase</span>
+</button>
+</div>
+<!-- 2. LIVE SALON CHAT & AI BOT ANNOUNCER -->
+<div class="w-full bg-surface-container-low/95 backdrop-blur-xl rounded-2xl p-5 shadow-xl flex flex-col h-[510px]">
+<!-- Chat Header -->
+<div class="flex items-center justify-between pb-3 mb-2">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-secondary text-xl">forum</span>
+<div class="flex flex-col">
+<span class="font-headline-sm text-base font-bold text-on-surface leading-tight">Salon Chat &amp; Bot</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant font-mono">Room #482 • 42 Connected</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-tertiary-container/30 text-tertiary font-mono text-[10px] uppercase font-bold">GPT-4o Audio Host</span>
+</div>
+<!-- Message Feed Container -->
+<div class="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 text-xs" id="chat-feed">
+<!-- System Bot Call Announcement -->
+<div class="p-2.5 rounded-xl bg-primary-container/15 flex items-start gap-2.5">
+<div class="w-6 h-6 rounded-md bg-primary-container text-on-primary-container flex items-center justify-center flex-shrink-0 text-xs font-bold">⚡</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-primary font-mono text-[11px]">@bot</span>
+<span class="text-[9px] text-on-surface-variant">19:42:08</span>
+</div>
+<span class="text-on-surface font-body-sm leading-relaxed mt-0.5">
+                    Draw #24 is <strong>64</strong>! Check your middle lines! 4 players are currently 1 number away!
+                  </span>
+</div>
+</div>
+<!-- Player Banter 1 -->
+<div class="p-2 rounded-xl bg-surface-container flex items-start gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center text-[10px] font-bold text-on-surface flex-shrink-0">VK</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-on-surface text-[11px]">Vikram99</span>
+<span class="text-[9px] text-on-surface-variant">19:42:10</span>
+</div>
+<span class="text-on-surface-variant font-body-sm">64 nailed my Jaldi! Oh wait Rohan got it first GG</span>
+</div>
+</div>
+<!-- Player Bot Command Request -->
+<div class="p-2 rounded-xl bg-surface-container flex items-start gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center text-[10px] font-bold text-on-surface flex-shrink-0">PR</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-on-surface text-[11px]">Priya_Diwali</span>
+<span class="text-[9px] text-on-surface-variant">19:42:12</span>
+</div>
+<span class="text-tertiary-fixed font-mono font-bold">@bot /prizes</span>
+</div>
+</div>
+<!-- Bot Response -->
+<div class="p-2.5 rounded-xl bg-tertiary-container/15 flex items-start gap-2.5">
+<div class="w-6 h-6 rounded-md bg-tertiary text-on-tertiary flex items-center justify-center flex-shrink-0 text-xs font-bold">🤖</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-tertiary font-mono text-[11px]">@bot</span>
+<span class="text-[9px] text-on-surface-variant">19:42:13</span>
+</div>
+<span class="text-on-surface font-body-sm leading-relaxed mt-0.5">
+                    🏆 <strong>Remaining:</strong> Middle Line (₹1,000), Bottom Line (₹1,000), Full House (₹5,000). Total ₹7,000 unawarded.
+                  </span>
+</div>
+</div>
+<!-- Player Banter 2 -->
+<div class="p-2 rounded-xl bg-surface-container flex items-start gap-2">
+<div class="w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center text-[10px] font-bold text-on-surface flex-shrink-0">AR</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-on-surface text-[11px]">Arjun Nair</span>
+<span class="px-1.5 rounded bg-primary-container/20 text-primary-fixed-dim text-[9px] font-bold">Top Line Winner</span>
+</div>
+<span class="text-on-surface-variant font-body-sm">Just need #44 or #89 for Full House! Heart pounding! 🔥</span>
+</div>
+</div>
+</div>
+<!-- Bot Quick Command Shortcuts -->
+<div class="flex items-center gap-1.5 py-2 overflow-x-auto no-scrollbar">
+<button class="cmd-pill px-2 py-1 rounded bg-surface-container hover:bg-surface-container-high text-[10px] font-mono text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap cursor-pointer">/help</button>
+<button class="cmd-pill px-2 py-1 rounded bg-surface-container hover:bg-surface-container-high text-[10px] font-mono text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap cursor-pointer">/rules</button>
+<button class="cmd-pill px-2 py-1 rounded bg-surface-container hover:bg-surface-container-high text-[10px] font-mono text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap cursor-pointer">/patterns</button>
+<button class="cmd-pill px-2 py-1 rounded bg-surface-container hover:bg-surface-container-high text-[10px] font-mono text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap cursor-pointer">/prizes</button>
+<button class="cmd-pill px-2 py-1 rounded bg-surface-container hover:bg-surface-container-high text-[10px] font-mono text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap cursor-pointer">/status</button>
+</div>
+<!-- Message Input Form -->
+<div class="flex items-center gap-2 pt-1">
+<input class="flex-1 bg-surface-container text-on-surface placeholder:text-on-surface-variant/50 px-3 py-2 rounded-xl text-xs font-body-md focus:outline-none" id="chat-input" placeholder="Type a message or @bot /command..." type="text"/>
+<button class="w-8 h-8 rounded-xl bg-primary-container text-on-primary-container flex items-center justify-center hover:bg-primary transition-colors cursor-pointer" id="chat-send-btn">
+<span class="material-symbols-outlined text-base">send</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ==============================================
+       FULL HOUSE WINNER CELEBRATION MODAL (POPUP DOCK)
+       ============================================== -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-surface-container-lowest/80 backdrop-blur-2xl hidden opacity-0 transition-opacity duration-300 p-4" id="winner-modal">
+<div class="relative w-full max-w-xl bg-surface-container-low/95 rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden flex flex-col items-center text-center">
+<!-- Radial Golden Burst Behind Trophy -->
+<div class="absolute -top-24 w-80 h-80 bg-primary-container/30 rounded-full blur-3xl pointer-events-none"></div>
+<!-- Close Button -->
+<button class="absolute top-4 right-4 w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer" id="close-win-modal">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+<!-- Trophy Icon Animation -->
+<div class="relative w-20 h-20 rounded-2xl bg-gradient-to-tr from-primary to-primary-container flex items-center justify-center text-on-primary-container shadow-2xl shadow-primary-container/50 mb-4 animate-bounce">
+<span class="material-symbols-outlined text-5xl" style="font-variation-settings: 'FILL' 1;">emoji_events</span>
+</div>
+<!-- Winner Headings -->
+<span class="px-3 py-1 rounded-full bg-primary-container/20 text-primary-fixed-dim font-label-sm text-xs font-extrabold uppercase tracking-widest mb-2">ROYAL BOGEY CLAIM CONFIRMED</span>
+<h3 class="font-headline-lg text-headline-lg font-black text-on-surface leading-tight">FULL HOUSE WINNER!</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-sm mt-1">
+        Certified Server-Authoritative Verification complete. All 15 numbers verified against live caller seed.
+      </p>
+<!-- Winner Identity Card -->
+<div class="w-full bg-surface-container rounded-2xl p-4 my-6 flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3 text-left">
+<div class="w-11 h-11 rounded-full bg-surface-container-highest flex items-center justify-center text-primary font-bold">
+              AN
+            </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-base font-bold text-on-surface">Arjun Nair</span>
+<span class="font-mono text-xs text-secondary-fixed">Ticket Serial: 993-BK • Razorpay ID: pay_OnZk81</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-xs text-on-surface-variant uppercase">Payout</span>
+<div class="font-headline-md text-2xl font-black text-primary font-mono leading-none mt-0.5">₹5,000</div>
+</div>
+</div>
+<!-- Verified Winning Number Pills Summary -->
+<div class="w-full bg-surface-container-lowest p-2.5 rounded-xl flex items-center justify-between text-xs font-mono text-on-surface-variant">
+<span>Struck on Call #24 (Ball 64)</span>
+<span class="text-secondary flex items-center gap-1 font-bold">
+<span class="material-symbols-outlined text-sm">verified</span> Verified RNG Seed #98221
+          </span>
+</div>
+</div>
+<!-- Immediate Payout Status Strip -->
+<div class="w-full flex items-center justify-between px-2 text-xs font-mono text-on-surface-variant mb-6">
+<span>Razorpay Auto-Disbursement</span>
+<span class="text-secondary font-bold">⚡ Instant UPI Transfer Queued</span>
+</div>
+<!-- Action -->
+<button class="w-full py-3.5 rounded-xl bg-primary-container hover:bg-primary text-on-primary-container font-headline-sm text-sm font-bold tracking-wider uppercase transition-colors cursor-pointer shadow-lg shadow-primary-container/30" id="dismiss-win-modal">
+        Return to Salon Deck
+      </button>
+</div>
+</div>
+<!-- INTERACTIVE VANILLA LOGIC SCRIPT -->
+<script>
+    (function() {
+      // 1. Populate Master 90-Board
+      const masterBoardEl = document.getElementById('master-board');
+      const calledNumbers = [4, 7, 12, 19, 20, 22, 25, 29, 35, 41, 42, 45, 47, 51, 53, 58, 64, 66, 73, 77, 81, 85, 88, 90];
+      const activeCurrentNumber = 64;
+
+      if (masterBoardEl) {
+        masterBoardEl.innerHTML = '';
+        for (let i = 1; i <= 90; i++) {
+          const cell = document.createElement('div');
+          const isCalled = calledNumbers.includes(i);
+          const isCurrent = i === activeCurrentNumber;
+
+          cell.textContent = i;
+          cell.className = 'flex items-center justify-center h-7 sm:h-8 rounded text-xs font-mono font-bold transition-all';
+
+          if (isCurrent) {
+            cell.className += ' bg-gradient-to-tr from-primary to-primary-container text-on-primary-container shadow-lg shadow-primary-container/40 scale-110 z-10';
+          } else if (isCalled) {
+            cell.className += ' bg-primary-container/30 text-primary-fixed';
+          } else {
+            cell.className += ' bg-surface-container-high/40 text-on-surface-variant/40 hover:bg-surface-container-high hover:text-on-surface';
+          }
+
+          masterBoardEl.appendChild(cell);
+        }
+      }
+
+      // 2. Interactive Cell Tapping with Audio Simulation & Haptics
+      const dabCells = document.querySelectorAll('.dab-cell');
+      dabCells.forEach(cell => {
+        cell.addEventListener('click', function() {
+          const val = parseInt(this.getAttribute('data-val'), 10);
+          if (calledNumbers.includes(val)) {
+            this.classList.toggle('bg-primary-container');
+            this.classList.toggle('text-on-primary-container');
+            this.classList.toggle('bg-surface-container-high');
+            this.classList.toggle('text-on-surface');
+            this.classList.toggle('shadow-md');
+          } else {
+            // Invalid Strike Jitter
+            this.classList.add('bg-error-container', 'text-on-error-container', 'animate-pulse');
+            setTimeout(() => {
+              this.classList.remove('bg-error-container', 'text-on-error-container', 'animate-pulse');
+            }, 600);
+          }
+        });
+      });
+
+      // 3. Countdown Timer Micro-Tick
+      let secondsLeft = 3;
+      const timerEl = document.getElementById('next-draw-timer');
+      setInterval(() => {
+        if (secondsLeft > 0) {
+          secondsLeft--;
+        } else {
+          secondsLeft = 10;
+        }
+        if (timerEl) {
+          timerEl.textContent = '00:' + (secondsLeft < 10 ? '0' + secondsLeft : secondsLeft);
+        }
+      }, 1000);
+
+      // 4. Modal Handlers
+      const winModal = document.getElementById('winner-modal');
+      const triggerBtn = document.getElementById('trigger-win-modal-btn');
+      const bingoClaimBtn = document.getElementById('bingo-claim-btn');
+      const closeBtn = document.getElementById('close-win-modal');
+      const dismissBtn = document.getElementById('dismiss-win-modal');
+
+      function openModal() {
+        if (!winModal) return;
+        winModal.classList.remove('hidden');
+        setTimeout(() => {
+          winModal.classList.remove('opacity-0');
+        }, 10);
+      }
+
+      function closeModal() {
+        if (!winModal) return;
+        winModal.classList.add('opacity-0');
+        setTimeout(() => {
+          winModal.classList.add('hidden');
+        }, 300);
+      }
+
+      if (triggerBtn) triggerBtn.addEventListener('click', openModal);
+      if (bingoClaimBtn) bingoClaimBtn.addEventListener('click', openModal);
+      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      if (dismissBtn) dismissBtn.addEventListener('click', closeModal);
+
+      // 5. Bot Command Click Autofill
+      const cmdPills = document.querySelectorAll('.cmd-pill');
+      const chatInput = document.getElementById('chat-input');
+      const chatFeed = document.getElementById('chat-feed');
+      const chatSendBtn = document.getElementById('chat-send-btn');
+
+      cmdPills.forEach(pill => {
+        pill.addEventListener('click', function() {
+          if (chatInput) {
+            chatInput.value = '@bot ' + this.textContent.trim();
+            chatInput.focus();
+          }
+        });
+      });
+
+      function sendChatMessage() {
+        if (!chatInput || !chatFeed || !chatInput.value.trim()) return;
+        const text = chatInput.value.trim();
+        
+        // Append user chat message
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'p-2 rounded-xl bg-surface-container flex items-start gap-2';
+        msgDiv.innerHTML = `
+          <div class="w-6 h-6 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-[10px] font-bold flex-shrink-0">YOU</div>
+          <div class="flex flex-col">
+            <div class="flex items-center gap-1.5">
+              <span class="font-bold text-primary font-mono text-[11px]">You</span>
+              <span class="text-[9px] text-on-surface-variant">Just now</span>
+            </div>
+            <span class="text-on-surface font-body-sm">${text}</span>
+          </div>
+        `;
+        chatFeed.appendChild(msgDiv);
+        chatInput.value = '';
+        chatFeed.scrollTop = chatFeed.scrollHeight;
+
+        // Simulate Bot Auto-reply if commanded
+        if (text.includes('@bot')) {
+          setTimeout(() => {
+            const botDiv = document.createElement('div');
+            botDiv.className = 'p-2.5 rounded-xl bg-tertiary-container/15 flex items-start gap-2.5';
+            botDiv.innerHTML = `
+              <div class="w-6 h-6 rounded-md bg-tertiary text-on-tertiary flex items-center justify-center flex-shrink-0 text-xs font-bold">🤖</div>
+              <div class="flex flex-col">
+                <div class="flex items-center gap-1.5">
+                  <span class="font-bold text-tertiary font-mono text-[11px]">@bot</span>
+                  <span class="text-[9px] text-on-surface-variant">Just now</span>
+                </div>
+                <span class="text-on-surface font-body-sm mt-0.5">
+                  ⚡ <strong>Query Processed:</strong> All server draws are synchronized on HMAC-SHA256 seed.
+                </span>
+              </div>
+            `;
+            chatFeed.appendChild(botDiv);
+            chatFeed.scrollTop = chatFeed.scrollHeight;
+          }, 600);
+        }
+      }
+
+      if (chatSendBtn) chatSendBtn.addEventListener('click', sendChatMessage);
+      if (chatInput) {
+        chatInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') sendChatMessage();
+        });
+      }
+    })();
+  </script>
+</div></main><footer class="w-full bg-surface-container-lowest py-12"><div class="w-full px-8 flex flex-col md:flex-row items-center justify-between gap-6"><div class="flex items-center gap-3"><img alt="Midnight Grand Tambola Logo" class="h-6 w-auto object-contain opacity-70" src="https://lh3.googleusercontent.com/aida/AEtjO1UP0cV2S7IRz1Pt7ACdFUQ5VqfD5IruXGevnQR74GlzqhC4o7kmMUVKNehBxwE9Q28jq0yiD2CaS-mvjmKb2-umG-WBQfu27wheRii-gi_k9nyPqeEIunjrzsYdk8GolmHcvoYxhFloDd6BqeMgXo_r_JAx9KsxhJjeMtFad8oMW4ZyywfNR6X0flRMdVF3V_OFBOMrnWW81EAFYseR7bnVPlMMNNgCkI-fRoBSicpGP-3wxVOkHWffE_4"/><span class="font-label-md text-label-md text-on-surface-variant">© 2024 Grand Tambola Salon. Real-Time Certified RNG Engine.</span></div><div class="flex items-center gap-6"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Fair Play Protocol v4.8</span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">WebSocket Engine Active</span><span class="font-label-sm text-label-sm text-secondary-fixed flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-secondary inline-block"></span> Systems Operational</span></div></div></footer></body></html>

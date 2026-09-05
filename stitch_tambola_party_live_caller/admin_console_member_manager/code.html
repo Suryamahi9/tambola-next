@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Space+Grotesk:wght@500;600;700&amp;family=Syne:wght@600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      "colors": {
+        "surface-container": "#1d1f27",
+        "primary-fixed-dim": "#ffb95f",
+        "on-secondary-fixed-variant": "#005236",
+        "tertiary-fixed": "#e9ddff",
+        "secondary-container": "#00a572",
+        "surface-container-lowest": "#0b0e15",
+        "on-tertiary-fixed-variant": "#5516be",
+        "on-error-container": "#ffdad6",
+        "on-primary-container": "#613b00",
+        "secondary-fixed": "#6ffbbe",
+        "on-tertiary-fixed": "#23005c",
+        "error": "#ffb4ab",
+        "background": "#10131a",
+        "inverse-primary": "#855300",
+        "on-surface": "#e1e2ec",
+        "on-primary-fixed-variant": "#653e00",
+        "inverse-surface": "#e1e2ec",
+        "surface-container-high": "#272a32",
+        "tertiary-fixed-dim": "#d0bcff",
+        "on-background": "#e1e2ec",
+        "surface": "#10131a",
+        "outline": "#a08e7a",
+        "on-error": "#690005",
+        "tertiary-container": "#bda2ff",
+        "secondary": "#4edea3",
+        "secondary-fixed-dim": "#4edea3",
+        "tertiary": "#d5c3ff",
+        "surface-container-highest": "#32353d",
+        "primary-fixed": "#ffddb8",
+        "on-tertiary-container": "#520fbb",
+        "on-primary-fixed": "#2a1700",
+        "primary-container": "#f59e0b",
+        "inverse-on-surface": "#2d3038",
+        "on-secondary-fixed": "#002113",
+        "surface-tint": "#ffb95f",
+        "surface-container-low": "#191b23",
+        "primary": "#ffc174",
+        "on-primary": "#472a00",
+        "on-secondary-container": "#00311f",
+        "error-container": "#93000a",
+        "surface-variant": "#32353d",
+        "surface-bright": "#363941",
+        "outline-variant": "#534434",
+        "on-tertiary": "#3c0091",
+        "on-secondary": "#003824",
+        "surface-dim": "#10131a",
+        "on-surface-variant": "#d8c3ad"
+      },
+      "borderRadius": {
+        "DEFAULT": "0.25rem",
+        "lg": "0.5rem",
+        "xl": "0.75rem",
+        "full": "9999px"
+      },
+      "spacing": {
+        "console-pad-lg": "2rem",
+        "board-cell-size-desktop": "2.75rem",
+        "grid-gutter": "1rem",
+        "board-cell-size-mobile": "1.875rem",
+        "ticket-gap": "0.375rem",
+        "console-pad-sm": "0.75rem",
+        "console-pad-md": "1.25rem"
+      },
+      "fontFamily": {
+        "caller-announcement-mobile": [
+          "Syne"
+        ],
+        "ticket-digit-mobile": [
+          "Space Grotesk"
+        ],
+        "display-hero": [
+          "Syne"
+        ],
+        "body-lg": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-lg": [
+          "Syne"
+        ],
+        "caller-announcement": [
+          "Syne"
+        ],
+        "body-md": [
+          "Plus Jakarta Sans"
+        ],
+        "body-sm": [
+          "Plus Jakarta Sans"
+        ],
+        "headline-md": [
+          "Syne"
+        ],
+        "headline-lg-mobile": [
+          "Syne"
+        ],
+        "ticket-digit": [
+          "Space Grotesk"
+        ],
+        "headline-sm": [
+          "Syne"
+        ],
+        "display-hero-mobile": [
+          "Syne"
+        ],
+        "label-lg": [
+          "Space Grotesk"
+        ],
+        "label-md": [
+          "Space Grotesk"
+        ],
+        "label-sm": [
+          "Space Grotesk"
+        ]
+      },
+      "fontSize": {
+        "caller-announcement-mobile": [
+          "48px",
+          {
+            "lineHeight": "48px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "800"
+          }
+        ],
+        "ticket-digit-mobile": [
+          "16px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "700"
+          }
+        ],
+        "display-hero": [
+          "64px",
+          {
+            "lineHeight": "72px",
+            "letterSpacing": "-0.02em",
+            "fontWeight": "800"
+          }
+        ],
+        "body-lg": [
+          "16px",
+          {
+            "lineHeight": "24px",
+            "fontWeight": "500"
+          }
+        ],
+        "headline-lg": [
+          "36px",
+          {
+            "lineHeight": "44px",
+            "letterSpacing": "-0.015em",
+            "fontWeight": "700"
+          }
+        ],
+        "caller-announcement": [
+          "80px",
+          {
+            "lineHeight": "80px",
+            "letterSpacing": "-0.03em",
+            "fontWeight": "800"
+          }
+        ],
+        "body-md": [
+          "14px",
+          {
+            "lineHeight": "20px",
+            "fontWeight": "400"
+          }
+        ],
+        "body-sm": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "fontWeight": "400"
+          }
+        ],
+        "headline-md": [
+          "24px",
+          {
+            "lineHeight": "30px",
+            "fontWeight": "700"
+          }
+        ],
+        "headline-lg-mobile": [
+          "26px",
+          {
+            "lineHeight": "32px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "700"
+          }
+        ],
+        "ticket-digit": [
+          "22px",
+          {
+            "lineHeight": "22px",
+            "letterSpacing": "0.01em",
+            "fontWeight": "700"
+          }
+        ],
+        "headline-sm": [
+          "20px",
+          {
+            "lineHeight": "26px",
+            "fontWeight": "600"
+          }
+        ],
+        "display-hero-mobile": [
+          "38px",
+          {
+            "lineHeight": "44px",
+            "letterSpacing": "-0.01em",
+            "fontWeight": "800"
+          }
+        ],
+        "label-lg": [
+          "14px",
+          {
+            "lineHeight": "18px",
+            "letterSpacing": "0.05em",
+            "fontWeight": "600"
+          }
+        ],
+        "label-md": [
+          "12px",
+          {
+            "lineHeight": "16px",
+            "letterSpacing": "0.06em",
+            "fontWeight": "600"
+          }
+        ],
+        "label-sm": [
+          "10px",
+          {
+            "lineHeight": "14px",
+            "letterSpacing": "0.08em",
+            "fontWeight": "700"
+          }
+        ]
+      }
+    }
+  }
+};</script></head><body class="bg-background font-body-md text-on-surface antialiased min-h-screen selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 left-0 right-0 w-full z-50 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-20 w-full px-8 flex items-center justify-between gap-6"><div class="flex items-center gap-8"><div class="flex items-center gap-3"><img alt="Midnight Grand Tambola Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UP0cV2S7IRz1Pt7ACdFUQ5VqfD5IruXGevnQR74GlzqhC4o7kmMUVKNehBxwE9Q28jq0yiD2CaS-mvjmKb2-umG-WBQfu27wheRii-gi_k9nyPqeEIunjrzsYdk8GolmHcvoYxhFloDd6BqeMgXo_r_JAx9KsxhJjeMtFad8oMW4ZyywfNR6X0flRMdVF3V_OFBOMrnWW81EAFYseR7bnVPlMMNNgCkI-fRoBSicpGP-3wxVOkHWffE_4"/><div class="flex flex-col"><div class="flex items-center gap-2"><span class="font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface">GRAND TAMBOLA</span><span class="px-2 py-0.5 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm uppercase font-bold tracking-wider">LIVE HOUSIE</span></div><span class="font-label-sm text-label-sm text-on-surface-variant opacity-80 uppercase tracking-widest">High-Stakes VIP Salon</span></div></div><nav class="hidden xl:flex items-center gap-1 bg-surface-container-lowest/60 p-1 rounded-xl" data-active-classes="bg-surface-container-high text-primary font-semibold rounded-lg shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]"><a class="px-4 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="home" href="#">Home</a><a class="px-4 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="live-caller" href="#">Live Caller</a><a class="px-4 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="ticket-engine" href="#">Ticket Engine</a><a class="px-4 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="party-room-482" href="#">Party Room</a><a class="px-4 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200" data-path="rules" href="#">Rules</a><a aria-current="page" class="px-4 py-2 transition-all duration-200 bg-surface-container-high text-primary font-semibold rounded-lg shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)]" data-path="admin" href="#">Admin</a></nav></div><div class="flex items-center gap-4"><div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]"><span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-secondary"></span></span><span class="font-label-md text-label-md text-on-surface tracking-wider font-semibold">ROOM #482 LIVE</span><span class="font-label-sm text-label-sm text-secondary font-mono px-1.5 py-0.5 rounded bg-surface-container">24ms</span></div><div class="flex items-center gap-3 bg-surface-container-low px-3.5 py-1.5 rounded-xl"><div class="flex items-center gap-1.5 text-primary-fixed-dim"><span class="material-symbols-outlined text-primary text-lg">toll</span><div class="flex flex-col text-right"><span class="font-label-xs text-[10px] text-on-surface-variant uppercase tracking-wider leading-none">Credits</span><span class="font-label-md text-label-md font-bold text-primary font-mono leading-none">14,250</span></div></div><div class="w-px h-6 bg-surface-container-highest"></div><div class="flex items-center gap-1.5 text-secondary-fixed"><span class="material-symbols-outlined text-secondary text-lg">confirmation_number</span><div class="flex flex-col text-right"><span class="font-label-xs text-[10px] text-on-surface-variant uppercase tracking-wider leading-none">Active</span><span class="font-label-md text-label-md font-bold text-secondary font-mono leading-none">6 TIX</span></div></div></div><div class="relative flex items-center gap-3 pl-2 group cursor-pointer"><div class="flex flex-col text-right hidden sm:flex"><span class="font-label-md text-label-md font-bold text-on-surface leading-tight">Host Viktor Ross</span><span class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest font-semibold leading-tight">VIP MC</span></div><div class="relative"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary/40 group-hover:ring-primary transition-all" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4ZBPrN_CYcaqxyzTqw3sxi6Dlay4UaUU7WftvxgkHLP8IP4oxQqGkdutOeW8QpUgBlacIuTxxRHjxapwdQiJx-zAYLrLa9NeVyOHxUYnIxKjlvHYnHUVfK2FVWcM48w3rEVjg06KieZbwQU8OcXtNnLa94frQB_uNS7iCa-mit3L7-P6A2Lf81ra886mO-obw2PEKQCRua57qBBDUMKBO9bxSN3p3DHbY45Ix67re06LckbXIYofb"/><span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-secondary-container ring-2 ring-surface"></span></div><span class="material-symbols-outlined text-on-surface-variant group-hover:text-on-surface transition-colors text-sm">expand_more</span></div></div></div></header><main class="w-full pt-20 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- System Status Strip & Breadcrumb -->
+<div class="w-full px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-container-lowest">
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-high">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface">Superadmin Vault</span>
+</div>
+<span class="text-outline-variant font-label-sm">/</span>
+<span class="font-label-md text-label-md text-primary font-bold tracking-wide">SYSTEM ROOT ACCESS</span>
+<span class="px-2 py-0.5 rounded bg-primary-container text-on-primary-container font-label-sm text-label-sm font-bold uppercase tracking-wider">L4 Operator</span>
+</div>
+<!-- Live Telemetry Health Beads -->
+<div class="flex flex-wrap items-center gap-3">
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container">
+<span class="material-symbols-outlined text-secondary text-sm">sensors</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">API Poller:</span>
+<span class="font-label-sm text-label-sm font-mono text-secondary font-bold">200 OK (11ms)</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container">
+<span class="material-symbols-outlined text-secondary text-sm">bolt</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Razorpay Hook:</span>
+<span class="font-label-sm text-label-sm font-mono text-secondary font-bold">LISTENING</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container">
+<span class="material-symbols-outlined text-primary text-sm">record_voice_over</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">GPT Announcer:</span>
+<span class="font-label-sm text-label-sm font-mono text-primary font-bold">ONLINE</span>
+</div>
+</div>
+</div>
+<!-- Dashboard Hero & Top KPIs -->
+<div class="w-full px-6 pt-6 pb-4">
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-3">
+<h1 class="font-headline-lg text-headline-lg text-on-surface font-extrabold tracking-tight">Grand Tambola Admin Console</h1>
+<span class="px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold uppercase tracking-wider">PROD CLUSTER #01</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Real-time room orchestration, payout authorizations, dynamic house splits &amp; high-stakes member telemetry.</p>
+</div>
+<!-- Global Actions -->
+<div class="flex items-center gap-3 shrink-0">
+<button class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-on-primary font-headline-sm text-sm font-bold shadow-md hover:bg-primary-fixed-dim transition-all" id="openInviteBtn">
+<span class="material-symbols-outlined text-lg">person_add</span>
+<span>Invite New Host/Member</span>
+</button>
+<button class="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-surface-container-high text-on-surface hover:bg-surface-variant transition-colors font-label-md text-label-md">
+<span class="material-symbols-outlined text-lg">lock_reset</span>
+<span>Rotate Auth Keys</span>
+</button>
+</div>
+</div>
+<!-- 4 High-Impact KPI Stat Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+<!-- KPI 1 -->
+<div class="relative overflow-hidden rounded-2xl bg-surface-container p-5 flex flex-col justify-between shadow-sm">
+<div class="absolute -right-6 -bottom-6 w-28 h-28 bg-primary/10 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex items-center justify-between mb-3">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant font-bold">Total Gross Turnover</span>
+<div class="p-2 rounded-lg bg-surface-container-high text-primary">
+<span class="material-symbols-outlined text-lg">currency_rupee</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-display-hero text-headline-lg font-bold text-on-surface font-mono">₹4,82,500</span>
+<span class="font-label-sm text-label-sm text-secondary font-bold flex items-center">
+<span class="material-symbols-outlined text-xs">arrow_upward</span>+18.4%
+          </span>
+</div>
+<div class="mt-4 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>Active Escrow: ₹1,12,000</span>
+<span class="text-secondary font-mono">Real-time</span>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="relative overflow-hidden rounded-2xl bg-surface-container p-5 flex flex-col justify-between shadow-sm">
+<div class="absolute -right-6 -bottom-6 w-28 h-28 bg-secondary/10 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex items-center justify-between mb-3">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant font-bold">Active Paid Rooms</span>
+<div class="p-2 rounded-lg bg-surface-container-high text-secondary">
+<span class="material-symbols-outlined text-lg">meeting_room</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-display-hero text-headline-lg font-bold text-on-surface font-mono">14</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">/ 20 Max Capacity</span>
+</div>
+<div class="mt-4 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> 9 High Roller Rooms</span>
+<span class="text-primary font-mono">5 Blitz</span>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="relative overflow-hidden rounded-2xl bg-surface-container p-5 flex flex-col justify-between shadow-sm">
+<div class="absolute -right-6 -bottom-6 w-28 h-28 bg-tertiary/10 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex items-center justify-between mb-3">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant font-bold">Total Tickets Issued</span>
+<div class="p-2 rounded-lg bg-surface-container-high text-tertiary">
+<span class="material-symbols-outlined text-lg">confirmation_number</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-display-hero text-headline-lg font-bold text-on-surface font-mono">12,450</span>
+<span class="font-label-sm text-label-sm text-secondary font-bold flex items-center">
+<span class="material-symbols-outlined text-xs">arrow_upward</span>+3,120 today
+          </span>
+</div>
+<div class="mt-4 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>Avg. 4.2 Tix/User</span>
+<span class="text-tertiary font-mono">98.9% Fill</span>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="relative overflow-hidden rounded-2xl bg-surface-container p-5 flex flex-col justify-between shadow-sm">
+<div class="absolute -right-6 -bottom-6 w-28 h-28 bg-primary-container/10 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex items-center justify-between mb-3">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant font-bold">Razorpay Fee Margin</span>
+<div class="p-2 rounded-lg bg-surface-container-high text-primary-fixed-dim">
+<span class="material-symbols-outlined text-lg">pie_chart</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-display-hero text-headline-lg font-bold text-on-surface font-mono">2.10%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Tier 1 VIP Net</span>
+</div>
+<div class="mt-4 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>Gross Margin: 8.4%</span>
+<span class="text-secondary font-mono">Settled ₹10.1k</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Primary Tab Bar Navigation -->
+<div class="w-full px-6 pt-2">
+<div class="flex items-center gap-2 p-1.5 rounded-2xl bg-surface-container-lowest overflow-x-auto">
+<button class="flex items-center gap-2 px-5 py-3 rounded-xl bg-surface-container-high text-primary font-headline-sm text-sm font-bold shadow-[inset_0_1px_1px_rgba(255,255,255,0.08)] whitespace-nowrap">
+<span class="material-symbols-outlined text-base">group</span>
+<span>1. Member Manager</span>
+<span class="px-2 py-0.5 rounded-full bg-primary-container text-on-primary-container font-label-sm text-label-sm">184</span>
+</button>
+<button class="flex items-center gap-2 px-5 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-headline-sm text-sm font-bold whitespace-nowrap">
+<span class="material-symbols-outlined text-base">podium</span>
+<span>2. Live Rooms &amp; Caller Monitor</span>
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+</button>
+<button class="flex items-center gap-2 px-5 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-headline-sm text-sm font-bold whitespace-nowrap">
+<span class="material-symbols-outlined text-base">monitoring</span>
+<span>3. Analytics &amp; CSV Export</span>
+</button>
+<button class="flex items-center gap-2 px-5 py-3 rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-headline-sm text-sm font-bold whitespace-nowrap">
+<span class="material-symbols-outlined text-base">tune</span>
+<span>4. Prize &amp; Cash Settings</span>
+</button>
+</div>
+</div>
+<!-- Main Active Content: Tab 1 (Member Manager) + Configuration & Quick Tools -->
+<div class="w-full px-6 py-6 flex flex-col xl:flex-row gap-6">
+<!-- Left / Center Main Stage: Member Manager Table & Search Filter -->
+<div class="flex-1 flex flex-col gap-5">
+<!-- Table Filter Bar -->
+<div class="p-4 rounded-2xl bg-surface-container flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+<div class="flex-1 flex items-center gap-3 bg-surface-container-low px-4 py-2 rounded-xl">
+<span class="material-symbols-outlined text-on-surface-variant text-lg">search</span>
+<input class="w-full bg-transparent text-on-surface placeholder:text-on-surface-variant/60 font-body-md text-body-md focus:outline-none" placeholder="Search by name, phone (+91), email, or wallet ID..." type="text"/>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-mono">⌘K</span>
+</div>
+<div class="flex flex-wrap items-center gap-3">
+<!-- Role Filter Chips -->
+<div class="flex items-center gap-1 bg-surface-container-low p-1 rounded-xl">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container text-primary font-label-sm text-label-sm font-bold">All</button>
+<button class="px-3 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm">Hosts (12)</button>
+<button class="px-3 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm">Cashiers (4)</button>
+<button class="px-3 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm">Admins (3)</button>
+<button class="px-3 py-1.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm">Players (165)</button>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface-container-high text-on-surface font-label-sm text-label-sm hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-base">filter_list</span>
+<span>Status</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-surface-container-high text-on-surface font-label-sm text-label-sm hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-base">sort</span>
+<span>Turnover: High-Low</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Data Table Card -->
+<div class="overflow-hidden rounded-2xl bg-surface-container shadow-sm flex flex-col">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-3.5 px-5 font-semibold">Member Details</th>
+<th class="py-3.5 px-4 font-semibold">Role</th>
+<th class="py-3.5 px-4 font-semibold text-center">Games Hosted</th>
+<th class="py-3.5 px-4 font-semibold text-right">Total Payouts</th>
+<th class="py-3.5 px-4 font-semibold text-center">Status</th>
+<th class="py-3.5 px-4 font-semibold">Last Active</th>
+<th class="py-3.5 px-5 font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 text-on-surface font-body-md text-body-md">
+<!-- Row 1: Active VIP Host -->
+<tr class="hover:bg-surface-container-high/60 transition-colors">
+<td class="py-3.5 px-5">
+<div class="flex items-center gap-3">
+<img class="w-9 h-9 rounded-full object-cover" data-alt="Close up sharp professional portrait of an Indian male games master host with stylish trimmed beard against dark moody neon violet club lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyvcYZBnDnod3C99DRJwNr53u3lo2W4BblS-8bBX1DK72q_UBNMzeJcriaMJcZK00oZ1VOxQa0PChZuTD-RFCMuJvp78IMv9q2-ou8MZ-bnwLPXXRrJnLZzkv92oCZeDNtdtbbU6N_-CL5po_bTVxYYZI6ACSVYbJeI8YtFTSq_zh11aVjMU870itJR2SSNyTmMqvn1287taVqCPCWhx_Kc8EBpRkWQyTljn7tKJvowPFUz_pAUtkQ"/>
+<div class="flex flex-col">
+<span class="font-headline-sm text-sm font-bold text-on-surface">Viktor Ross</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">viktor.ross@housievip.in</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container-highest text-primary font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-xs">mic</span> Lead Host
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center font-mono font-bold text-on-surface">148</td>
+<td class="py-3.5 px-4 text-right font-mono font-bold text-secondary">₹1,84,000</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary-container/30 text-secondary-fixed font-label-sm text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Active
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-on-surface-variant font-label-sm text-label-sm font-mono">Just now (Room #482)</td>
+<td class="py-3.5 px-5 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="p-1.5 rounded-lg bg-surface-container-high text-primary hover:bg-primary hover:text-on-primary transition-colors" title="Grant Host Access">
+<span class="material-symbols-outlined text-sm">stars</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors" title="Reset Password">
+<span class="material-symbols-outlined text-sm">key</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors" title="More options">
+<span class="material-symbols-outlined text-sm">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Cashier Operator -->
+<tr class="hover:bg-surface-container-high/60 transition-colors bg-surface-container-low/30">
+<td class="py-3.5 px-5">
+<div class="flex items-center gap-3">
+<img class="w-9 h-9 rounded-full object-cover" data-alt="Confident female fintech operator in dark techwear with neon emerald highlights in high-tech banking salon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOZe8Gq_DaUV-do-BBIcKtLuiuuHBzOvJM8dXhMjx3P7sZbYIWIX80UmZn-F4HcmI5Mrj6S2C37Tr_seLtr_CoVYpSIq-gVBFUNr2qxvdIUzzQ4bFkjOM-3VLX0Y4tBlYGAmBgU--rMoyeizWBpKrXySH3_r3iu8kCNUp_M7LLxg7tzX7YV5QYSYNBi2Yqun2GrCIYJF3GvJGWSe8-OGXhdWDsxDVzE7UcFO_95bBVOcg1HIvg-JtD"/>
+<div class="flex flex-col">
+<span class="font-headline-sm text-sm font-bold text-on-surface">Ananya Sen</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">+91 98450 19283</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container-highest text-secondary font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-xs">payments</span> Head Cashier
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center font-mono font-bold text-on-surface">32</td>
+<td class="py-3.5 px-4 text-right font-mono font-bold text-secondary">₹3,40,900</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary-container/30 text-secondary-fixed font-label-sm text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Active
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-on-surface-variant font-label-sm text-label-sm font-mono">4 mins ago</td>
+<td class="py-3.5 px-5 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="p-1.5 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-primary transition-colors" title="Grant Host Access">
+<span class="material-symbols-outlined text-sm">stars</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors" title="Reset Password">
+<span class="material-symbols-outlined text-sm">key</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors" title="More options">
+<span class="material-symbols-outlined text-sm">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Superadmin System Host -->
+<tr class="hover:bg-surface-container-high/60 transition-colors">
+<td class="py-3.5 px-5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container font-bold font-headline-sm">
+                      RK
+                    </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-sm font-bold text-on-surface">Rajesh K. (Root)</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">rajesh.ops@grandtambola.io</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-xs">shield_person</span> Admin
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center font-mono font-bold text-on-surface">512</td>
+<td class="py-3.5 px-4 text-right font-mono font-bold text-on-surface-variant">—</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary-container/30 text-secondary-fixed font-label-sm text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Active
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-on-surface-variant font-label-sm text-label-sm font-mono">12 mins ago</td>
+<td class="py-3.5 px-5 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="p-1.5 rounded-lg bg-surface-container-high text-on-surface-variant opacity-40 cursor-not-allowed" title="Grant Host Access">
+<span class="material-symbols-outlined text-sm">stars</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors" title="Reset Password">
+<span class="material-symbols-outlined text-sm">key</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors" title="More options">
+<span class="material-symbols-outlined text-sm">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Invited Host -->
+<tr class="hover:bg-surface-container-high/60 transition-colors bg-surface-container-low/30">
+<td class="py-3.5 px-5">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant font-bold font-headline-sm">
+                      MD
+                    </div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-sm font-bold text-on-surface">Meera Deshmukh</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">meera.d@bengaluruhousie.com</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-xs">mic</span> Guest Host
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center font-mono font-bold text-on-surface-variant">0</td>
+<td class="py-3.5 px-4 text-right font-mono font-bold text-on-surface-variant">₹0</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary-container/20 text-primary-fixed font-label-sm text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span> Invited
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-on-surface-variant font-label-sm text-label-sm font-mono">Token expires in 18h</td>
+<td class="py-3.5 px-5 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="p-1.5 rounded-lg bg-surface-container-high text-primary hover:bg-surface-variant transition-colors" title="Resend Invite">
+<span class="material-symbols-outlined text-sm">send</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-container-high text-error hover:bg-error-container hover:text-on-error-container transition-colors" title="Revoke Invite">
+<span class="material-symbols-outlined text-sm">cancel</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5: High Roller Player (Flagged/Suspended) -->
+<tr class="hover:bg-surface-container-high/60 transition-colors">
+<td class="py-3.5 px-5">
+<div class="flex items-center gap-3">
+<img class="w-9 h-9 rounded-full object-cover" data-alt="Stylized neon avatar of an aggressive high-roller gamer silhouette illuminated with red warning amber rim lights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqKsPngLHW8SF9xLDYFdErm9OOAso4EWI06CfypTRJrUb4FqfEDgSWPffuv0Pg-QndkhFFS5qSfl3FrTc6lEOqh-Dz_zGg3IsY8Jjrnfm99lMk0JVZdWlcVLo1G0D-YEBqoshlAmgFAeXUtYTVnGE7Rv1wMpFfIuT0GzAj7vOil45E8Hwa1YycXPZsLQZpyFAJq-09qnKPnoDU_mA7rt23yTpY8U7Q6hcnYX_1LULtbslb5hlhJCsx"/>
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-sm font-bold text-on-surface">Karan 'Bluff' Mehta</span>
+<span class="material-symbols-outlined text-error text-xs" title="Auto-flagged claim anomalies">warning</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">karan.mehta99@gmail.com</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container-highest text-tertiary font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-xs">sports_esports</span> VIP Player
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-center font-mono font-bold text-on-surface">0</td>
+<td class="py-3.5 px-4 text-right font-mono font-bold text-secondary">₹72,400</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-error-container/40 text-error font-label-sm text-label-sm font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> Suspended
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-on-surface-variant font-label-sm text-label-sm font-mono">Yesterday 23:42</td>
+<td class="py-3.5 px-5 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="p-1.5 rounded-lg bg-surface-container-high text-secondary hover:bg-surface-variant transition-colors" title="Reinstate Member">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+</button>
+<button class="p-1.5 rounded-lg bg-surface-container-high text-error hover:bg-error-container hover:text-on-error-container transition-colors" title="Remove Member">
+<span class="material-symbols-outlined text-sm">delete_forever</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Pagination -->
+<div class="px-5 py-3.5 bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-3 text-on-surface-variant font-label-sm text-label-sm">
+<div class="flex items-center gap-2">
+<span>Showing <span class="font-bold text-on-surface font-mono">1 to 5</span> of 184 registered members</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant">Page 1 of 37</span>
+</div>
+<div class="flex items-center gap-1.5">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container text-on-surface-variant opacity-50 cursor-not-allowed">Previous</button>
+<button class="px-3 py-1.5 rounded-lg bg-primary-container text-on-primary-container font-bold">1</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high">2</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high">3</button>
+<span class="px-1 text-on-surface-variant">...</span>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high">37</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high">Next</button>
+</div>
+</div>
+</div>
+<!-- Export Data Toolbar Strip -->
+<div class="rounded-2xl bg-surface-container p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
+<div class="flex items-center gap-3">
+<div class="p-2.5 rounded-xl bg-surface-container-high text-primary">
+<span class="material-symbols-outlined text-xl">dataset</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-sm font-bold text-on-surface">Real-Time Data Extraction Vault</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Automated ledger reconciliations compliant with Indian online skill gaming norms.</span>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+<button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-surface-container-high text-on-surface hover:bg-surface-variant font-label-md text-label-md transition-colors">
+<span class="material-symbols-outlined text-base">table_view</span>
+<span>Download Analytics CSV</span>
+</button>
+<button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-surface-container-high text-on-surface hover:bg-surface-variant font-label-md text-label-md transition-colors">
+<span class="material-symbols-outlined text-base">history_edu</span>
+<span>Export Round History CSV</span>
+</button>
+<button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-primary text-on-primary font-bold font-label-md text-label-md hover:bg-primary-fixed-dim transition-colors shadow-sm">
+<span class="material-symbols-outlined text-base">receipt_long</span>
+<span>Tax &amp; Commission Report</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Right Rail: Prize & Razorpay Configuration Card -->
+<div class="w-full xl:w-96 flex flex-col gap-5 shrink-0">
+<!-- Prize & Gateway Config Card -->
+<div class="rounded-2xl bg-surface-container p-6 shadow-sm flex flex-col gap-6">
+<div class="flex items-center justify-between pb-3 border-b-0 bg-surface-container-low -mx-6 -mt-6 p-6 rounded-t-2xl">
+<div class="flex items-center gap-2.5">
+<div class="p-2 rounded-lg bg-surface-container-high text-primary">
+<span class="material-symbols-outlined text-lg">tune</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface">Prize &amp; Cash Engine</h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Session #482 Operational Policy</span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-secondary-container/20 text-secondary font-mono font-bold text-xs">V4.8-SYNC</span>
+</div>
+<!-- Test Mode Toggle Pill -->
+<div class="p-3.5 rounded-xl bg-surface-container-low flex items-center justify-between gap-3">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-bold text-on-surface">Gateway Test Mode</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Auto-approve payouts when live keys absent</span>
+</div>
+<!-- Capacitive Style Toggle -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<!-- Razorpay Live Key Input -->
+<div class="flex flex-col gap-2">
+<label class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold flex justify-between">
+<span>Razorpay Key ID</span>
+<span class="text-secondary font-mono">Encrypted</span>
+</label>
+<div class="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-surface-container-low">
+<span class="material-symbols-outlined text-on-surface-variant text-base">credit_card</span>
+<input class="w-full bg-transparent text-on-surface font-mono text-sm focus:outline-none" type="password" value="rzp_live_938k20f92jka"/>
+<button class="text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined text-sm">visibility</span>
+</button>
+</div>
+</div>
+<!-- Ticket Price Input -->
+<div class="flex flex-col gap-2">
+<label class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">Default Ticket Price</label>
+<div class="relative flex items-center">
+<span class="absolute left-3.5 font-mono text-on-surface-variant text-sm font-bold">₹</span>
+<input class="w-full pl-8 pr-16 py-2.5 rounded-xl bg-surface-container-low text-on-surface font-mono text-base font-bold focus:outline-none focus:ring-0" type="number" value="200"/>
+<span class="absolute right-3.5 font-label-sm text-label-sm text-on-surface-variant">INR / Tix</span>
+</div>
+</div>
+<!-- Prize Allocation Sliders / Inputs Breakdown -->
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">Prize Allocations</span>
+<span class="font-label-sm text-label-sm text-secondary font-mono font-bold">Total: 100%</span>
+</div>
+<!-- Allocation Item 1: Early Five -->
+<div class="p-3 rounded-xl bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
+<span class="font-label-md text-label-md font-bold text-on-surface">Early Five (Jaldi 5)</span>
+</div>
+<div class="flex items-center gap-1 font-mono">
+<input class="w-10 text-right bg-surface-container-high text-primary font-bold py-1 px-1.5 rounded text-sm focus:outline-none" type="text" value="10"/>
+<span class="text-on-surface-variant text-sm">%</span>
+</div>
+</div>
+<!-- Allocation Item 2: Three Lines (15% each = 45%) -->
+<div class="p-3 rounded-xl bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+<span class="font-label-md text-label-md font-bold text-on-surface">Lines (Top, Mid, Bottom)</span>
+</div>
+<div class="flex items-center gap-1 font-mono">
+<input class="w-10 text-right bg-surface-container-high text-secondary font-bold py-1 px-1.5 rounded text-sm focus:outline-none" type="text" value="15"/>
+<span class="text-on-surface-variant text-sm">% x3</span>
+</div>
+</div>
+<!-- Allocation Item 3: Corners -->
+<div class="p-3 rounded-xl bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+<span class="font-label-md text-label-md font-bold text-on-surface">Four Corners</span>
+</div>
+<div class="flex items-center gap-1 font-mono">
+<input class="w-10 text-right bg-surface-container-high text-tertiary font-bold py-1 px-1.5 rounded text-sm focus:outline-none" type="text" value="10"/>
+<span class="text-on-surface-variant text-sm">%</span>
+</div>
+</div>
+<!-- Allocation Item 4: Full House -->
+<div class="p-3 rounded-xl bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+<span class="font-label-md text-label-md font-bold text-on-surface">Grand Full House</span>
+</div>
+<div class="flex items-center gap-1 font-mono">
+<input class="w-10 text-right bg-surface-container-high text-primary font-bold py-1 px-1.5 rounded text-sm focus:outline-none" type="text" value="35"/>
+<span class="text-on-surface-variant text-sm">%</span>
+</div>
+</div>
+</div>
+<!-- Draw Interval & Caller Takeover Rules -->
+<div class="flex flex-col gap-3 pt-2">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">Draw Speed Interval</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Caller automated countdown</span>
+</div>
+<div class="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-surface-container-low font-mono font-bold text-primary">
+<span>5.0s</span>
+<span class="text-xs text-on-surface-variant">cycle</span>
+</div>
+</div>
+<div class="p-3.5 rounded-xl bg-surface-container-low flex items-center justify-between gap-3">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-bold text-on-surface">Operator Caller Takeover</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Allow superadmin manual override if host drops</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+<!-- Save Button -->
+<button class="w-full py-3 rounded-xl bg-primary text-on-primary font-headline-sm text-sm font-bold shadow-md hover:bg-primary-fixed-dim transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg">save</span>
+<span>Apply Active Salon Configuration</span>
+</button>
+</div>
+<!-- Quick Room Audit Snapshot -->
+<div class="rounded-2xl bg-surface-container p-5 flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-bold">RNG Entropy Check</span>
+<span class="px-2 py-0.5 rounded bg-secondary-container/20 text-secondary font-label-sm text-label-sm font-bold">SHA-256 Valid</span>
+</div>
+<div class="p-3 rounded-xl bg-surface-container-low font-mono text-xs text-on-surface-variant break-all">
+          0x9a88f72c49b01f3e82d1c6742aef91208940c72b5
+        </div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Seed refreshed every 90-ball round. Certified zero-bias distributor.</span>
+</div>
+</div>
+</div>
+<!-- Modal: Invite New Host / Member -->
+<div class="fixed inset-0 z-50 hidden bg-surface-container-lowest/80 backdrop-blur-md flex items-center justify-center p-4" id="inviteModal">
+<div class="w-full max-w-lg rounded-2xl bg-surface-container p-6 shadow-xl flex flex-col gap-5">
+<div class="flex items-center justify-between pb-2">
+<div class="flex items-center gap-2.5">
+<div class="p-2 rounded-xl bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-xl">person_add</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Generate Host / Member Invite</h3>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Issues encrypted session cookie with strict role scopes.</span>
+</div>
+</div>
+<button class="p-1 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" id="closeInviteBtn">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+</div>
+<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">Target Full Legal Name</label>
+<input class="px-3.5 py-2.5 rounded-xl bg-surface-container-low text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none font-body-md text-body-md" placeholder="e.g. Samarth Oberoi" type="text"/>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">Email / WhatsApp Number</label>
+<input class="px-3.5 py-2.5 rounded-xl bg-surface-container-low text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none font-body-md text-body-md font-mono" placeholder="samarth@housie.in" type="text"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">Assign Security Role</label>
+<select class="px-3.5 py-2.5 rounded-xl bg-surface-container-low text-on-surface focus:outline-none font-body-md text-body-md">
+<option value="host">Live VIP Host</option>
+<option value="cashier">Cashier Operator</option>
+<option value="admin">Cluster Administrator</option>
+<option value="player">Whitelisted High-Roller</option>
+</select>
+</div>
+</div>
+<div class="p-3.5 rounded-xl bg-surface-container-low flex flex-col gap-2">
+<div class="flex items-center justify-between text-on-surface font-label-sm text-label-sm">
+<span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-sm text-primary">cookie</span> Session Auth Lifetime:</span>
+<span class="font-mono text-secondary font-bold">24 Hours (HttpOnly)</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">The recipient will receive an onboarding magic-link enforcing 2FA via SMS OTP prior to console handover.</p>
+</div>
+</div>
+<div class="flex items-center justify-end gap-3 pt-2">
+<button class="px-4 py-2.5 rounded-xl bg-surface-container-high text-on-surface font-label-md text-label-md hover:bg-surface-variant transition-colors" id="cancelInviteBtn">
+          Cancel
+        </button>
+<button class="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-headline-sm text-sm font-bold hover:bg-primary-fixed-dim transition-all shadow-md flex items-center gap-2" id="dispatchInviteBtn">
+<span class="material-symbols-outlined text-base">outgoing_mail</span>
+<span>Dispatch Invite Token</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Inline Micro-Interactions Script -->
+<script>
+    (function() {
+      const openBtn = document.getElementById('openInviteBtn');
+      const closeBtn = document.getElementById('closeInviteBtn');
+      const cancelBtn = document.getElementById('cancelInviteBtn');
+      const dispatchBtn = document.getElementById('dispatchInviteBtn');
+      const modal = document.getElementById('inviteModal');
+
+      function openModal() {
+        if (modal) modal.classList.remove('hidden');
+      }
+
+      function closeModal() {
+        if (modal) modal.classList.add('hidden');
+      }
+
+      if (openBtn) openBtn.addEventListener('click', openModal);
+      if (closeBtn) closeBtn.addEventListener('click', closeModal);
+      if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+      
+      if (dispatchBtn) {
+        dispatchBtn.addEventListener('click', function() {
+          const origText = dispatchBtn.innerHTML;
+          dispatchBtn.innerHTML = '<span class="material-symbols-outlined text-base animate-spin">autorenew</span> Dispatched!';
+          dispatchBtn.classList.add('bg-secondary', 'text-on-secondary');
+          setTimeout(() => {
+            closeModal();
+            dispatchBtn.innerHTML = origText;
+            dispatchBtn.classList.remove('bg-secondary', 'text-on-secondary');
+          }, 800);
+        });
+      }
+
+      // Close modal on ESC key
+      window.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+          closeModal();
+        }
+      });
+    })();
+  </script>
+</div></main><footer class="w-full bg-surface-container-lowest py-12"><div class="w-full px-8 flex flex-col md:flex-row items-center justify-between gap-6"><div class="flex items-center gap-3"><img alt="Midnight Grand Tambola Logo" class="h-6 w-auto object-contain opacity-70" src="https://lh3.googleusercontent.com/aida/AEtjO1UP0cV2S7IRz1Pt7ACdFUQ5VqfD5IruXGevnQR74GlzqhC4o7kmMUVKNehBxwE9Q28jq0yiD2CaS-mvjmKb2-umG-WBQfu27wheRii-gi_k9nyPqeEIunjrzsYdk8GolmHcvoYxhFloDd6BqeMgXo_r_JAx9KsxhJjeMtFad8oMW4ZyywfNR6X0flRMdVF3V_OFBOMrnWW81EAFYseR7bnVPlMMNNgCkI-fRoBSicpGP-3wxVOkHWffE_4"/><span class="font-label-md text-label-md text-on-surface-variant">© 2024 Grand Tambola Salon. Real-Time Certified RNG Engine.</span></div><div class="flex items-center gap-6"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Fair Play Protocol v4.8</span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">WebSocket Engine Active</span><span class="font-label-sm text-label-sm text-secondary-fixed flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-secondary inline-block"></span> Systems Operational</span></div></div></footer></body></html>

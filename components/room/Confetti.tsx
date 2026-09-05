@@ -20,8 +20,8 @@ export default function Confetti({ prizes }: { prizes?: Prize[] }) {
     canvas.height = window.innerHeight;
 
     const COLORS = [
-      "#a855f7", "#ec4899", "#f59e0b", "#10b981",
-      "#3b82f6", "#ef4444", "#f472b6", "#fbbf24",
+      "#f59e0b", "#ffc174", "#ffddb8", "#4edea3",
+      "#00a572", "#6ffbbe", "#d5c3ff", "#e9ddff",
     ];
     const pieces: {
       x: number; y: number; vx: number; vy: number;

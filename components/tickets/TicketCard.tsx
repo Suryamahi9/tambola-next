@@ -24,12 +24,12 @@ interface Props {
 }
 
 const STYLE_LABELS: Record<TicketStyle, string> = {
-  carnival: "🎡 Carnival (default)",
+  carnival: "🎡 Carnival",
   ocean: "🌊 Ocean Blue",
   rosegold: "🥀 Rose Gold",
   emerald: "🌲 Emerald Gold",
   sunset: "🌅 Sunset",
-  paperwhite: "⚪ Paper White",
+  paperwhite: "⚪ Paper White (default)",
   mint: "🌿 Sky Mint",
   lavender: "🔮 Lavender",
   charcoalgold: "🖤 Charcoal Gold",
@@ -50,6 +50,7 @@ interface ThemeSpec {
   filled: string;
   called: string;
   watermark: string;
+  foilDark?: boolean;
 }
 
 const THEMES: Record<Exclude<TicketStyle, "carnival">, ThemeSpec> = {
@@ -68,6 +69,7 @@ const THEMES: Record<Exclude<TicketStyle, "carnival">, ThemeSpec> = {
     watermark: "rgba(125,211,252,0.12)",
   },
   rosegold: {
+    foilDark: true,
     card: "bg-gradient-to-b from-[#fdf0ee] to-[#f4d8d3] rounded-[6px] border border-[#b36a5e] shadow-[0_10px_28px_rgba(0,0,0,0.28)]",
     band: "bg-gradient-to-r from-[#8b3742] to-[#a84c5a]",
     brand: "text-[#fdeceb]",
@@ -96,6 +98,7 @@ const THEMES: Record<Exclude<TicketStyle, "carnival">, ThemeSpec> = {
     watermark: "rgba(251,191,36,0.11)",
   },
   sunset: {
+    foilDark: true,
     card: "bg-gradient-to-b from-[#fff3e0] to-[#fbd8b8] rounded-[6px] border border-[#7a4a21] shadow-[0_10px_28px_rgba(0,0,0,0.28)]",
     band: "bg-gradient-to-r from-[#d96a1d] to-[#b84e10]",
     brand: "text-[#fff7ed]",
@@ -110,6 +113,7 @@ const THEMES: Record<Exclude<TicketStyle, "carnival">, ThemeSpec> = {
     watermark: "rgba(217,106,29,0.12)",
   },
   paperwhite: {
+    foilDark: true,
     card: "bg-gradient-to-b from-white to-[#f6f6f6] rounded-[6px] border border-black shadow-[0_10px_28px_rgba(0,0,0,0.22)]",
     brand: "text-black",
     serial: "text-black",
@@ -118,11 +122,12 @@ const THEMES: Record<Exclude<TicketStyle, "carnival">, ThemeSpec> = {
     line: "#000000",
     gridText: "text-[#000000]",
     num: "text-black",
-    filled: "bg-black/[0.04]",
+    filled: "bg-black/[0.06]",
     called: "bg-[#d23c2e] text-white",
     watermark: "rgba(0,0,0,0.09)",
   },
   mint: {
+    foilDark: true,
     card: "bg-gradient-to-b from-[#ecfbf2] to-[#d3f0e0] rounded-[6px] border border-[#2b9160] shadow-[0_10px_28px_rgba(0,0,0,0.26)]",
     band: "bg-gradient-to-r from-[#15803d] to-[#0d6b35]",
     brand: "text-[#ecfdf5]",
@@ -137,6 +142,7 @@ const THEMES: Record<Exclude<TicketStyle, "carnival">, ThemeSpec> = {
     watermark: "rgba(43,145,96,0.13)",
   },
   lavender: {
+    foilDark: true,
     card: "bg-gradient-to-b from-[#f5f3ff] to-[#e6e0fa] rounded-[6px] border border-[#8a78d1] shadow-[0_10px_28px_rgba(0,0,0,0.26)]",
     band: "bg-gradient-to-r from-[#6d28d9] to-[#5b21b6]",
     brand: "text-[#ede9fe]",
@@ -164,6 +170,7 @@ const THEMES: Record<Exclude<TicketStyle, "carnival">, ThemeSpec> = {
     watermark: "rgba(251,191,36,0.11)",
   },
   navycream: {
+    foilDark: true,
     card: "bg-gradient-to-b from-[#fdf6e8] to-[#f2e3c4] rounded-[6px] border border-[#1e3a5f] shadow-[inset_0_0_0_3px_#fffaf0,0_10px_28px_rgba(0,0,0,0.28)]",
     band: "bg-gradient-to-r from-[#16324f] to-[#244a7e]",
     brand: "text-[#eef2ff]",
@@ -270,43 +277,42 @@ function CarnivalCard({ grid, name, index, total, called }: Omit<Props, "style">
 function ThemedCard({ grid, name, index, total, called, style }: Props & { style: Exclude<TicketStyle, "carnival"> }) {
   const t = THEMES[style];
   const brand = name || "Tambola";
-const header = t.band ? (
-    <div className={`flex items-center gap-2 px-3 py-1.5 ${t.band}`}>
-      <span className={`font-vintage-display min-w-0 flex-1 truncate text-[11px] font-bold uppercase leading-none tracking-[0.22em] ${t.brand}`}>
-        ✦ {brand}
-      </span>
-      <span className={`font-vintage-display shrink-0 text-[10px] font-bold italic tracking-wide ${t.serial}`}>
-        No. {String(index + 1).padStart(2, "0")}
-        <span className={t.serialMuted}> / {String(total).padStart(2, "0")}</span>
-      </span>
-    </div>
-  ) : (
-    <div className="flex items-center gap-2 px-3 py-1.5">
-      <span className={`font-vintage-display min-w-0 flex-1 truncate text-[11px] font-bold uppercase leading-none tracking-[0.22em] ${t.brand}`}>
-        ✦ {brand}
-      </span>
-      <span className={`font-vintage-display shrink-0 text-[10px] font-bold italic tracking-wide ${t.serial}`}>
-        No. {String(index + 1).padStart(2, "0")}
-        <span className={t.serialMuted}> / {String(total).padStart(2, "0")}</span>
-      </span>
-    </div>
-  );
+  const foil = t.foilDark ? "ticket-foil-deep" : "ticket-foil";
+  const serialRing = "ABCDEFGH"[index % 8];
+  const serialId = `#TKT-${String(8901 + index).slice(-4)}-${serialRing}`;
   return (
-    <div className={`relative break-inside-avoid overflow-hidden ${t.card}`}>
+    <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center"
       >
         <span
-          className="font-vintage-display whitespace-nowrap text-[20px] font-bold tracking-[0.22em] sm:text-[24px]"
+          className="font-vintage-display whitespace-nowrap text-[24px] font-bold uppercase tracking-[0.28em] sm:text-[34px] rotate-[-8deg]"
           style={{ color: t.watermark }}
         >
           NAVEEN CHERRY
         </span>
       </div>
-      {header}
-      {t.rule && <div className={`mx-3 mt-0 h-[3px] ${t.rule}`} />}
-      <div className="p-2 pt-1.5">
+
+      {/* Header band */}
+      <div className={`relative z-[2] flex items-center gap-2.5 ${t.band ? t.band : ""} px-3 py-2`}>
+        <span
+          className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[15px] ${t.rule ? t.rule : ""} text-white shadow`}
+        >
+          <span className="material-symbols-outlined text-[15px]">military_tech</span>
+        </span>
+        <span className={`font-vintage-display min-w-0 flex-1 truncate text-[12px] font-bold uppercase leading-none tracking-[0.2em] ${foil}`}>
+          ✦ {brand}
+        </span>
+        <span className={`font-vintage-display shrink-0 text-[11px] font-bold italic tracking-wide ${foil}`}>
+          No. {String(index + 1).padStart(2, "0")}
+          <span className={t.serialMuted}> / {String(total).padStart(2, "0")}</span>
+        </span>
+      </div>
+
+      {t.rule && <div className={`relative z-[2] mx-3 mt-0 h-[3px] ${t.rule}`} />}
+
+      <div className="relative z-[2] p-2 pt-1.5">
         <div
           className="rounded-[4px] border p-[3px]"
           style={{ borderColor: t.line }}
@@ -334,15 +340,27 @@ const header = t.band ? (
           </div>
         </div>
       </div>
+
+      {/* Serial + barcode footer */}
+      <div className={`relative z-[2] flex flex-wrap items-center justify-between gap-2 px-3 pb-2 pt-1 ${t.serialMuted}`}>
+        <span className="flex items-center gap-2 font-mono text-[9px] font-bold tracking-widest">
+          {serialId}
+          <svg className="h-3 w-20" fill="currentColor" viewBox="0 0 100 16" aria-hidden="true">
+            {[3,1,4,2,1,3,5,2,4,1,3,2,4,2,1,5,2,3,1,4,2,3,5,2,4,1,3,2,1,4].map((w, idx) => (
+              <rect key={idx} height="16" width={w} x={idx * 3.3} y="0"></rect>
+            ))}
+          </svg>
+        </span>
+      </div>
     </div>
   );
 }
 
 export default function TicketCard(props: Props) {
-  if (props.style === "carnival" || !props.style) {
+  if (props.style === "carnival") {
     return <CarnivalCard {...props} />;
   }
-  return <ThemedCard {...props} style={props.style} />;
+  return <ThemedCard {...props} style={props.style ?? "paperwhite"} />;
 }
 
 export { STYLE_LABELS };

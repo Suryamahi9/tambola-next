@@ -16,7 +16,7 @@ export default function LoginForm({ next }: { next: string }) {
       <div>
         <label
           htmlFor="email"
-          className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-neutral-400"
+          className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-on-surface-variant"
         >
           Email
         </label>
@@ -26,14 +26,14 @@ export default function LoginForm({ next }: { next: string }) {
           type="email"
           autoComplete="email"
           required
-          className="w-full rounded-xl border border-white/15 bg-[#0b0d1a] px-4 py-2.5 text-sm text-neutral-100 outline-none transition placeholder:text-neutral-500 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+          className="w-full rounded-xl border border-white/10 bg-surface-container-lowest px-4 py-2.5 text-sm text-on-surface outline-none transition placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/20"
           placeholder="you@example.com"
         />
       </div>
       <div>
         <label
           htmlFor="password"
-          className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-neutral-400"
+          className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-on-surface-variant"
         >
           Password
         </label>
@@ -47,7 +47,7 @@ export default function LoginForm({ next }: { next: string }) {
       </div>
 
       {state?.error && (
-        <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+        <p className="rounded-lg border border-error/30 bg-error/10 px-3 py-2 text-sm text-error">
           {state.error}
         </p>
       )}
@@ -55,7 +55,7 @@ export default function LoginForm({ next }: { next: string }) {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-violet-600/30 transition hover:brightness-110 disabled:opacity-60"
+        className="w-full rounded-full bg-gradient-to-r from-primary-container via-primary to-primary-fixed px-5 py-3 text-sm font-bold text-on-primary-container shadow-lg shadow-primary/25 transition hover:brightness-110 disabled:opacity-60"
       >
         {pending ? "Signing in…" : "Sign In"}
       </button>

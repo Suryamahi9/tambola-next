@@ -33,7 +33,7 @@ export default function RoomInviteCard({
 
   useEffect(() => {
     let active = true;
-    QRCode.toDataURL(joinUrl, { width: 400, margin: 1, color: { dark: "#1e1b4b", light: "#ffffff" } })
+    QRCode.toDataURL(joinUrl, { width: 400, margin: 1, color: { dark: "#0b0e15", light: "#ffffff" } })
       .then((url) => {
         if (active) setQrUrl(url);
       })
@@ -70,9 +70,9 @@ export default function RoomInviteCard({
       const ctx = card.getContext("2d")!;
 
       const grad = ctx.createLinearGradient(0, 0, 720, 1040);
-      grad.addColorStop(0, "#4c1d95");
-      grad.addColorStop(0.5, "#312e81");
-      grad.addColorStop(1, "#831843");
+      grad.addColorStop(0, "#0b0e15");
+      grad.addColorStop(0.55, "#1d1f27");
+      grad.addColorStop(1, "#3a2a12");
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, 720, 1040);
 
@@ -126,80 +126,89 @@ export default function RoomInviteCard({
 
   return (
     <div
-      className="fixed inset-0 z-[90] flex items-center justify-center bg-black/70 p-4"
+      className="fixed inset-0 z-[90] flex items-center justify-center bg-surface-container-lowest/80 backdrop-blur-2xl p-4"
       role="dialog"
       aria-modal="true"
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="glass w-full max-w-sm rounded-3xl border border-white/15 p-6 shadow-2xl"
+        className="relative w-full max-w-sm rounded-3xl bg-surface-container-low/95 backdrop-blur-2xl p-6 shadow-2xl overflow-hidden"
       >
-        <div className="flex items-center justify-between">
-          <p className="font-display text-lg font-bold text-white">Invite players</p>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close"
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-white/[0.06] text-neutral-300 transition hover:text-white"
-          >
-            ✕
-          </button>
-        </div>
-
-        <div className="mt-4 flex items-center justify-between rounded-2xl border border-white/10 bg-[#0b0d1a] px-4 py-3">
-          <div>
-            <p className="text-[11px] uppercase tracking-wider text-neutral-500">Room code</p>
-            <p className="font-mono text-2xl font-bold tracking-[0.25em] text-violet-300">
-              {room.code}
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-[11px] uppercase tracking-wider text-neutral-500">Status</p>
-            <p className="text-sm font-bold text-emerald-300">
-              {paidCount} player{paidCount === 1 ? "" : "s"} in
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-4 flex items-center justify-center rounded-2xl border border-white/10 bg-white p-3">
-          {qrUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={qrUrl} alt={`QR code to join room ${room.code}`} width={208} height={208} />
-          ) : (
-            <div className="flex h-[208px] w-[208px] items-center justify-center text-sm text-neutral-500">
-              Generating…
+        <div className="absolute -top-20 left-1/2 w-64 h-64 bg-primary-container/25 rounded-full blur-3xl pointer-events-none -translate-x-1/2" aria-hidden="true" />
+        <div className="relative z-[1]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary text-lg">link</span>
+              <p className="font-headline-sm text-headline-sm font-bold text-on-surface">Invite players</p>
             </div>
-          )}
-        </div>
-        <p className="mt-2 text-center text-[11px] text-neutral-500">
-          Scan with any phone camera to join instantly
-        </p>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-container text-on-surface-variant transition hover:text-on-surface"
+            >
+              <span className="material-symbols-outlined text-lg">close</span>
+            </button>
+          </div>
 
-        <div className="mt-4 flex flex-wrap gap-2">
+          <div className="mt-4 flex items-center justify-between rounded-2xl border border-outline-variant/40 bg-surface-container-lowest px-4 py-3">
+            <div>
+              <p className="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant">Room code</p>
+              <p className="font-mono text-2xl font-bold tracking-[0.25em] text-primary-fixed-dim">
+                {room.code}
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant">Status</p>
+              <p className="text-sm font-bold text-secondary">
+                {paidCount} player{paidCount === 1 ? "" : "s"} in
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-4 flex items-center justify-center rounded-2xl border border-white/10 bg-white p-3">
+            {qrUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={qrUrl} alt={`QR code to join room ${room.code}`} width={208} height={208} />
+            ) : (
+              <div className="flex h-[208px] w-[208px] items-center justify-center text-sm text-on-surface-variant">
+                Generating…
+              </div>
+            )}
+          </div>
+          <p className="mt-2 text-center text-[11px] text-on-surface-variant">
+            Scan with any phone camera to join instantly
+          </p>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={copyLink}
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-secondary-container/20 px-4 py-2.5 text-sm font-semibold text-secondary transition hover:bg-secondary-container/30"
+            >
+              <span className="material-symbols-outlined text-lg">{copied ? "check_circle" : "content_copy"}</span>
+              {copied ? "Copied!" : "Copy link"}
+            </button>
+            <button
+              type="button"
+              onClick={waShare}
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-surface-container-high px-4 py-2.5 text-sm font-semibold text-on-surface-variant transition hover:bg-surface-container-highest hover:text-on-surface"
+            >
+              <span className="material-symbols-outlined text-lg">share</span>
+              WhatsApp
+            </button>
+          </div>
           <button
             type="button"
-            onClick={copyLink}
-            className="flex-1 rounded-full border border-white/15 bg-white/[0.06] px-4 py-2.5 text-sm font-semibold text-neutral-200 transition hover:border-violet-400 hover:text-violet-200"
+            disabled={!qrUrl || downloading}
+            onClick={() => void downloadCard()}
+            className="mt-2 w-full rounded-xl bg-gradient-to-r from-primary-container via-primary to-primary-fixed px-4 py-2.5 text-sm font-bold text-on-primary-container shadow-[0_0_24px_rgba(245,158,11,0.3)] transition hover:brightness-110 disabled:opacity-50"
           >
-            {copied ? "Copied ✓" : "🔗 Copy link"}
-          </button>
-          <button
-            type="button"
-            onClick={waShare}
-            className="flex-1 rounded-full bg-emerald-600/20 px-4 py-2.5 text-sm font-semibold text-emerald-300 transition hover:bg-emerald-600/30"
-          >
-            💬 WhatsApp
+            <span className="material-symbols-outlined text-lg align-middle mr-1">download</span>
+            {downloading ? "Building card…" : "Download invite card"}
           </button>
         </div>
-        <button
-          type="button"
-          disabled={!qrUrl || downloading}
-          onClick={() => void downloadCard()}
-          className="mt-2 w-full rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 py-2.5 text-sm font-bold text-white transition hover:brightness-110 disabled:opacity-50"
-        >
-          {downloading ? "Building card…" : "⬇ Download invite card"}
-        </button>
       </div>
     </div>
   );

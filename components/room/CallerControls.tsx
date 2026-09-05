@@ -30,16 +30,16 @@ export default function CallerControls({
   const history = [...calledNumbers].reverse();
 
   return (
-    <div className="glass-subtle mt-4 rounded-2xl border border-white/10 p-4">
+    <div className="mt-4 rounded-2xl bg-surface-container/90 backdrop-blur-2xl p-4 shadow-xl">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+        <p className="font-label-sm text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
           Draw controls
         </p>
         {live && calledNumbers.length > 0 && (
           <button
             type="button"
             onClick={() => setShowHistory((v) => !v)}
-            className="text-[11px] font-semibold text-violet-300 transition hover:text-violet-100"
+            className="text-[11px] font-semibold text-primary-fixed-dim transition hover:text-primary"
           >
             {showHistory ? "Hide" : `History (${calledNumbers.length})`}
           </button>
@@ -55,8 +55,8 @@ export default function CallerControls({
               onClick={() => onSpeedChange(ms)}
               className={`rounded-full px-3 py-1 text-[11px] font-bold transition ${
                 speedMs === ms
-                  ? "bg-violet-600/30 text-violet-200"
-                  : "bg-white/[0.05] text-neutral-400 hover:bg-white/[0.1] hover:text-neutral-200"
+                  ? "bg-secondary-container text-on-secondary-container shadow-md"
+                  : "bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface"
               }`}
             >
               {label}
@@ -73,8 +73,8 @@ export default function CallerControls({
                 key={`${n}-${i}`}
                 className={`flex items-center justify-center rounded-md py-0.5 text-[11px] font-bold ${
                   i === 0
-                    ? "bg-gradient-to-br from-violet-500 to-fuchsia-600 text-white"
-                    : "bg-white/[0.06] text-neutral-400"
+                    ? "bg-gradient-to-tr from-primary-fixed to-primary-container text-on-primary-container shadow-md"
+                    : "bg-surface-container-high text-on-surface-variant"
                 }`}
               >
                 {n}

@@ -3,16 +3,110 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
-  --font-display: var(--font-space-grotesk), var(--font-geist-sans), ui-sans-serif, sans-serif;
+  --font-sans: var(--font-pjs), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-space-grotesk), ui-monospace, SFMono-Regular, monospace;
+  --font-display: var(--font-syne), var(--font-pjs), ui-sans-serif, sans-serif;
   --font-vintage-display: var(--font-playfair), Georgia, "Times New Roman", serif;
   --font-vintage-serif: var(--font-lora), Georgia, "Times New Roman", serif;
+
+  --color-background: #10131a;
+  --color-on-background: #e1e2ec;
+  --color-surface: #10131a;
+  --color-surface-dim: #10131a;
+  --color-surface-bright: #363941;
+  --color-surface-container-lowest: #0b0e15;
+  --color-surface-container-low: #191b23;
+  --color-surface-container: #1d1f27;
+  --color-surface-container-high: #272a32;
+  --color-surface-container-highest: #32353d;
+  --color-on-surface: #e1e2ec;
+  --color-on-surface-variant: #d8c3ad;
+  --color-outline: #a08e7a;
+  --color-outline-variant: #534434;
+  --color-primary: #ffc174;
+  --color-on-primary: #472a00;
+  --color-primary-container: #f59e0b;
+  --color-on-primary-container: #613b00;
+  --color-primary-fixed: #ffddb8;
+  --color-primary-fixed-dim: #ffb95f;
+  --color-secondary: #4edea3;
+  --color-on-secondary: #003824;
+  --color-secondary-container: #00a572;
+  --color-on-secondary-container: #00311f;
+  --color-secondary-fixed: #6ffbbe;
+  --color-secondary-fixed-dim: #4edea3;
+  --color-tertiary: #d5c3ff;
+  --color-on-tertiary: #3c0091;
+  --color-tertiary-container: #bda2ff;
+  --color-on-tertiary-container: #520fbb;
+  --color-tertiary-fixed: #e9ddff;
+  --color-tertiary-fixed-dim: #d0bcff;
+  --color-error: #ffb4ab;
+  --color-on-error: #690005;
+  --color-error-container: #93000a;
+  --color-on-error-container: #ffdad6;
+
+  --font-display-hero: var(--font-syne), sans-serif;
+  --font-headline-lg: var(--font-syne), sans-serif;
+  --font-headline-md: var(--font-syne), sans-serif;
+  --font-headline-sm: var(--font-syne), sans-serif;
+  --font-body-lg: var(--font-pjs), sans-serif;
+  --font-body-md: var(--font-pjs), sans-serif;
+  --font-body-sm: var(--font-pjs), sans-serif;
+  --font-label-lg: var(--font-space-grotesk), monospace;
+  --font-label-md: var(--font-space-grotesk), monospace;
+  --font-label-sm: var(--font-space-grotesk), monospace;
+  --font-ticket-digit: var(--font-space-grotesk), monospace;
+  --font-caller-announcement: var(--font-syne), sans-serif;
+
+  --text-display-hero: 64px;
+  --text-display-hero--line-height: 72px;
+  --text-display-hero--letter-spacing: -0.02em;
+  --text-display-hero--font-weight: 800;
+  --text-headline-lg: 36px;
+  --text-headline-lg--line-height: 44px;
+  --text-headline-lg--letter-spacing: -0.015em;
+  --text-headline-lg--font-weight: 700;
+  --text-headline-md: 24px;
+  --text-headline-md--line-height: 30px;
+  --text-headline-md--font-weight: 700;
+  --text-headline-sm: 20px;
+  --text-headline-sm--line-height: 26px;
+  --text-headline-sm--font-weight: 600;
+  --text-body-lg: 16px;
+  --text-body-lg--line-height: 24px;
+  --text-body-lg--font-weight: 500;
+  --text-body-md: 14px;
+  --text-body-md--line-height: 20px;
+  --text-body-md--font-weight: 400;
+  --text-body-sm: 12px;
+  --text-body-sm--line-height: 16px;
+  --text-body-sm--font-weight: 400;
+  --text-label-lg: 14px;
+  --text-label-lg--line-height: 18px;
+  --text-label-lg--letter-spacing: 0.05em;
+  --text-label-lg--font-weight: 600;
+  --text-label-md: 12px;
+  --text-label-md--line-height: 16px;
+  --text-label-md--letter-spacing: 0.06em;
+  --text-label-md--font-weight: 600;
+  --text-label-sm: 10px;
+  --text-label-sm--line-height: 14px;
+  --text-label-sm--letter-spacing: 0.08em;
+  --text-label-sm--font-weight: 700;
+  --text-ticket-digit: 22px;
+  --text-ticket-digit--line-height: 22px;
+  --text-ticket-digit--letter-spacing: 0.01em;
+  --text-ticket-digit--font-weight: 700;
+  --text-caller-announcement: 80px;
+  --text-caller-announcement--line-height: 80px;
+  --text-caller-announcement--letter-spacing: -0.03em;
+  --text-caller-announcement--font-weight: 800;
 }
 
 ::selection {
-  background-color: var(--color-violet-600);
-  color: white;
+  background-color: var(--color-primary-container);
+  color: var(--color-surface-container-lowest);
 }
 
 html {
@@ -207,14 +301,128 @@ body {
   border-bottom: none;
 }
 
-.glass {
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.03) 55%, rgba(255, 255, 255, 0.07));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 12px 32px rgba(0, 0, 0, 0.35);
+.glass-subtle {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.glass-subtle {
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+.glass {
+  background: rgba(22, 33, 58, 0.65);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  box-shadow: 0 12px 36px -8px rgba(0, 0, 0, 0.65), 0 0 24px -4px rgba(139, 92, 246, 0.15);
+}
+
+.glass-high {
+  background: rgba(30, 41, 59, 0.85);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  box-shadow: 0 20px 60px -10px rgba(0, 0, 0, 0.85), 0 0 40px 0 rgba(245, 158, 11, 0.25);
+}
+
+/* Iridescent 1px hairline used on tickets & floating panels. */
+.iridescent-line {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)) padding-box,
+    linear-gradient(
+        160deg,
+        rgba(245, 158, 11, 0.45),
+        rgba(139, 92, 246, 0.25) 45%,
+        rgba(6, 182, 212, 0.45)
+      )
+      border-box;
+}
+
+/* Designer 3D slip finish — extruded edge, float shadow, iridescent gloss. */
+.ticket-3d {
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.22),
+    0 0 0 1px rgba(10, 13, 20, 0.35),
+    0 2px 0 0 rgba(10, 13, 20, 0.85),
+    0 7px 4px -2px rgba(10, 13, 20, 0.55),
+    0 22px 40px -12px rgba(10, 13, 20, 0.75);
+}
+
+.ticket-3d::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.55;
+  background:
+    radial-gradient(140% 90% at 12% 0%, rgba(255, 255, 255, 0.35), transparent 42%),
+    linear-gradient(
+      118deg,
+      transparent 18%,
+      rgba(255, 255, 255, 0.22) 30%,
+      rgba(255, 255, 255, 0) 46%
+    ),
+    linear-gradient(
+      310deg,
+      transparent 62%,
+      rgba(255, 193, 116, 0.22) 78%,
+      rgba(255, 255, 255, 0) 88%
+    );
+}
+
+.ticket-3d::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+
+/* Gold foil metal text for ticket serials & brand headers. */
+.ticket-foil {
+  background: linear-gradient(
+    115deg,
+    #fde68a 0%,
+    #ffc174 22%,
+    #d98d1e 48%,
+    #ffd98a 70%,
+    #e8a33c 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Deep bronze foil for light paper shells where bright gold reads faint. */
+.ticket-foil-deep {
+  background: linear-gradient(
+    115deg,
+    #92400e 0%,
+    #b45309 30%,
+    #f59e0b 55%,
+    #d97706 80%,
+    #a16207 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+[type="text" i],
+[type="email" i],
+[type="password" i],
+[type="number" i],
+textarea,
+select {
+  font-family: var(--font-space-grotesk), monospace;
 }
 
 @media print {
@@ -227,6 +435,13 @@ body {
   }
   .print-area {
     box-shadow: none !important;
+  }
+  .ticket-3d {
+    box-shadow: none !important;
+  }
+  .ticket-3d::before,
+  .ticket-3d::after {
+    display: none !important;
   }
   body {
     background: white !important;

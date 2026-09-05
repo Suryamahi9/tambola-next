@@ -1,76 +1,32 @@
 import Link from "next/link";
-import { navLinks, siteConfig } from "@/lib/site";
 import Logo from "./Logo";
-
-const featureLinks = [
-  { href: "/game", label: "Number Caller" },
-  { href: "/game", label: "Auto Mode" },
-  { href: "/tickets", label: "Ticket Generator" },
-  { href: "/tickets", label: "Full Set (1-90)" },
-];
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/10 bg-[#0b0d1a]/60">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <div className="grid gap-10 md:grid-cols-4">
-          <div className="md:col-span-2">
-            <Link href="/">
-              <Logo />
-            </Link>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-              {siteConfig.tagline}. Free, no sign-up, works on any device — from
-              your phone to the living-room TV.
-            </p>
-            <p className="mt-4 text-xs text-neutral-400 dark:text-neutral-500">
-              Caller audio speaks English, हिंदी and తెలుగు.
-            </p>
+    <footer className="w-full bg-surface-container-lowest py-12">
+      <div className="w-full px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
+          <div className="opacity-70">
+            <Logo />
           </div>
-
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-neutral-900 dark:text-neutral-100">
-              Explore
-            </h3>
-            <ul className="mt-4 space-y-2.5 text-sm">
-              {navLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-neutral-600 transition hover:text-violet-600 dark:text-neutral-400 dark:hover:text-violet-300"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-neutral-900 dark:text-neutral-100">
-              Features
-            </h3>
-            <ul className="mt-4 space-y-2.5 text-sm">
-              {featureLinks.map((link, i) => (
-                <li key={i}>
-                  <Link
-                    href={link.href}
-                    className="text-neutral-600 transition hover:text-violet-600 dark:text-neutral-400 dark:hover:text-violet-300"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <span className="font-label-md text-label-md text-on-surface-variant">
+            © {new Date().getFullYear()} Grand Tambola Salon. Real-Time Certified RNG Engine.
+          </span>
         </div>
-
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 sm:flex-row">
-          <p className="text-xs text-neutral-500 dark:text-neutral-500">
-            © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
-          </p>
-          <p className="text-xs text-neutral-500 dark:text-neutral-500">
-            Made for house parties, clubs and community Tambola nights.
-          </p>
+        <div className="flex flex-wrap items-center justify-center gap-6">
+          <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Fair Play Protocol v4.8</span>
+          <span className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Auto-Sync Cluster Active</span>
+          <span className="font-label-sm text-label-sm text-secondary-fixed flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-secondary inline-block"></span> Systems Operational
+          </span>
+        </div>
+        <div className="flex items-center gap-6">
+          <Link href="/rules" className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest transition hover:text-primary">
+            Rules & Patterns
+          </Link>
+          <Link href="/admin" className="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest transition hover:text-primary">
+            Admin Console
+          </Link>
         </div>
       </div>
     </footer>
