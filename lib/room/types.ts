@@ -2,7 +2,48 @@ import type { Grid } from "@/lib/ticket";
 
 export type RoomStatus = "waiting" | "live" | "finished";
 
+/** One chat line in a room. `kind` drives the UI:
+ *  "user" = a player, "system" = game events, "ai" = the bot announcer. */
+export type ChatKind = "user" | "system" | "ai";
+
+export interface ChatMessage {
+  id: string;
+  playerId: string | null; // null for system/bot lines
+  playerName: string; // display label ("" for system lines)
+  kind: ChatKind;
+  text: string;
+  createdAt: string; // ISO
+}
+
+/** Chat bounds: cap the transcript (oldest dropped) + per-player rate limit. */
+export const MAX_CHAT_MESSAGES = 100;
+export const MAX_CHAT_LENGTH = 240;
+export const CHAT_MIN_INTERVAL_MS = 1500;
+
 export type PatternId = "fullhouse" | "corners" | "bottom" | "middle" | "top" | "early5";
+
+/** Per-room prize configuration — the host picks which patterns are active and
+ *  the priority order of the three lines before the game starts. */
+export interface RoomSettings {
+  fullHouse: boolean;
+  corners: boolean;
+  earlyFive: boolean;
+  topLine: boolean;
+  middleLine: boolean;
+  bottomLine: boolean;
+  /** Relative priority of the lines when several complete on the same draw. */
+  lineOrder: ("top" | "middle" | "bottom")[];
+}
+
+export const DEFAULT_ROOM_SETTINGS: RoomSettings = {
+  fullHouse: true,
+  corners: true,
+  earlyFive: true,
+  topLine: true,
+  middleLine: true,
+  bottomLine: true,
+  lineOrder: ["bottom", "middle", "top"],
+};
 
 export interface Player {
   id: string;
@@ -63,6 +104,10 @@ export interface Room {
   // are cut across players — no number repeats within a book.
   dealStrip: Grid[] | null;
   dealOffset: number;
+  /** Room chat — capped at MAX_CHAT_MESSAGES, oldest dropped first. */
+  messages: ChatMessage[];
+  /** Prize configuration chosen by the host (defaults to all patterns on). */
+  settings: RoomSettings;
 }
 
 export interface PublicPlayer {
@@ -93,4 +138,7 @@ export interface PublicRoom {
   standings: Record<string, number>;
   history: RoundSummary[];
   ticketsNeeded: number;
+  messages: ChatMessage[];
+  /** Prize configuration — visible so players know which patterns score. */
+  settings: RoomSettings;
 }

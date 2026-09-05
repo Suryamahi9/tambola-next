@@ -134,20 +134,21 @@ function CameraRig({
 function makeTicketTexture(index: number) {
   const grid = generateTicket();
   const accent = ACCENTS[index % ACCENTS.length];
-  const brown = index % 2 === 1;
   const canvas = document.createElement("canvas");
   canvas.width = 480;
   canvas.height = 330;
   const ctx = canvas.getContext("2d")!;
 
-  const paper = brown
-    ? ["#a37240", "#87562d"]
-    : ["#fdfbf7", "#f1eadb"];
-  const header = brown
-    ? ["#4a2f17", "#684a26"]
-    : ["#5a3a1d", "#7a5530"];
-  const gridLine = brown ? "#e0c9a4" : "#a9845c";
-  const numColor = brown ? "#fbf3e2" : "#5a3a1d";
+  const darken = (hex: string) => {
+    const n = parseInt(hex.slice(1), 16);
+    const r = Math.round(((n >> 16) & 255) * 0.55);
+    const g = Math.round(((n >> 8) & 255) * 0.55);
+    const b = Math.round((n & 255) * 0.55);
+    return `rgb(${r},${g},${b})`;
+  };
+
+  const paper = ["#fdf8ec", "#f1e6cd"];
+  const ink = "#2a211a";
 
   const bgGrad = ctx.createLinearGradient(0, 0, 0, 330);
   bgGrad.addColorStop(0, paper[0]);
@@ -155,43 +156,51 @@ function makeTicketTexture(index: number) {
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, 480, 330);
 
-  const headerGrad = ctx.createLinearGradient(0, 0, 480, 0);
-  headerGrad.addColorStop(0, header[0]);
-  headerGrad.addColorStop(1, header[1]);
-  ctx.fillStyle = headerGrad;
-  ctx.fillRect(0, 0, 480, 52);
-  ctx.fillStyle = "#ffffff";
-  ctx.font = "bold 24px 'Segoe UI', sans-serif";
-  ctx.textAlign = "center";
-  ctx.fillText("TAMBOLA", 196, 35);
-  ctx.textAlign = "right";
-  ctx.font = "bold 16px 'Segoe UI', sans-serif";
-  ctx.fillText(`#${String(index + 1).padStart(2, "0")}`, 460, 35);
+  // accent identity ribbon on the left
+  const ribbon = ctx.createLinearGradient(0, 0, 14, 0);
+  ribbon.addColorStop(0, accent);
+  ribbon.addColorStop(1, darken(accent));
+  ctx.fillStyle = ribbon;
+  ctx.fillRect(0, 0, 14, 330);
 
-  const x0 = 6;
-  const y0 = 58;
-  const cw = 52;
+  // header: brand wordmark + accent serial
+  ctx.fillStyle = ink;
+  ctx.font = "bold 22px 'Playfair Display', Georgia, serif";
+  ctx.textAlign = "left";
+  ctx.fillText("✦ TAMBOLA", 30, 34);
+  ctx.textAlign = "right";
+  ctx.font = "italic bold 16px 'Playfair Display', Georgia, serif";
+  ctx.fillStyle = accent;
+  ctx.fillText(`No. ${String(index + 1).padStart(2, "0")}`, 460, 34);
+
+  // accent underline
+  ctx.fillStyle = accent;
+  ctx.fillRect(24, 48, 436, 3);
+
+  const x0 = 30;
+  const y0 = 60;
+  const cw = 48;
   const ch = 86;
-  ctx.strokeStyle = gridLine;
-  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = ink;
+  ctx.lineWidth = 1.5;
   for (let c = 0; c < 9; c++) {
     for (let r = 0; r < 3; r++) {
       ctx.strokeRect(x0 + c * cw, y0 + r * ch, cw, ch);
     }
   }
-  ctx.fillStyle = numColor;
-  ctx.font = "bold 24px 'Segoe UI', sans-serif";
+  ctx.fillStyle = ink;
+  ctx.font = "bold 22px 'Lora', Georgia, serif";
   grid.forEach((row, r) =>
     row.forEach((v, c) => {
       if (v !== null) {
-        ctx.fillText(String(v), x0 + c * cw + cw / 2, y0 + r * ch + ch / 2 + 9);
+        ctx.fillText(String(v), x0 + c * cw + cw / 2, y0 + r * ch + ch / 2 + 8);
       }
     })
   );
 
   ctx.strokeStyle = accent;
-  ctx.lineWidth = 5;
-  ctx.strokeRect(3, 3, 474, 324);
+  ctx.lineWidth = 3;
+  ctx.strokeRect(1.5, 1.5, 477, 327);
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.anisotropy = 4;

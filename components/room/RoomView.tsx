@@ -1,10 +1,18 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import TicketCard from "@/components/tickets/TicketCard";
-import { PATTERNS } from "@/lib/room/wins";
-import type { PublicRoom } from "@/lib/room/types";
+import ChatPanel from "@/components/room/ChatPanel";
+import Confetti from "@/components/room/Confetti";
+import CallerControls from "@/components/room/CallerControls";
+import Leaderboard from "@/components/room/Leaderboard";
+import BallMachine from "@/components/room/BallMachine";
+import CashPool from "@/components/room/CashPool";
+import RoomInviteCard from "@/components/room/RoomInviteCard";
+import RoomSettingsEditor from "@/components/room/RoomSettingsEditor";
+import { completePatternsOnTickets, PATTERNS } from "@/lib/room/wins";
+import type { PublicRoom, RoomSettings } from "@/lib/room/types";
 import type { Grid } from "@/lib/ticket";
 
 interface RoomData {
@@ -14,7 +22,6 @@ interface RoomData {
 }
 
 const POLL_MS = 2000;
-const DRAW_MS = 5000;
 
 let dingCtx: AudioContext | null = null;
 function playDing() {
@@ -30,6 +37,29 @@ function playDing() {
     osc.connect(gain).connect(dingCtx.destination);
     osc.start();
     osc.stop(dingCtx.currentTime + 0.45);
+  } catch {
+    /* audio unavailable */
+  }
+}
+
+/** Brief win fanfare — played when a Bingo claim or prize is confirmed. */
+function playBingo() {
+  try {
+    dingCtx = dingCtx ?? new AudioContext();
+    const notes = [523.25, 659.25, 783.99, 1046.5];
+    notes.forEach((freq, i) => {
+      const osc = dingCtx!.createOscillator();
+      const gain = dingCtx!.createGain();
+      osc.type = "triangle";
+      osc.frequency.value = freq;
+      const t0 = dingCtx!.currentTime + i * 0.13;
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.exponentialRampToValueAtTime(0.2, t0 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.5);
+      osc.connect(gain).connect(dingCtx!.destination);
+      osc.start(t0);
+      osc.stop(t0 + 0.55);
+    });
   } catch {
     /* audio unavailable */
   }
@@ -59,10 +89,12 @@ export default function RoomView({ roomId }: { roomId: string }) {
   const [error, setError] = useState("");
   const [auto, setAuto] = useState(true);
   const [voiceOn, setVoiceOn] = useState(true);
-  const [copied, setCopied] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [settingsSaving, setSettingsSaving] = useState(false);
   const [calling, setCalling] = useState(false);
   const [claiming, setClaiming] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [drawSpeedMs, setDrawSpeedMs] = useState(5000);
   const pendingCall = useRef(false);
   const lastAnnounced = useRef<number | null>(null);
   const lastRound = useRef(0);
@@ -124,8 +156,34 @@ export default function RoomView({ roomId }: { roomId: string }) {
   const isCaller = !!room && room.callerId === me;
   const isHost = !!room && room.hostId === me;
   const myPlayer = room?.players.find((p) => p.id === me) ?? null;
-  const calledSet = new Set(room?.calledNumbers ?? []);
   const winnerIds = new Set(room?.prizes.map((p) => p.playerId) ?? []);
+  const calledSet = useMemo(
+    () => new Set(room?.calledNumbers ?? []),
+    [room?.calledNumbers]
+  );
+
+  // Client-side Bingo self-check: which patterns MY tickets currently complete
+  // (honours the room's prize settings and prizes already awarded).
+  const myComplete = useMemo(() => {
+    if (!room || !data?.myTickets.length) return [];
+    return completePatternsOnTickets(data.myTickets, calledSet, room);
+  }, [data, room, calledSet]);
+  const canClaim = myComplete.length > 0 && room?.status === "live";
+
+  async function saveSettings(patch: Partial<RoomSettings>) {
+    if (!roomId) return;
+    setSettingsSaving(true);
+    try {
+      await fetch(`/api/rooms/${roomId}/settings`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patch),
+      });
+      showToast("Prize settings saved");
+    } finally {
+      setSettingsSaving(false);
+    }
+  }
 
   // Announce newly drawn numbers (ding + voice).
   useEffect(() => {
@@ -155,15 +213,37 @@ export default function RoomView({ roomId }: { roomId: string }) {
     }
   }
 
-  // Caller auto-draw: every DRAW_MS while I'm the caller and the game is live.
+  async function doCallSpecific(num: number) {
+    if (!roomId || pendingCall.current) return;
+    pendingCall.current = true;
+    setCalling(true);
+    try {
+      const res = await fetch(`/api/rooms/${roomId}/call`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ number: num }),
+      });
+      const json = (await res.json().catch(() => ({}))) as { error?: string };
+      if (res.ok) {
+        await refresh();
+      } else {
+        showToast(json.error ?? "Could not call that number.");
+      }
+    } finally {
+      pendingCall.current = false;
+      setCalling(false);
+    }
+  }
+
+  // Caller auto-draw: every drawSpeedMs while I'm the caller and the game is live.
   useEffect(() => {
     if (!room || room.status !== "live" || room.callerId !== me || !auto) return;
     const iv = setInterval(() => {
       void doCall();
-    }, DRAW_MS);
+    }, drawSpeedMs);
     return () => clearInterval(iv);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roomId, room?.status, room?.callerId, me, auto]);
+  }, [roomId, room?.status, room?.callerId, me, auto, drawSpeedMs]);
 
   async function takeOver() {
     if (!roomId) return;
@@ -184,6 +264,7 @@ export default function RoomView({ roomId }: { roomId: string }) {
       const res = await fetch(`/api/rooms/${roomId}/claim`, { method: "POST" });
       const json = (await res.json().catch(() => ({}))) as { error?: string };
       if (res.ok) {
+        playBingo();
         showToast("✅ Bingo! Claim confirmed — refresh the board.");
         await refresh();
       } else {
@@ -209,22 +290,6 @@ export default function RoomView({ roomId }: { roomId: string }) {
       }
       const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
       window.open(url, "_blank", "noopener,noreferrer");
-    } catch {
-      /* user cancelled */
-    }
-  }
-
-  async function share() {
-    const url = typeof window !== "undefined" ? window.location.href : "";
-    const text = `🎫 Join my Tambola room! Code: ${room?.code ?? ""} · ${url}`;
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: "Tambola Party Room", text, url });
-        return;
-      }
-      await navigator.clipboard.writeText(`${text}\n${url}`);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
     } catch {
       /* user cancelled */
     }
@@ -263,6 +328,8 @@ export default function RoomView({ roomId }: { roomId: string }) {
 
   return (
     <div className="space-y-6">
+      <Confetti prizes={room?.prizes} />
+      {inviteOpen && room && <RoomInviteCard room={room} onClose={() => setInviteOpen(false)} />}
       {error && <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-300">{error}</p>}
 
       {/* Header */}
@@ -311,10 +378,10 @@ export default function RoomView({ roomId }: { roomId: string }) {
             🔊 Voice
           </label>
           <button
-            onClick={share}
+            onClick={() => setInviteOpen(true)}
             className="rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-sm font-semibold text-neutral-200 transition hover:border-violet-400 hover:text-violet-200"
           >
-            {copied ? "Copied ✓" : "🔗 Invite players"}
+            📇 Invite players
           </button>
           {isCaller && (
             <label className="flex cursor-pointer items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-sm font-semibold text-neutral-200">
@@ -345,6 +412,19 @@ export default function RoomView({ roomId }: { roomId: string }) {
         </div>
       )}
 
+      {/* Cash pool */}
+      <CashPool room={room} />
+
+      {/* Host prize settings (lobby only) */}
+      {room.status === "waiting" && isHost && (
+        <RoomSettingsEditor
+          settings={room.settings}
+          disabled={false}
+          saving={settingsSaving}
+          onSave={(patch) => void saveSettings(patch)}
+        />
+      )}
+
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
         {/* Board + caller */}
         <div className="space-y-4">
@@ -352,9 +432,9 @@ export default function RoomView({ roomId }: { roomId: string }) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Last called</p>
-                <p className="font-display text-4xl font-bold text-violet-300">
-                  {room.lastNumber ?? "—"}
-                </p>
+                <div className="mt-2">
+                  <BallMachine number={room.lastNumber} live={room.status === "live"} />
+                </div>
               </div>
               <div className="text-right">
                 <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Called</p>
@@ -365,21 +445,41 @@ export default function RoomView({ roomId }: { roomId: string }) {
             </div>
 
             <div className="mt-5 grid grid-cols-10 gap-1.5">
-              {Array.from({ length: 90 }, (_, i) => i + 1).map((n) => (
-                <div
-                  key={n}
-                  className={`flex aspect-square items-center justify-center rounded-md text-xs font-bold transition ${
-                    n === room.lastNumber
-                      ? "bg-gradient-to-br from-violet-500 to-fuchsia-600 text-white shadow-lg shadow-violet-600/30"
-                      : calledSet.has(n)
-                        ? "bg-violet-600/30 text-violet-200"
-                        : "bg-white/[0.04] text-neutral-500"
-                  }`}
-                >
-                  {n}
-                </div>
-              ))}
+              {Array.from({ length: 90 }, (_, i) => i + 1).map((n) => {
+                const called = calledSet.has(n);
+                const isLast = n === room.lastNumber;
+                const canPick = isCaller && room.status === "live" && !called && !calling;
+                return (
+                  <button
+                    key={n}
+                    type="button"
+                    disabled={!canPick}
+                    onClick={() => canPick && void doCallSpecific(n)}
+                    className={`flex aspect-square items-center justify-center rounded-md text-xs font-bold transition ${
+                      isLast
+                        ? "bg-gradient-to-br from-violet-500 to-fuchsia-600 text-white shadow-lg shadow-violet-600/30"
+                        : called
+                          ? "bg-violet-600/30 text-violet-200"
+                          : canPick
+                            ? "cursor-pointer bg-white/[0.06] text-neutral-400 hover:scale-110 hover:bg-white/[0.14] hover:text-white active:scale-95"
+                            : "bg-white/[0.04] text-neutral-500"
+                    }`}
+                  >
+                    {n}
+                  </button>
+                );
+              })}
             </div>
+
+            {isCaller && (
+              <CallerControls
+                calledNumbers={room.calledNumbers}
+                isCaller={isCaller}
+                live={room.status === "live"}
+                speedMs={drawSpeedMs}
+                onSpeedChange={setDrawSpeedMs}
+              />
+            )}
 
             {room.status === "waiting" && isHost && (
               <div className="mt-5">
@@ -403,36 +503,59 @@ export default function RoomView({ roomId }: { roomId: string }) {
             )}
 
             {room.status === "live" && (
-              <div className="mt-5 flex flex-wrap gap-3">
-                {isCaller ? (
-                  <button
-                    onClick={() => void doCall()}
-                    disabled={calling}
-                    className="flex-1 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-violet-600/30 transition hover:brightness-110 disabled:opacity-60"
-                  >
-                    {calling ? "Calling…" : "🎙️ Call Next Number"}
-                  </button>
-                ) : (
-                  <div className="flex-1">
-                    <p className="text-center text-xs text-neutral-400">
-                      {room.callerId ? "The caller draws the numbers — watch the board live." : "Caller pending…"}{" "}
-                      {me && (
-                        <button onClick={() => void takeOver()} className="ml-1 font-semibold text-violet-300 underline-offset-2 hover:underline">
-                          Take over as caller
-                        </button>
+              <div className="mt-5 space-y-3">
+                {isCaller && (
+                  <p className="text-center text-xs font-medium text-violet-300">
+                    Tap any highlighted number on the board to call it, or draw randomly ↓
+                  </p>
+                )}
+                <div className="flex flex-wrap gap-3">
+                  {isCaller ? (
+                    <button
+                      onClick={() => void doCall()}
+                      disabled={calling}
+                      className="flex-1 rounded-full border border-violet-400/30 bg-white/[0.06] px-5 py-3 text-sm font-bold text-violet-200 transition hover:border-violet-400/60 hover:bg-white/[0.1] disabled:opacity-40"
+                    >
+                      {calling ? "Calling…" : "🎲 Random draw"}
+                    </button>
+                  ) : (
+                    <div className="flex-1">
+                      <p className="text-center text-xs text-neutral-400">
+                        {room.callerId ? "The caller draws the numbers — watch the board live." : "Caller pending…"}{" "}
+                        {me && (
+                          <button onClick={() => void takeOver()} className="ml-1 font-semibold text-violet-300 underline-offset-2 hover:underline">
+                            Take over as caller
+                          </button>
+                        )}
+                      </p>
+                    </div>
+                  )}
+                  {me && myPlayer?.paid && (
+                    <div className="flex flex-col items-center gap-1.5">
+                      <button
+                        onClick={() => void claimBingo()}
+                        disabled={claiming || !canClaim}
+                        className={`rounded-full px-5 py-3 text-sm font-bold transition disabled:cursor-not-allowed disabled:opacity-50 ${
+                          canClaim
+                            ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 hover:bg-emerald-500/30 animate-pulse"
+                            : "bg-white/[0.06] text-neutral-500 border border-white/10"
+                        }`}
+                      >
+                        {claiming ? "Checking…" : canClaim ? "🟢 BINGO!" : "🟢 Bingo"}
+                      </button>
+                      {!canClaim && room.status === "live" && (
+                        <p className="text-[11px] text-neutral-500">
+                          No complete pattern yet — {90 - room.calledNumbers.length} numbers left
+                        </p>
                       )}
-                    </p>
-                  </div>
-                )}
-                {me && myPlayer?.paid && (
-                  <button
-                    onClick={() => void claimBingo()}
-                    disabled={claiming}
-                    className="rounded-full border border-emerald-400/40 bg-emerald-500/10 px-5 py-3 text-sm font-bold text-emerald-300 transition hover:bg-emerald-500/20 disabled:opacity-60"
-                  >
-                    {claiming ? "Checking…" : "🟢 Bingo!"}
-                  </button>
-                )}
+                      {canClaim && (
+                        <p className="text-[11px] font-semibold text-emerald-300">
+                          {myComplete.map((h) => h.label).join(", ")} ready on your ticket!
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
@@ -492,6 +615,10 @@ export default function RoomView({ roomId }: { roomId: string }) {
               })}
             </ul>
           </div>
+
+          <Leaderboard room={room} />
+
+          <ChatPanel roomId={roomId} room={room} me={me} onSent={refresh} />
         </div>
       </div>
 

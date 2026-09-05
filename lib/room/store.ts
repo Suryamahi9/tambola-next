@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "
 import path from "node:path";
 import { get as blobGet, put as blobPut } from "@vercel/blob";
 import type { Room } from "./types";
+import { DEFAULT_ROOM_SETTINGS } from "./types";
 
 interface Store {
   rooms: Room[];
@@ -44,18 +45,23 @@ function writeFileAtomic(filePath: string, content: string) {
 }
 
 async function loadAllRooms(): Promise<Room[]> {
+  let raw: string | null = null;
   if (usingBlobStore()) {
-    const raw = await readBlob();
-    if (!raw) return [];
-    try {
-      return (JSON.parse(raw) as Store).rooms ?? [];
-    } catch {
-      return [];
-    }
+    raw = await readBlob();
+  } else if (existsSync(roomsPath)) {
+    raw = readFileSync(roomsPath, "utf8");
   }
-  if (!existsSync(roomsPath)) return [];
+  if (!raw) return [];
   try {
-    return (JSON.parse(readFileSync(roomsPath, "utf8")) as Store).rooms ?? [];
+    const rooms = (JSON.parse(raw) as Store).rooms ?? [];
+    // Normalize rooms saved before fields were added (e.g. chat messages).
+    return rooms.map((r) => ({
+      ...r,
+      messages: r.messages ?? [],
+      settings: r.settings ?? { ...DEFAULT_ROOM_SETTINGS },
+      history: r.history ?? [],
+      standings: r.standings ?? {},
+    }));
   } catch {
     return [];
   }
@@ -106,4 +112,9 @@ export async function insertRoom(room: Room): Promise<Room> {
   cache.set(room.id, room);
   await persistAll(Array.from(cache.values()));
   return room;
+}
+
+/** All rooms — used by the admin analytics panel. */
+export async function getAllRooms(): Promise<Room[]> {
+  return loadAllRooms();
 }

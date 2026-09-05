@@ -1,5 +1,6 @@
 import type { Grid } from "@/lib/ticket";
 import type { PatternId, Player, Prize, Room, Win } from "./types";
+import { DEFAULT_ROOM_SETTINGS } from "./types";
 
 export const PATTERNS = [
   { id: "fullhouse", label: "Full House", icon: "🏆" },
@@ -19,6 +20,51 @@ export const PATTERN_PRIORITY: Record<PatternId, number> = {
   top: 4,
   early5: 5,
 };
+
+type BooleanSettingKey = "fullHouse" | "corners" | "earlyFive" | "topLine" | "middleLine" | "bottomLine";
+
+const LINE_SETTING: Record<"top" | "middle" | "bottom", BooleanSettingKey> = {
+  top: "topLine",
+  middle: "middleLine",
+  bottom: "bottomLine",
+};
+
+/** Is this pattern active for the room (respects host prize settings)? */
+export function isPatternEnabled(room: Pick<Room, "settings">, pattern: PatternId): boolean {
+  const s = room.settings ?? DEFAULT_ROOM_SETTINGS;
+  switch (pattern) {
+    case "fullhouse": return s.fullHouse;
+    case "corners": return s.corners;
+    case "early5": return s.earlyFive;
+    case "top":
+    case "middle":
+    case "bottom": return s[LINE_SETTING[pattern]];
+    default: return true;
+  }
+}
+
+/** The patterns that can be awarded, in priority order. Lines are prioritized
+ *  per the host's lineOrder setting (full house first, early five last). */
+export function activePatterns(room: Pick<Room, "settings">): PatternId[] {
+  const s = room.settings ?? DEFAULT_ROOM_SETTINGS;
+  const lines = (s.lineOrder ?? DEFAULT_ROOM_SETTINGS.lineOrder).slice();
+
+  const lineRank: Record<string, number> = { top: 5, middle: 5, bottom: 5 };
+  lines.forEach((l, i) => (lineRank[l] = 2 + i));
+
+  const priority: Record<PatternId, number> = {
+    fullhouse: 0,
+    corners: 1,
+    top: lineRank.top,
+    middle: lineRank.middle,
+    bottom: lineRank.bottom,
+    early5: 5,
+  };
+
+  return (Object.keys(priority) as PatternId[])
+    .filter((p) => isPatternEnabled(room, p))
+    .sort((a, b) => priority[a] - priority[b]);
+}
 
 export function ticketRowNums(grid: Grid, row: number): number[] {
   return grid[row].filter((v): v is number => v !== null);
@@ -96,26 +142,35 @@ export function playerCompletePatterns(
   player: Player,
   calledSet: Set<number>
 ): { pattern: PatternId; label: string; ticketIndex: number; grid: Grid }[] {
+  return completePatternsOnTickets(player.tickets, calledSet);
+}
+
+/** Complete patterns across a set of grids. Optionally honors a room's prize
+ *  settings + already-awarded prizes (used by the client Bingo self-check). */
+export function completePatternsOnTickets(
+  tickets: Grid[],
+  calledSet: Set<number>,
+  room?: Pick<Room, "prizes" | "settings">
+): { pattern: PatternId; label: string; ticketIndex: number; grid: Grid }[] {
   const out: { pattern: PatternId; label: string; ticketIndex: number; grid: Grid }[] = [];
-  for (let ti = 0; ti < player.tickets.length; ti++) {
-    for (const hit of ticketWins(player.tickets[ti], calledSet)) {
-      out.push({
-        pattern: hit.id as PatternId,
-        label: hit.label,
-        ticketIndex: ti,
-        grid: player.tickets[ti],
-      });
+  for (let ti = 0; ti < tickets.length; ti++) {
+    for (const hit of ticketWins(tickets[ti], calledSet)) {
+      const pattern = hit.id as PatternId;
+      if (room && !isPatternEnabled(room, pattern)) continue;
+      if (room && room.prizes.some((p) => p.pattern === pattern)) continue;
+      out.push({ pattern, label: hit.label, ticketIndex: ti, grid: tickets[ti] });
     }
   }
   return out;
 }
 
-/** Award one prize per pattern (first paid player in join order). Returns newly awarded prizes. */
+/** Award one prize per active pattern (first paid player in join order).
+ *  Only patterns enabled by the host's room settings are considered. */
 export function awardPrizes(room: Room): Prize[] {
   const calledSet = new Set(room.calledNumbers);
   const awarded = new Set(room.prizes.map((p) => p.pattern));
   const newly: Prize[] = [];
-  for (const pattern of PATTERNS.map((p) => p.id)) {
+  for (const pattern of activePatterns(room)) {
     if (awarded.has(pattern)) continue;
     for (const player of room.players) {
       if (!player.paid) continue;

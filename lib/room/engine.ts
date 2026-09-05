@@ -1,9 +1,11 @@
 import { randomBytes } from "node:crypto";
 import { generateSetTickets, generateStrip, type Grid } from "@/lib/ticket";
 import { signToken, verifyToken } from "@/lib/auth/session";
+import { generateBotReply, isBotTrigger } from "./ai";
 import { getRoomByCode, getRoomById, insertRoom, withRoom } from "./store";
-import { awardPrizes, PATTERN_PRIORITY, playerCompletePatterns } from "./wins";
-import type { PatternId, Player, Prize, PublicPlayer, PublicRoom, Room } from "./types";
+import { awardPrizes, isPatternEnabled, PATTERN_PRIORITY, playerCompletePatterns } from "./wins";
+import { CHAT_MIN_INTERVAL_MS, DEFAULT_ROOM_SETTINGS, MAX_CHAT_LENGTH, MAX_CHAT_MESSAGES } from "./types";
+import type { ChatMessage, PatternId, Player, Prize, PublicPlayer, PublicRoom, Room, RoomSettings } from "./types";
 
 /** Minimum paid tickets before the host may start the game. */
 export const TICKETS_TO_START = 15;
@@ -80,6 +82,81 @@ export async function readPlayerToken(token: string | undefined | null): Promise
   return payload.uid;
 }
 
+// ---- Room chat ----
+
+function pushChat(room: Room, message: ChatMessage): void {
+  room.messages.push(message);
+  if (room.messages.length > MAX_CHAT_MESSAGES) {
+    room.messages.splice(0, room.messages.length - MAX_CHAT_MESSAGES);
+  }
+}
+
+/** Append a game-event line (draws, prizes, round changes) to the chat. */
+export function postSystemMessage(room: Room, text: string): void {
+  pushChat(room, {
+    id: createRoomId(),
+    playerId: null,
+    playerName: "",
+    kind: "system",
+    text,
+    createdAt: new Date().toISOString(),
+  });
+}
+
+/** Persist a player's chat line; replies to @bot / /help via the AI announcer. */
+export async function sendMessage(
+  roomId: string,
+  playerId: string,
+  raw: string
+): Promise<{ room: Room } | { error: string }> {
+  const text = raw.trim().slice(0, MAX_CHAT_LENGTH);
+  if (!text) return { error: "Message is empty." } as const;
+
+  const base = await withRoom(roomId, (room) => {
+    if (!room) return { error: "Room not found." } as const;
+    const player = room.players.find((p) => p.id === playerId);
+    if (!player) return { error: "You are not a player in this room." } as const;
+
+    const lastUser = [...room.messages]
+      .reverse()
+      .find((m) => m.kind === "user" && m.playerId === playerId);
+    if (lastUser && Date.now() - Date.parse(lastUser.createdAt) < CHAT_MIN_INTERVAL_MS) {
+      return { error: "You're sending too fast — take a breath." } as const;
+    }
+
+    pushChat(room, {
+      id: createRoomId(),
+      playerId,
+      playerName: player.name,
+      kind: "user",
+      text,
+      createdAt: new Date().toISOString(),
+    });
+    return { room } as const;
+  });
+
+  if ("error" in base) return base;
+
+  // AI announcer runs AFTER the user message persists so a slow model call
+  // never blocks the send. The reply lands a poll or two later.
+  if (isBotTrigger(text)) {
+    const reply = await generateBotReply(text, base.room);
+    await withRoom(roomId, (room) => {
+      if (!room) return;
+      pushChat(room, {
+        id: createRoomId(),
+        playerId: null,
+        playerName: "Tambola Bot",
+        kind: "ai",
+        text: reply,
+        createdAt: new Date().toISOString(),
+      });
+    });
+  }
+
+  return base;
+}
+
 // ---- Room lifecycle ----
 
 export function createRoomRecord(name: string, ticketCount: number): { room: Room; player: Player } {
@@ -103,6 +180,8 @@ export function createRoomRecord(name: string, ticketCount: number): { room: Roo
     history: [],
     dealStrip: null,
     dealOffset: 0,
+    messages: [],
+    settings: { ...DEFAULT_ROOM_SETTINGS },
   };
   const player: Player = {
     id: createRoomId(),
@@ -173,6 +252,7 @@ export async function markPaid(
     const player = room.players.find((p) => p.id === playerId);
     if (!player) return { error: "Player not in this room." } as const;
     player.paid = true;
+    postSystemMessage(room, `${player.name} is in with ${player.tickets.length} ticket${player.tickets.length === 1 ? "" : "s"}.`);
 
     if (room.status === "waiting" && roomIsFull(room)) {
       room.status = "live";
@@ -180,6 +260,22 @@ export async function markPaid(
       // The first player to join drives the draw.
       room.callerId = room.players[0]?.id ?? playerId;
     }
+    return { room } as const;
+  });
+}
+
+/** Host configures the prize patterns before the game starts. */
+export async function updateRoomSettings(
+  roomId: string,
+  playerId: string,
+  patch: Partial<RoomSettings>
+): Promise<{ room: Room } | { error: string }> {
+  return withRoom(roomId, (room) => {
+    if (!room) return { error: "Room not found." } as const;
+    if (room.status !== "waiting") return { error: "Settings can only change before the game starts." } as const;
+    const host = room.players[0];
+    if (!host || host.id !== playerId) return { error: "Only the host can change prize settings." } as const;
+    room.settings = { ...room.settings, ...patch };
     return { room } as const;
   });
 }
@@ -200,14 +296,18 @@ export async function startGame(
     room.status = "live";
     room.startedAt = new Date().toISOString();
     room.callerId = host.id;
+    postSystemMessage(room, `Game started by ${host.name} — good luck everyone! 🍀`);
     return { room } as const;
   });
 }
 
-/** Server draws the next number so nobody can tamper with the board. */
+/** Server draws a number — either the caller picks one, or a random draw.
+ *  When `num` is provided the caller is selecting manually (like a physical
+ *  Tambola bag); otherwise auto-draw picks at random. */
 export async function callNumber(
   roomId: string,
-  callerId: string
+  callerId: string,
+  num?: number
 ): Promise<{ room: Room } | { error: string }> {
   return withRoom(roomId, (room) => {
     if (!room) return { error: "Room not found." } as const;
@@ -222,14 +322,32 @@ export async function callNumber(
       room.finishedAt = new Date().toISOString();
       return { room } as const;
     }
-    const num = remaining[Math.floor(Math.random() * remaining.length)];
-    room.calledNumbers.push(num);
-    room.lastNumber = num;
+
+    let chosen: number;
+    if (num !== undefined) {
+      if (!remaining.includes(num)) {
+        return { error: `${num} is not available — pick an uncalled number.` } as const;
+      }
+      chosen = num;
+    } else {
+      chosen = remaining[Math.floor(Math.random() * remaining.length)];
+    }
+
+    room.calledNumbers.push(chosen);
+    room.lastNumber = chosen;
+
+    // Chat milestones keep the room lively without spamming every draw.
+    if (room.calledNumbers.length % 10 === 0) {
+      postSystemMessage(room, `📣 ${room.calledNumbers.length}/90 numbers called.`);
+    }
 
     // Award any newly-completed patterns (one prize per pattern). The game
     // keeps running until Full House is won or all 90 numbers are called.
     const newly = awardPrizes(room);
     if (newly.length > 0) {
+      for (const p of newly) {
+        postSystemMessage(room, `🏆 ${p.playerName} completes ${p.label}!`);
+      }
       // The headline win is the highest-priority pattern that just completed
       // (Full House even when a line also completed on the same draw).
       const best = newly.reduce((a, b) =>
@@ -248,6 +366,12 @@ export async function callNumber(
     if (hasFullHouse || room.calledNumbers.length >= 90) {
       room.status = "finished";
       room.finishedAt = new Date().toISOString();
+      postSystemMessage(
+        room,
+        hasFullHouse && room.winner
+          ? `🎉 ${room.winner.playerName} wins ${room.winner.label} — game over!`
+          : "All 90 numbers were called — game complete."
+      );
     }
     return { room } as const;
   });
@@ -266,7 +390,9 @@ export async function claimBingo(
     if (!player || !player.paid) return { error: "Only paid players can claim." } as const;
 
     const available = playerCompletePatterns(player, new Set(room.calledNumbers)).filter(
-      (hit) => !room.prizes.some((p) => p.pattern === hit.pattern)
+      (hit) =>
+        !room.prizes.some((p) => p.pattern === hit.pattern) &&
+        isPatternEnabled(room, hit.pattern as PatternId)
     );
     if (available.length === 0) {
       return { error: "No complete pattern on your ticket yet — keep playing!" } as const;
@@ -285,6 +411,7 @@ export async function claimBingo(
       calledCount: room.calledNumbers.length,
     };
     room.prizes.push(prize);
+    postSystemMessage(room, `${player.name} claims ${best.label}!`);
     room.winner = {
       playerId: player.id,
       playerName: player.name,
@@ -339,6 +466,7 @@ export async function nextRound(
     room.round += 1;
     room.status = "live";
     room.startedAt = new Date().toISOString();
+    postSystemMessage(room, `Round ${room.round} — fresh tickets for everyone. Go! 🔄`);
     return { room } as const;
   });
 }
@@ -351,7 +479,9 @@ export async function takeOverCaller(
   return withRoom(roomId, (room) => {
     if (!room) return { error: "Room not found." } as const;
     if (!room.players.some((p) => p.id === playerId)) return { error: "Not in this room." } as const;
+    const name = room.players.find((p) => p.id === playerId)?.name ?? "A player";
     room.callerId = playerId;
+    postSystemMessage(room, `${name} is now the caller. 🎙️`);
     return { room } as const;
   });
 }
@@ -384,6 +514,8 @@ export function toPublicRoom(room: Room): PublicRoom {
     standings: room.standings,
     history: room.history,
     ticketsNeeded: ticketsNeeded(room),
+    messages: room.messages,
+    settings: room.settings ?? { ...DEFAULT_ROOM_SETTINGS },
   };
 }
 

@@ -28,6 +28,7 @@ export const navLinks = [
   { href: "/play", label: "Play" },
   { href: "/game", label: "Number Caller" },
   { href: "/tickets", label: "Tickets" },
+  { href: "/history", label: "My Games" },
   { href: "/rules", label: "Rules" },
 ];
 

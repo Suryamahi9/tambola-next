@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   generateHalfSetBatch,
   generateSetBatch,
@@ -10,9 +10,10 @@ import {
   type Batch,
   type Grid,
 } from "@/lib/ticket";
-import TicketCard from "./TicketCard";
+import TicketCard, { STYLE_LABELS, type TicketStyle } from "./TicketCard";
 
 type Mode = "random" | "fullset" | "halfset";
+const STYLE_OPTIONS = Object.entries(STYLE_LABELS) as [TicketStyle, string][];
 const SET_LABELS = [
   "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
   "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", "AN",
@@ -27,7 +28,7 @@ export default function TicketGenerator() {
   const [labels, setLabels] = useState<(string | null)[]>([]);
   const [batches, setBatches] = useState<Batch[]>([]);
   const [toast, setToast] = useState<string | null>(null);
-  const printRef = useRef<HTMLDivElement>(null);
+  const [style, setStyle] = useState<TicketStyle>("carnival");
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
@@ -248,7 +249,23 @@ export default function TicketGenerator() {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-end gap-2">
+            <div className="w-44">
+              <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+                Ticket style
+              </span>
+              <select
+                value={style}
+                onChange={(e) => setStyle(e.target.value as TicketStyle)}
+                className="w-full appearance-none rounded-xl border border-white/15 bg-[#0b0d1a] px-4 py-2.5 text-sm font-semibold text-neutral-100 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+              >
+                {STYLE_OPTIONS.map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </div>
             <button
               type="button"
               onClick={generate}
@@ -298,7 +315,7 @@ export default function TicketGenerator() {
         )}
       </div>
 
-      <div ref={printRef} className="print-area mt-8">
+      <div className="print-area mt-8">
         {tickets.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-neutral-300 p-16 text-center dark:border-neutral-700">
             <p className="text-4xl">🎫</p>
@@ -318,6 +335,7 @@ export default function TicketGenerator() {
                   name={labels[i] || undefined}
                   index={i}
                   total={tickets.length}
+                  style={style}
                 />
               </div>
             ))}

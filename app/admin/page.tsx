@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { requireAdmin } from "@/lib/auth/auth";
 import { listMembers } from "@/lib/auth/store";
+import { getAllRooms } from "@/lib/room/store";
 import AdminPanel from "@/components/admin/AdminPanel";
+import AnalyticsPanel from "@/components/admin/AnalyticsPanel";
 
 export const metadata: Metadata = {
   title: "Admin — Members",
@@ -12,7 +14,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
   const user = await requireAdmin("/admin");
-  const members = await listMembers();
+  const [members, rooms] = await Promise.all([listMembers(), getAllRooms()]);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
@@ -35,6 +37,11 @@ export default async function AdminPage() {
       </div>
 
       <AdminPanel members={members} />
+
+      <div className="mt-10">
+        <h2 className="font-display text-xl font-bold text-white mb-5">Analytics</h2>
+        <AnalyticsPanel rooms={rooms} />
+      </div>
     </div>
   );
 }
