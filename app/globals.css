@@ -39,7 +39,95 @@ body {
 }
 
 .animate-pop {
-  animation: pop 0.3s ease-out;
+  animation: pop 0.3s ease-out both;
+}
+
+@keyframes slot-flip {
+  0% {
+    transform: perspective(400px) rotateX(-90deg);
+    opacity: 0;
+  }
+  55% {
+    transform: perspective(400px) rotateX(12deg);
+    opacity: 1;
+  }
+  100% {
+    transform: perspective(400px) rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+.animate-slot-flip {
+  animation: slot-flip 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes glow-ring {
+  0% {
+    transform: scale(0.55);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.animate-glow-ring {
+  animation: glow-ring 0.9s ease-out both;
+}
+
+@keyframes board-pop {
+  0% {
+    transform: scale(0.5);
+    box-shadow: 0 0 0 0 rgba(217, 70, 239, 0.85);
+  }
+  60% {
+    transform: scale(1.18);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(217, 70, 239, 0);
+  }
+}
+
+.animate-board-pop {
+  animation: board-pop 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes chip-in {
+  0% {
+    transform: translateY(8px) scale(0.7);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-chip-in {
+  animation: chip-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes confetti-burst {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--cx), var(--cy)) rotate(var(--cr));
+    opacity: 0;
+  }
+}
+
+.confetti-particle {
+  position: absolute;
+  width: 8px;
+  height: 12px;
+  border-radius: 2px;
+  pointer-events: none;
+  animation: confetti-burst 0.9s ease-out forwards;
+  animation-delay: var(--cd, 0ms);
 }
 
 /* Tambola draw ball — glassy sphere with the drawn number. */

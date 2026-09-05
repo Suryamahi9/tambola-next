@@ -1,13 +1,28 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { audioLanguages, type AudioLang } from "@/lib/site";
+import {
+  audioLanguages,
+  voiceTones,
+  type AudioLang,
+  type VoiceTone,
+} from "@/lib/site";
 
 const SAVE_KEY = "tambola-game-v2";
+
+interface Particle {
+  id: number;
+  cx: string;
+  cy: string;
+  cr: string;
+  cd: string;
+  color: string;
+}
 
 interface GameState {
   mode: "manual" | "auto";
   language: AudioLang;
+  tone: VoiceTone;
   speed: number;
   calledNumbers: number[];
   lastNumber: number | null;
@@ -16,10 +31,40 @@ interface GameState {
 const DEFAULT_STATE: GameState = {
   mode: "manual",
   language: "en-IN",
+  tone: "natural",
   speed: 4000,
   calledNumbers: [],
   lastNumber: null,
 };
+
+const BURST_COLORS = [
+  "#7c3aed",
+  "#d946ef",
+  "#22d3ee",
+  "#34d399",
+  "#facc15",
+  "#fb7185",
+  "#60a5fa",
+];
+
+function makeBurst(seed: number): Particle[] {
+  const parts: Particle[] = [];
+  for (let i = 0; i < 16; i++) {
+    const angle = (i / 16) * Math.PI * 2 + (seed % 7) * 0.15;
+    const dist = 60 + Math.random() * 90;
+    const x = Math.cos(angle) * dist;
+    const y = Math.sin(angle) * dist - 20;
+    parts.push({
+      id: seed * 100 + i,
+      cx: `${Math.round(x)}px`,
+      cy: `${Math.round(y)}px`,
+      cr: `${Math.round(Math.random() * 540 - 270)}deg`,
+      cd: `${Math.round(Math.random() * 120)}ms`,
+      color: BURST_COLORS[i % BURST_COLORS.length],
+    });
+  }
+  return parts;
+}
 
 function loadState(): GameState | null {
   if (typeof window === "undefined") return null;
@@ -38,26 +83,35 @@ function loadState(): GameState | null {
   }
 }
 
-function speakNumber(num: number, lang: AudioLang): boolean {
-  const audio = new Audio(`/audio/${lang === "hi-IN" ? "hi" : "te"}/${num}.mp3`);
+function speakNumber(num: number, lang: AudioLang, tone: VoiceTone): boolean {
+  const toneSpec = voiceTones.find((t) => t.value === tone) ?? voiceTones[0];
   if (lang === "hi-IN" || lang === "te-IN") {
+    const sub = lang === "hi-IN" ? "hi" : "te";
+    const audio = new Audio(`/audio/${sub}/${num}.mp3`);
     audio.play().catch(() => false);
     return true;
   }
   if (!("speechSynthesis" in window)) return false;
   const utterance = new SpeechSynthesisUtterance(String(num));
   utterance.lang = lang;
-  utterance.rate = 0.85;
-  utterance.pitch = 1;
+  utterance.rate = toneSpec.rate;
+  utterance.pitch = toneSpec.pitch;
   if (speechSynthesis.speaking) speechSynthesis.cancel();
   window.setTimeout(() => speechSynthesis.speak(utterance), 200);
   return true;
 }
 
 const LANG_NAMES: Record<AudioLang, string> = {
-  "en-IN": "English",
+  "en-IN": "English (India)",
   "hi-IN": "Hindi",
   "te-IN": "Telugu",
+};
+
+const TONE_NAMES: Record<VoiceTone, string> = {
+  natural: "Natural",
+  deep: "Deep",
+  bright: "Bright",
+  quick: "Quick",
 };
 
 function buildReportText(state: GameState) {
@@ -65,7 +119,7 @@ function buildReportText(state: GameState) {
   return {
     meta: [
       `Mode: ${state.mode === "auto" ? "Auto" : "Manual"}`,
-      `Audio Language: ${LANG_NAMES[state.language]}`,
+      `Voice: ${LANG_NAMES[state.language]} · ${TONE_NAMES[state.tone]}`,
       `Status: ${status}`,
     ],
     stats: [
@@ -83,6 +137,8 @@ export default function Caller() {
   const [toast, setToast] = useState<string | null>(null);
   const [confirmReset, setConfirmReset] = useState(false);
   const [audioOk, setAudioOk] = useState(true);
+  const [particles, setParticles] = useState<Particle[]>([]);
+  const [lastKey, setLastKey] = useState(0);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const stateRef = useRef(state);
@@ -134,13 +190,15 @@ export default function Caller() {
       calledNumbers: [...prev.calledNumbers, num],
       lastNumber: num,
     }));
-    if (!speakNumber(num, s.language)) setAudioOk(false);
+    setLastKey((k) => k + 1);
+    setParticles(makeBurst(num));
+    if (!speakNumber(num, s.language, s.tone)) setAudioOk(false);
   }, [showToast]);
 
   const announceNumber = useCallback((num: number) => {
     const s = stateRef.current;
     if (num < 1 || num > 90) return;
-    if (!speakNumber(num, s.language)) setAudioOk(false);
+    if (!speakNumber(num, s.language, s.tone)) setAudioOk(false);
   }, []);
 
   const toggleAuto = useCallback(() => {
@@ -231,7 +289,7 @@ export default function Caller() {
       "",
       `Generated: ${new Date().toLocaleString()}`,
       `Mode: ${s.mode === "auto" ? "Auto" : "Manual"}`,
-      `Audio Language: ${LANG_NAMES[s.language]}`,
+      `Voice: ${LANG_NAMES[s.language]} · ${TONE_NAMES[s.tone]}`,
       `Status: ${s.calledNumbers.length >= 90 ? "Game Over" : "In Progress"}`,
       "",
       `Numbers Called: ${s.calledNumbers.length} / 90`,
@@ -332,7 +390,14 @@ export default function Caller() {
 
   const resetGame = useCallback(() => {
     stopAuto();
-    setState({ ...DEFAULT_STATE, mode: stateRef.current.mode, language: stateRef.current.language, speed: stateRef.current.speed });
+    setState({
+      ...DEFAULT_STATE,
+      mode: stateRef.current.mode,
+      language: stateRef.current.language,
+      tone: stateRef.current.tone,
+      speed: stateRef.current.speed,
+    });
+    setParticles([]);
     setConfirmReset(false);
     showToast("Game reset");
   }, [stopAuto, showToast]);
@@ -408,24 +473,64 @@ export default function Caller() {
                 ))}
               </select>
             </label>
+
+            <label className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-300">
+              Tone
+              <select
+                value={state.tone}
+                onChange={(e) => setState((p) => ({ ...p, tone: e.target.value as VoiceTone }))}
+                className="rounded-lg border border-white/15 bg-[#0b0d1a] px-3 py-1.5 text-sm font-semibold text-neutral-100 outline-none focus:border-violet-500"
+                title="Change the caller voice pitch & speed"
+              >
+                {voiceTones.map((t) => (
+                  <option key={t.value} value={t.value}>
+                    {t.label}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
 
           <div className="mt-6 flex items-center gap-6">
-            <div className="flex-1 text-center">
+            <div className="relative flex-1 text-center">
               <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
                 Last Number
               </p>
-              <p
-                key={state.lastNumber ?? "none"}
-                className="animate-pop mt-1 font-display text-6xl font-bold text-transparent sm:text-7xl"
-                style={{
-                  backgroundImage: "linear-gradient(135deg, #7c3aed, #d946ef)",
-                  WebkitBackgroundClip: "text",
-                  backgroundClip: "text",
-                }}
-              >
-                {state.lastNumber ?? "–"}
-              </p>
+              <div className="relative mt-1 inline-block">
+                {state.lastNumber !== null && particles.length > 0 && (
+                  <>
+                    <span className="animate-glow-ring pointer-events-none absolute inset-0 mx-auto my-auto block h-24 w-24 rounded-full border-2 border-fuchsia-400/80" />
+                    {particles.map((p) => (
+                      <span
+                        key={p.id}
+                        className="confetti-particle"
+                        style={
+                          {
+                            left: "50%",
+                            top: "50%",
+                            background: p.color,
+                            "--cx": p.cx,
+                            "--cy": p.cy,
+                            "--cr": p.cr,
+                            "--cd": p.cd,
+                          } as React.CSSProperties
+                        }
+                      />
+                    ))}
+                  </>
+                )}
+                <p
+                  key={state.lastNumber ?? "none"}
+                  className="animate-slot-flip mt-1 font-display text-6xl font-bold text-transparent sm:text-7xl"
+                  style={{
+                    backgroundImage: "linear-gradient(135deg, #7c3aed, #d946ef)",
+                    WebkitBackgroundClip: "text",
+                    backgroundClip: "text",
+                  }}
+                >
+                  {state.lastNumber ?? "–"}
+                </p>
+              </div>
             </div>
             <div className="h-16 w-px bg-neutral-200 dark:bg-neutral-800" />
             <div className="grid flex-1 grid-cols-2 gap-3">
@@ -527,7 +632,16 @@ export default function Caller() {
               {status}
             </span>
           </div>
-          <div className="grid grid-cols-6 gap-1.5 sm:grid-cols-9 sm:gap-2 lg:grid-cols-10">
+          <div className="mb-4 h-1.5 overflow-hidden rounded-full bg-neutral-800">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 transition-[width] duration-700 ease-out"
+              style={{ width: `${(state.calledNumbers.length / 90) * 100}%` }}
+            />
+          </div>
+          <div
+            key={lastKey}
+            className="grid grid-cols-6 gap-1.5 sm:grid-cols-9 sm:gap-2 lg:grid-cols-10"
+          >
             {Array.from({ length: 90 }, (_, i) => i + 1).map((num) => {
               const called = calledSet.has(num);
               const isLast = state.lastNumber === num;
@@ -536,7 +650,7 @@ export default function Caller() {
                   key={num}
                   className={`flex aspect-square items-center justify-center rounded-lg text-sm font-bold transition ${
                     isLast
-                      ? "bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white ring-2 ring-violet-400 ring-offset-1 ring-offset-neutral-900"
+                      ? "animate-board-pop bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white ring-2 ring-violet-400 ring-offset-1 ring-offset-neutral-900"
                       : called
                         ? "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300"
                         : "bg-neutral-100 text-neutral-400 dark:bg-neutral-800 dark:text-neutral-500"
@@ -571,7 +685,7 @@ export default function Caller() {
                     type="button"
                     onClick={() => announceNumber(num)}
                     title={`Announce ${num} again`}
-                    className={`inline-flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold transition hover:scale-105 ${
+                    className={`animate-chip-in inline-flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold transition hover:scale-105 ${
                       i === 0
                         ? "bg-violet-600 text-white"
                         : "bg-neutral-100 text-neutral-700 hover:bg-violet-100 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-violet-900/40"

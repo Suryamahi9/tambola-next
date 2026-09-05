@@ -33,9 +33,18 @@ export const navLinks = [
 ];
 
 export const audioLanguages = [
-  { value: "en-IN", label: "English", flag: "🇬🇧" },
-  { value: "hi-IN", label: "Hindi", flag: "🇮🇳" },
-  { value: "te-IN", label: "Telugu", flag: "🇮🇳" },
+  { value: "en-IN", label: "English (India)", flag: "🇮🇳" },
+  { value: "hi-IN", label: "Hindi", flag: "हिं" },
+  { value: "te-IN", label: "Telugu", flag: "తె" },
 ] as const;
 
 export type AudioLang = (typeof audioLanguages)[number]["value"];
+
+export const voiceTones = [
+  { value: "natural", label: "Natural", rate: 0.85, pitch: 1 },
+  { value: "deep", label: "Deep", rate: 0.75, pitch: 0.7 },
+  { value: "bright", label: "Bright", rate: 0.85, pitch: 1.4 },
+  { value: "quick", label: "Quick", rate: 1.2, pitch: 1 },
+] as const;
+
+export type VoiceTone = (typeof voiceTones)[number]["value"];
