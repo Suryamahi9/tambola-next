@@ -7,10 +7,13 @@ import {
   generateUniqueGrids,
   type Grid,
 } from "@/lib/ticket";
-import TicketCard, { STYLE_LABELS, type TicketStyle } from "./TicketCard";
+import TicketCard, { THEME_LABELS, DESIGN_LABELS, type TicketTheme, type TicketDesign } from "./TicketCard";
 
 type Mode = "random" | "fullset" | "halfset";
-const STYLE_OPTIONS = Object.entries(STYLE_LABELS) as [TicketStyle, string][];
+type SelectedDesign = TicketDesign | "all";
+const THEME_OPTIONS = Object.entries(THEME_LABELS) as [TicketTheme, string][];
+const DESIGN_OPTIONS = Object.entries(DESIGN_LABELS) as [TicketDesign, string][];
+const DESIGN_ORDER: TicketDesign[] = ["classic", "carnival", "stub", "metro", "aura", "blueprint"];
 const SET_LABELS = [
   "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
   "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", "AN",
@@ -24,7 +27,8 @@ export default function TicketGenerator() {
   const [tickets, setTickets] = useState<Grid[]>([]);
   const [labels, setLabels] = useState<(string | null)[]>([]);
   const [toast, setToast] = useState<string | null>(null);
-  const [style, setStyle] = useState<TicketStyle>("paperwhite");
+  const [style, setStyle] = useState<TicketTheme>("paperwhite");
+  const [design, setDesign] = useState<SelectedDesign>("all");
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
@@ -239,17 +243,37 @@ export default function TicketGenerator() {
               </span>
               <select
                 value={style}
-                onChange={(e) => setStyle(e.target.value as TicketStyle)}
+                onChange={(e) => setStyle(e.target.value as TicketTheme)}
                 className="w-full bg-surface-container-highest text-on-surface px-4 py-3 rounded-xl font-label-md text-label-md focus:outline-none focus:bg-surface-container shadow-inner transition-colors"
               >
-                {STYLE_OPTIONS.map(([value, label]) => (
+                {THEME_OPTIONS.map(([value, label]) => (
                   <option key={value} value={value}>
                     {label}
                   </option>
                 ))}
               </select>
             </div>
-            <span className="font-label-sm text-label-sm text-secondary font-mono">11 Luxury Card Schemes</span>
+            <div className="space-y-2">
+              <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-bold flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-sm">tune</span>
+                Ticket Design
+              </span>
+              <select
+                value={design}
+                onChange={(e) => setDesign(e.target.value as SelectedDesign)}
+                className="w-full bg-surface-container-highest text-on-surface px-4 py-3 rounded-xl font-label-md text-label-md focus:outline-none focus:bg-surface-container shadow-inner transition-colors"
+              >
+                <option value="all">✦ All Designs Mixed</option>
+                {DESIGN_OPTIONS.map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <span className="font-label-sm text-label-sm text-secondary font-mono">
+              {THEME_OPTIONS.length} Themes · {DESIGN_OPTIONS.length} Designs · Unique SN
+            </span>
           </div>
         </div>
 
@@ -319,6 +343,9 @@ export default function TicketGenerator() {
             <span className="text-on-surface-variant font-label-sm text-label-sm uppercase bg-surface-container-high px-2 py-0.5 rounded-full">
               {tickets.length} Ticket{tickets.length === 1 ? "" : "s"} Ready
             </span>
+            <span className="text-secondary font-label-sm text-label-sm uppercase bg-secondary-container/15 px-2 py-0.5 rounded-full">
+              Unique Serials
+            </span>
           </div>
           <div className="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
             <span className="material-symbols-outlined text-secondary text-sm">verified_user</span>
@@ -344,6 +371,7 @@ export default function TicketGenerator() {
                   index={i}
                   total={tickets.length}
                   style={style}
+                  design={design === "all" ? DESIGN_ORDER[i % DESIGN_ORDER.length] : design}
                 />
               </div>
             ))}
