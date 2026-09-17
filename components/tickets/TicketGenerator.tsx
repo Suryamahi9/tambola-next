@@ -1,16 +1,61 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   generateHalfSetBatch,
   generateSetBatch,
   generateUniqueGrids,
+  gridKey,
+  isValidTicket,
   type Grid,
 } from "@/lib/ticket";
-import TicketCard, { THEME_LABELS, DESIGN_LABELS, type TicketTheme, type TicketDesign } from "./TicketCard";
+import TicketCard, {
+  THEME_LABELS,
+  DESIGN_LABELS,
+  type TicketTheme,
+  type TicketDesign,
+  type ThemeSpec,
+} from "./TicketCard";
 
 type Mode = "random" | "fullset" | "halfset";
 type SelectedDesign = TicketDesign | "all";
+type CustomPalette = [string, string, string, string, string, string];
+const RANDOM_MAX = 50;
+const SET_MAX = 50;
+const PREF_KEY = "tambola-generator-prefs";
+const DEFAULT_CUSTOM: CustomPalette = ["#1f3a5f", "#111c30", "#2e5f8a", "#eef4ff", "#22d3ee", "#7dd3fc"];
+const CUSTOM_FIELDS: { key: string; label: string }[] = [
+  { key: "cardTop", label: "Card Top" },
+  { key: "cardBottom", label: "Card Bottom" },
+  { key: "band", label: "Band" },
+  { key: "ink", label: "Ink · Text" },
+  { key: "accent", label: "Accent" },
+  { key: "watermark", label: "Watermark" },
+];
+
+function hexToRgb(hex: string): [number, number, number] {
+  const h = hex.replace("#", "");
+  return [
+    parseInt(h.slice(0, 2), 16),
+    parseInt(h.slice(2, 4), 16),
+    parseInt(h.slice(4, 6), 16),
+  ];
+}
+
+function shade(hex: string, f: number): string {
+  const [r, g, b] = hexToRgb(hex).map((c) => Math.max(0, Math.min(255, Math.round(c * f))));
+  return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)}`;
+}
+
+function luminance(hex: string): number {
+  const [r, g, b] = hexToRgb(hex);
+  return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+}
+
+function rgba(hex: string, a: number): string {
+  const [r, g, b] = hexToRgb(hex);
+  return `rgba(${r},${g},${b},${a})`;
+}
 const THEME_OPTIONS = Object.entries(THEME_LABELS) as [TicketTheme, string][];
 const DESIGN_OPTIONS = Object.entries(DESIGN_LABELS) as [TicketDesign, string][];
 const DESIGN_ORDER: TicketDesign[] = ["classic", "carnival", "stub", "metro", "aura", "blueprint"];
@@ -29,11 +74,16 @@ export default function TicketGenerator() {
   const [toast, setToast] = useState<string | null>(null);
   const [style, setStyle] = useState<TicketTheme>("paperwhite");
   const [design, setDesign] = useState<SelectedDesign>("all");
+  const [showCoverage, setShowCoverage] = useState(false);
+  const [ticketSize, setTicketSize] = useState<"sm" | "md" | "lg">("md");
+  const [customColors, setCustomColors] = useState<CustomPalette>(DEFAULT_CUSTOM);
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
     window.setTimeout(() => setToast(null), 2600);
   }, []);
+
+  const hydratedRef = useRef(false);
 
   useEffect(() => {
     if (!toast) return;
@@ -41,9 +91,128 @@ export default function TicketGenerator() {
     return () => window.clearTimeout(t);
   }, [toast]);
 
+  // Template memory — restore last controls after mount so server and client renders match.
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(PREF_KEY);
+      if (!raw) {
+        hydratedRef.current = true; // nothing to protect — arm persistence immediately
+        return;
+      }
+      const p = JSON.parse(raw) as Partial<Record<"mode" | "count" | "name" | "style" | "design" | "ticketSize" | "custom", unknown>>;
+      const id = window.requestAnimationFrame(() => {
+        if (p.mode === "random" || p.mode === "fullset" || p.mode === "halfset") setMode(p.mode);
+        if (typeof p.count === "number") {
+          const max = p.mode === "random" ? RANDOM_MAX : SET_MAX;
+          setCount(Math.max(1, Math.min(max, p.count)));
+        }
+        if (typeof p.name === "string") setName(p.name);
+        if (typeof p.style === "string" && p.style in THEME_LABELS) setStyle(p.style as TicketTheme);
+        if (p.design === "all" || (typeof p.design === "string" && p.design in DESIGN_LABELS))
+          setDesign(p.design as SelectedDesign);
+        if (p.ticketSize === "sm" || p.ticketSize === "md" || p.ticketSize === "lg")
+          setTicketSize(p.ticketSize);
+        if (
+          Array.isArray(p.custom) &&
+          p.custom.length === 6 &&
+          (p.custom as unknown[]).every((c) => typeof c === "string" && /^#[0-9a-f]{6}$/i.test(c as string))
+        )
+          setCustomColors(p.custom as CustomPalette);
+        hydratedRef.current = true;
+      });
+      return () => window.cancelAnimationFrame(id);
+    } catch {
+      /* corrupt storage — keep defaults */
+    }
+  }, []);
+
+  // Persist only after restore has applied, so defaults never clobber saved prefs.
+  useEffect(() => {
+    if (!hydratedRef.current) return;
+    try {
+      localStorage.setItem(PREF_KEY, JSON.stringify({ mode, count, name, style, design, ticketSize, custom: customColors }));
+    } catch {
+      /* storage full / private mode */
+    }
+  }, [mode, count, name, style, design, ticketSize, customColors]);
+
+  const analysis = useMemo(() => {
+    let duplicateLines = 0;
+    let invalid = 0;
+    let gridDupes = 0;
+    const seenGrids = new Set<string>();
+    const seenLines = new Map<string, number>();
+    for (const g of tickets) {
+      if (!isValidTicket(g)) invalid++;
+      const key = gridKey(g);
+      if (seenGrids.has(key)) gridDupes++;
+      seenGrids.add(key);
+      for (const row of g) {
+        const line = row.filter((v): v is number => v !== null).sort((a, b) => a - b).join(",");
+        const prev = seenLines.get(line) ?? 0;
+        if (prev > 0) duplicateLines++;
+        seenLines.set(line, prev + 1);
+      }
+    }
+    return { duplicateLines, invalid, gridDupes };
+  }, [tickets]);
+
+  const coverage = useMemo(() => {
+    const counts = new Array<number>(91).fill(0);
+    let total = 0;
+    let peak = 0;
+    for (const g of tickets) {
+      for (const row of g) {
+        for (const v of row) {
+          if (v) {
+            counts[v]++;
+            total++;
+          }
+        }
+      }
+    }
+    for (let n = 1; n <= 90; n++) if (counts[n] > peak) peak = counts[n];
+    return { counts, total, missing: counts.filter((_, n) => n >= 1 && counts[n] === 0).length, peak };
+  }, [tickets]);
+
+  const customTheme = useMemo<ThemeSpec>(() => {
+    const [cardF, cardT, cB, ink, acc, wat] = customColors;
+    const dark = luminance(cardF) < 0.45;
+    const band = `bg-gradient-to-r from-[${cB}] to-[${shade(cB, 0.68)}]`;
+    const brand = luminance(cB) < 0.55 ? "text-white" : "text-[#111111]";
+    const line = dark ? shade(ink, 0.78) : shade(ink, 0.88);
+    const card = dark
+      ? `bg-gradient-to-b from-[${cardF}] to-[${cardT}] rounded-[6px] border border-[${shade(cB, 1.35)}] shadow-[0_10px_28px_rgba(0,0,0,0.4)]`
+      : `bg-gradient-to-b from-[${cardF}] to-[${cardT}] rounded-[6px] border border-[${shade(cB, 0.62)}] shadow-[0_10px_28px_rgba(0,0,0,0.2)]`;
+    const accDark = luminance(acc) < 0.5;
+    return {
+      foilDark: dark,
+      card,
+      band,
+      brand,
+      serial: dark ? `text-[${shade(acc, 1.3)}]` : `text-[${ink}]`,
+      serialMuted: dark ? `text-[${shade(acc, 0.85)}]` : `text-[${shade(ink, 0.85)}]`,
+      rule: `bg-[${acc}]`,
+      line,
+      gridText: `text-[${line}]`,
+      num: `text-[${ink}]`,
+      filled: dark ? "bg-white/[0.09]" : `bg-[${ink}]/[0.08]`,
+      called: `bg-[${acc}] ${accDark ? "text-white" : "text-[#151515]"}`,
+      watermark: rgba(wat, dark ? 0.12 : 0.1),
+    };
+  }, [customColors]);
+
+  const updateCustomColor = useCallback((i: number, value: string) => {
+    setCustomColors((prev) => {
+      const next = [...prev] as CustomPalette;
+      next[i] = value;
+      return next;
+    });
+  }, []);
+
   const generate = useCallback(() => {
     if (mode === "fullset") {
-      const sets = Math.max(1, Math.min(50, count));
+      const sets = Math.max(1, Math.min(SET_MAX, count));
       const batch = generateSetBatch(sets);
       if (!batch) {
         showToast("Could not generate unique full sets — please try again");
@@ -56,7 +225,7 @@ export default function TicketGenerator() {
     }
 
     if (mode === "halfset") {
-      const sets = Math.max(1, Math.min(50, count));
+      const sets = Math.max(1, Math.min(SET_MAX, count));
       const batch = generateHalfSetBatch(sets);
       if (!batch) {
         showToast("Could not generate unique half sets — please try again");
@@ -68,7 +237,7 @@ export default function TicketGenerator() {
       return;
     }
 
-    const n = Math.max(1, Math.min(30, count));
+    const n = Math.max(1, Math.min(RANDOM_MAX, count));
     const grids = generateUniqueGrids(n);
     setTickets(grids);
     setLabels(Array(n).fill(name.trim() || null));
@@ -85,7 +254,7 @@ export default function TicketGenerator() {
       return;
     }
     const names = name.trim().split(/\s+/).filter(Boolean);
-    const n = Math.max(1, Math.min(30, count));
+    const n = Math.max(1, Math.min(RANDOM_MAX, count));
     const grids = generateUniqueGrids(n);
     setTickets(grids);
     setLabels(names.map((base, i) => `${base}-${i + 1}`));
@@ -99,18 +268,20 @@ export default function TicketGenerator() {
   const handleCountChange = (value: string) => {
     const parsed = parseInt(value, 10) || 1;
     if (mode === "fullset" || mode === "halfset") {
-      setCount(Math.max(1, Math.min(50, parsed)));
+      setCount(Math.max(1, Math.min(SET_MAX, parsed)));
     } else {
-      setCount(Math.max(1, Math.min(30, parsed)));
+      setCount(Math.max(1, Math.min(RANDOM_MAX, parsed)));
     }
   };
 
   const switchMode = (m: Mode) => {
     setMode(m);
     if (m === "fullset") {
-      setCount((c) => Math.max(1, Math.min(50, Math.ceil(c / 6))));
+      setCount((c) => Math.max(1, Math.min(SET_MAX, Math.ceil(c / 6))));
     } else if (m === "halfset") {
-      setCount((c) => Math.max(1, Math.min(50, Math.ceil(c / 3))));
+      setCount((c) => Math.max(1, Math.min(SET_MAX, Math.ceil(c / 3))));
+    } else {
+      setCount((c) => Math.max(1, Math.min(RANDOM_MAX, c)));
     }
   };
 
@@ -227,7 +398,7 @@ export default function TicketGenerator() {
               <input
                 type="number"
                 min={1}
-                max={mode === "random" ? 30 : 50}
+                max={mode === "random" ? RANDOM_MAX : SET_MAX}
                 value={count}
                 onChange={(e) => handleCountChange(e.target.value)}
                 className="w-24 bg-surface-container-highest text-on-surface text-center py-2.5 rounded-xl font-mono font-bold focus:outline-none focus:bg-surface-container shadow-inner transition-colors"
@@ -271,11 +442,93 @@ export default function TicketGenerator() {
                 ))}
               </select>
             </div>
+            <div className="space-y-2">
+              <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-bold flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-sm">zoom_out_map</span>
+                Ticket Size
+              </span>
+              <select
+                value={ticketSize}
+                onChange={(e) => setTicketSize(e.target.value as "sm" | "md" | "lg")}
+                className="w-full bg-surface-container-highest text-on-surface px-4 py-3 rounded-xl font-label-md text-label-md focus:outline-none focus:bg-surface-container shadow-inner transition-colors"
+              >
+                <option value="sm">Compact</option>
+                <option value="md">Standard</option>
+                <option value="lg">Large</option>
+              </select>
+            </div>
             <span className="font-label-sm text-label-sm text-secondary font-mono">
-              {THEME_OPTIONS.length} Themes · {DESIGN_OPTIONS.length} Designs · Unique SN
+              {THEME_OPTIONS.length} Themes · {DESIGN_OPTIONS.length} Designs
             </span>
           </div>
         </div>
+
+        {style === "custom" && (
+          <div className="rounded-2xl bg-surface-container-highest/60 border border-primary-container/30 p-4 space-y-3 print:hidden">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-bold flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-sm">palette</span>
+                Custom Theme Editor
+              </span>
+              <span className="font-label-sm text-label-sm text-secondary">
+                Previewed live on the batch below · saved to this browser
+              </span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              {CUSTOM_FIELDS.map((f, i) => (
+                <label key={f.key} className="block">
+                  <span className="font-label-sm text-label-sm text-on-surface-variant">{f.label}</span>
+                  <div className="mt-1.5 flex items-center gap-2 rounded-xl bg-surface-container p-1.5">
+                    <input
+                      type="color"
+                      value={customColors[i]}
+                      onChange={(e) => updateCustomColor(i, e.target.value)}
+                      className="h-8 w-10 shrink-0 cursor-pointer rounded-md border-0 bg-transparent p-0"
+                      aria-label={f.label}
+                    />
+                    <span className="truncate font-mono text-[11px] text-on-surface-variant">{customColors[i]}</span>
+                  </div>
+                </label>
+              ))}
+            </div>
+            <div className="flex items-center justify-between gap-3 flex-wrap pt-2">
+              <span className="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1.5">
+                <span
+                  className="inline-block h-3 w-3 rounded-full border border-white/40"
+                  style={{ backgroundColor: customColors[2] }}
+                  aria-hidden
+                />
+                Band
+                <span
+                  className="inline-block h-3 w-3 rounded-full border border-white/40"
+                  style={{ backgroundColor: customColors[4] }}
+                  aria-hidden
+                />
+                Accent
+                <span
+                  className="inline-block h-3 w-3 rounded-full border border-white/40"
+                  style={{ backgroundColor: customColors[3] }}
+                  aria-hidden
+                />
+                Ink
+                <span
+                  className="inline-block h-3 w-3 rounded-full border border-white/40"
+                  style={{ backgroundColor: customColors[5] }}
+                  aria-hidden
+                />
+                Watermark
+              </span>
+              <button
+                type="button"
+                onClick={() => setCustomColors(DEFAULT_CUSTOM)}
+                className="rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface px-3 py-1.5 font-label-sm text-label-sm font-bold flex items-center gap-1 transition-all"
+              >
+                <span className="material-symbols-outlined text-sm">restart_alt</span>
+                Reset Colors
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Action toolbar */}
         <div className="flex flex-wrap items-center justify-between gap-4 pt-4 bg-surface-container-highest/40 p-4 rounded-xl">
@@ -344,14 +597,84 @@ export default function TicketGenerator() {
               {tickets.length} Ticket{tickets.length === 1 ? "" : "s"} Ready
             </span>
             <span className="text-secondary font-label-sm text-label-sm uppercase bg-secondary-container/15 px-2 py-0.5 rounded-full">
-              Unique Serials
+              Live Preview
             </span>
           </div>
-          <div className="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
-            <span className="material-symbols-outlined text-secondary text-sm">verified_user</span>
-            <span>Zero Duplicate Lines • Exact 5 Numbers/Row Standard</span>
+          <div className="flex flex-wrap items-center gap-2">
+            {tickets.length > 0 && (
+              <span
+                className={`font-label-sm text-label-sm uppercase px-2 py-0.5 rounded-full ${
+                  analysis.invalid === 0 && analysis.gridDupes === 0
+                    ? "text-secondary bg-secondary-container/15"
+                    : "text-[#fbbf24] bg-[#fbbf24]/10"
+                }`}
+              >
+                {analysis.invalid === 0 && analysis.gridDupes === 0
+                  ? `✓ ${tickets.length} unique · all valid`
+                  : `⚠ ${analysis.invalid} invalid · ${analysis.gridDupes} dupes`}
+              </span>
+            )}
+            {tickets.length > 0 && (
+              <span
+                className={`font-label-sm text-label-sm uppercase px-2 py-0.5 rounded-full ${
+                  analysis.duplicateLines === 0
+                    ? "text-secondary bg-secondary-container/15"
+                    : "text-[#fbbf24] bg-[#fbbf24]/10"
+                }`}
+              >
+                {analysis.duplicateLines === 0 ? "✓ No duplicate lines" : `⚠ ${analysis.duplicateLines} duplicate lines`}
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={() => setShowCoverage((v) => !v)}
+              disabled={tickets.length === 0}
+              className="font-label-sm text-label-sm uppercase px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant hover:text-on-surface disabled:opacity-40 flex items-center gap-1 transition-colors"
+            >
+              <span className="material-symbols-outlined text-sm">grid_view</span>
+              {showCoverage ? "Hide" : "Show"} Number Coverage
+            </button>
           </div>
         </div>
+
+        {showCoverage && tickets.length > 0 && (
+          <div className="no-print rounded-2xl bg-surface-container-low border border-surface-container-high p-4 space-y-3">
+            <div className="flex flex-wrap items-center gap-2.5 font-label-md text-label-md font-bold text-on-surface">
+              <span className="material-symbols-outlined text-secondary text-lg">bar_chart</span>
+              Number Coverage
+              <span className="text-on-surface-variant font-label-sm text-label-sm">
+                {coverage.total} numbers across {tickets.length} tickets
+              </span>
+              <span className="font-label-sm text-label-sm text-[#fbbf24] bg-[#fbbf24]/10 px-2 py-0.5 rounded-full">
+                {coverage.missing} missing
+              </span>
+              <span className="font-label-sm text-label-sm text-primary bg-primary-container/15 px-2 py-0.5 rounded-full">
+                peak ×{coverage.peak}
+              </span>
+            </div>
+            <div className="grid grid-cols-10 gap-1" aria-label="How many times each number 1-90 appears">
+              {Array.from({ length: 9 }, (_, r) =>
+                Array.from({ length: 10 }, (_, c) => r * 10 + c + 1)
+              ).flat().map((n) => {
+                const c = coverage.counts[n];
+                const cls =
+                  c === 0
+                    ? "bg-surface-container text-on-surface-variant"
+                    : c === 1
+                      ? "bg-primary-container text-on-primary-container"
+                      : c === 2
+                        ? "bg-secondary-container text-on-secondary-container"
+                        : "bg-tertiary-container text-on-tertiary-container";
+                return (
+                  <div key={n} className={`aspect-[2/3] rounded-md flex flex-col items-center justify-center ${cls}`} title={`${n} appears ${c}×`}>
+                    <span className="font-mono font-bold text-[9px] leading-none">{n}</span>
+                    <span className="font-mono text-[6px] leading-none opacity-70 mt-0.5">{c}×</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {tickets.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-surface-container-highest p-16 text-center bg-surface-container-low/40">
@@ -362,7 +685,16 @@ export default function TicketGenerator() {
             </p>
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <div
+        className={`grid gap-4 ${
+          ticketSize === "sm"
+            ? "sm:grid-cols-3 xl:grid-cols-4"
+            : ticketSize === "lg"
+              ? "sm:grid-cols-1 lg:grid-cols-2"
+              : "sm:grid-cols-2 xl:grid-cols-3"
+        }`}
+        style={ticketSize !== "md" ? { zoom: ticketSize === "sm" ? 0.9 : 1.05 } : undefined}
+      >
             {tickets.map((grid, i) => (
               <div key={i} className="break-inside-avoid">
                 <TicketCard
@@ -372,6 +704,7 @@ export default function TicketGenerator() {
                   total={tickets.length}
                   style={style}
                   design={design === "all" ? DESIGN_ORDER[i % DESIGN_ORDER.length] : design}
+                  customTheme={style === "custom" ? customTheme : undefined}
                 />
               </div>
             ))}

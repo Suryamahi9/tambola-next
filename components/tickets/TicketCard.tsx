@@ -30,7 +30,10 @@ export type TicketTheme =
   | "arctic"
   | "iris"
   | "pines"
-  | "stone";
+  | "stone"
+  | "print"
+  | "dots"
+  | "custom";
 
 /** Structural layout — the "cut" of the ticket. */
 export type TicketDesign =
@@ -52,6 +55,7 @@ interface Props {
   called?: ReadonlySet<number>;
   style?: TicketStyle;
   design?: TicketDesign;
+  customTheme?: ThemeSpec;
 }
 
 const THEME_LABELS: Record<TicketTheme, string> = {
@@ -81,6 +85,9 @@ const THEME_LABELS: Record<TicketTheme, string> = {
   iris: "🪻 Iris Indigo",
   pines: "🌲 Pines Evergreen",
   stone: "🪨 Warm Stone",
+  print: "🖨️ B/W Print",
+  dots: "◌ Dot Matrix",
+  custom: "🎨 Custom",
 };
 
 const DESIGN_LABELS: Record<TicketDesign, string> = {
@@ -95,7 +102,7 @@ const DESIGN_LABELS: Record<TicketDesign, string> = {
 export { THEME_LABELS, DESIGN_LABELS };
 export const STYLE_LABELS = THEME_LABELS;
 
-interface ThemeSpec {
+export interface ThemeSpec {
   card: string;
   band?: string;
   brand: string;
@@ -491,6 +498,51 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     called: "bg-[#d64541] text-white",
     watermark: "rgba(106,106,99,0.08)",
   },
+  print: {
+    foilDark: true,
+    card: "bg-gradient-to-b from-[#ffffff] to-[#e9e9e9] rounded-[6px] border border-[#191919] shadow-[0_10px_28px_rgba(0,0,0,0.22)]",
+    band: "bg-gradient-to-r from-[#191919] to-[#3d3d3d]",
+    brand: "text-white",
+    serial: "text-[#222222]",
+    serialMuted: "text-[#6f6f6f]",
+    rule: "bg-[#111111]",
+    line: "#191919",
+    gridText: "text-[#4a4a4a]",
+    num: "text-[#0a0a0a]",
+    filled: "bg-[#111111]/[0.12]",
+    called: "bg-[#111111] text-white",
+    watermark: "rgba(0,0,0,0.06)",
+  },
+  dots: {
+    foilDark: true,
+    card: "bg-gradient-to-b from-[#fdfdf6] to-[#efefe4] rounded-[6px] border border-[#242424] shadow-[0_10px_28px_rgba(0,0,0,0.22)]",
+    band: "bg-gradient-to-r from-[#242424] to-[#4c4c46]",
+    brand: "text-white",
+    serial: "text-[#262626]",
+    serialMuted: "text-[#73736c]",
+    rule: "bg-[#141414]",
+    line: "#262626",
+    gridText: "text-[#4c4c4c]",
+    num: "text-[#161616]",
+    filled: "bg-[radial-gradient(circle,rgba(0,0,0,0.5)_1px,transparent_1.4px)] bg-[length:5px_5px]",
+    called: "bg-[#141414] text-white",
+    watermark: "rgba(0,0,0,0.05)",
+  },
+  custom: {
+    foilDark: true,
+    card: "bg-gradient-to-b from-[#ffffff] to-[#eef1f5] rounded-[6px] border border-[#c3ccd6] shadow-[0_10px_28px_rgba(0,0,0,0.18)]",
+    band: "bg-gradient-to-r from-[#46586c] to-[#33424f]",
+    brand: "text-white",
+    serial: "text-[#33424f]",
+    serialMuted: "text-[#7d8a99]",
+    rule: "bg-[#46586c]",
+    line: "#46586c",
+    gridText: "text-[#546375]",
+    num: "text-[#18222c]",
+    filled: "bg-[#18222c]/[0.07]",
+    called: "bg-[#18222c] text-white",
+    watermark: "rgba(70,88,108,0.10)",
+  },
 };
 
 const ACCENTS = [
@@ -508,19 +560,6 @@ const CARNIVAL_CARD =
   "relative overflow-hidden rounded-[6px] border border-[#2a211a] bg-gradient-to-b from-[#fdf8ec] to-[#f1e6cd] shadow-[inset_0_0_0_3px_#fffdf5,0_10px_28px_rgba(0,0,0,0.3)]";
 const CARNIVAL_STAIN =
   "after:pointer-events-none after:absolute after:inset-0 after:z-[1] after:content-[''] after:bg-[radial-gradient(ellipse_at_14%_6%,rgba(120,88,38,0.13),transparent_46%),radial-gradient(ellipse_at_92%_94%,rgba(96,68,30,0.11),transparent_52%)]";
-
-/** FNV-1a digest of a ticket's 15 numbers → stable, effectively-unique serial
- *  per grid (independent of position in a batch). */
-function ticketSerial(grid: Grid): string {
-  const nums = grid.flat().filter((v): v is number => v !== null).sort((a, b) => a - b);
-  let h = 2166136261;
-  for (const n of nums) {
-    h ^= n;
-    h = Math.imul(h, 16777619);
-  }
-  const code = (h >>> 0).toString(36).toUpperCase().slice(-6).padStart(6, "0");
-  return `#TKT-${code}`;
-}
 
 /** Shared 3×9 number grid. `line` feeds the per-cell hairline via --ticket-line. */
 function TicketGrid({
@@ -610,12 +649,6 @@ function CarnivalCard({ grid, name, index, total, called }: Omit<Props, "style" 
             </div>
           </div>
         </div>
-        <div className="relative z-[2] flex items-center justify-between gap-2 px-2 pb-1.5">
-          <span className="font-mono text-[8px] font-bold tracking-widest text-[#8a6f4d]">
-            {ticketSerial(grid)}
-          </span>
-          <span className={`font-vintage-display text-[9px] font-bold italic tracking-wide ${a.text}`}>✦ {brand}</span>
-        </div>
       </div>
     </div>
   );
@@ -670,13 +703,6 @@ function ClassicCard({
           <TicketGrid grid={grid} called={called} t={t} />
         </div>
       </div>
-
-      {/* Serial footer */}
-      <div className={`relative z-[2] flex flex-wrap items-center justify-center gap-2 px-3 pb-2 pt-1 ${t.serialMuted}`}>
-        <span className="flex items-center gap-2 font-mono text-[9px] font-bold tracking-widest">
-          {ticketSerial(grid)}
-        </span>
-      </div>
     </div>
   );
 }
@@ -723,15 +749,6 @@ function StubCard({
       </div>
 
       <div className="relative z-[2] border-t-2 border-dashed" style={{ borderColor: `${t.line}55` }} />
-
-      <div className="relative z-[2] flex items-center justify-between gap-2 px-3 pb-2 pt-1">
-        <span className={`font-mono text-[8px] font-bold tracking-widest ${t.serialMuted}`}>
-          {ticketSerial(grid)}
-        </span>
-        <span className={`font-vintage-display text-[10px] font-bold italic tracking-wide ${foil}`}>
-          ✦ {brand}
-        </span>
-      </div>
     </div>
   );
 }
@@ -740,7 +757,6 @@ function MetroCard({
   grid,
   name,
   index,
-  total,
   called,
   t,
 }: Omit<Props, "style" | "design"> & { t: ThemeSpec }) {
@@ -783,13 +799,6 @@ function MetroCard({
         </div>
       </div>
 
-      <div className={`relative z-[2] flex items-center justify-between gap-2 px-4 pb-2 pt-1 ${t.serialMuted}`}>
-        <span className="font-mono text-[8px] font-bold tracking-[0.18em]">{ticketSerial(grid)}</span>
-        <span className="font-mono text-[8px] font-bold tracking-[0.18em]">
-          SHEET {String(index + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
-        </span>
-      </div>
-
       <div className="relative z-[2] h-2.5" style={{ backgroundImage: stripes }} />
     </div>
   );
@@ -798,13 +807,10 @@ function MetroCard({
 function AuraCard({
   grid,
   name,
-  index,
-  total,
   called,
   t,
 }: Omit<Props, "style" | "design"> & { t: ThemeSpec }) {
   const brand = name || "Tambola";
-  const foil = t.foilDark ? "ticket-foil-deep" : "ticket-foil";
   return (
     <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
       <div
@@ -819,29 +825,14 @@ function AuraCard({
         </span>
       </div>
 
-      <div className="relative z-[2] flex items-center justify-between gap-2 px-3 py-2">
+      <div className="relative z-[2] flex items-center justify-start gap-2 px-3 py-2">
         <span className={`font-vintage-display min-w-0 flex-1 truncate text-[11px] font-bold uppercase tracking-[0.3em] ${t.serial}`}>
           ✦ {brand}
-        </span>
-        <span
-          className="shrink-0 rounded-full border px-2 py-0.5 font-mono text-[8px] font-bold"
-          style={{ borderColor: `${t.line}66`, color: t.line }}
-        >
-          {ticketSerial(grid)}
         </span>
       </div>
 
       <div className="relative z-[2] mx-3 rounded-[6px] p-[3px]" style={{ border: `1px solid ${t.line}44` }}>
         <TicketGrid grid={grid} called={called} t={t} />
-      </div>
-
-      <div className="relative z-[2] flex items-center justify-center gap-2.5 px-3 pb-2 pt-2">
-        <span className={`h-[3px] w-8 rounded-full ${t.rule ?? "bg-surface-container"}`} />
-        <span className={`font-vintage-display whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.24em] ${foil}`}>
-          ✦ {brand}
-          <span className={t.serialMuted}> · {String(index + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}</span>
-        </span>
-        <span className={`h-[3px] w-8 rounded-full ${t.rule ?? "bg-surface-container"}`} />
       </div>
     </div>
   );
@@ -896,17 +887,12 @@ function BlueprintCard({
           </div>
         </div>
       </div>
-
-      <div className={`relative z-[2] flex items-center justify-between gap-2 border-t px-3 pb-2 pt-1 ${t.serialMuted}`} style={{ borderColor: `${t.line}33` }}>
-        <span className="font-mono text-[8px] font-bold tracking-widest">{ticketSerial(grid)}</span>
-        <span className="font-mono text-[8px] font-bold tracking-widest">N = 1–90 · 3×9 LATTICE</span>
-      </div>
     </div>
   );
 }
 
 export default function TicketCard(props: Props) {
-  const t = THEMES[props.style ?? "paperwhite"];
+  const t = props.customTheme ?? THEMES[props.style ?? "paperwhite"];
   switch (props.design ?? "classic") {
     case "carnival":
       return <CarnivalCard {...props} />;
