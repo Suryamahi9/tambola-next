@@ -1,12 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   audioLanguages,
   voiceTones,
   type AudioLang,
   type VoiceTone,
 } from "@/lib/site";
+import {
+  isPackLang,
+  preloadVoicePack,
+  recordedDuration,
+  speakRecorded,
+  type PackLang,
+} from "@/lib/voice";
 
 const SAVE_KEY = "tambola-game-v2";
 
@@ -22,19 +29,35 @@ interface Particle {
 interface GameState {
   mode: "manual" | "auto";
   language: AudioLang;
+  /** "" = studio recording for Hindi/Telugu, device default elsewhere. */
+  voiceURI: string;
+  /** 0.5–2 spoken/recording pitch. 1 = the voice's natural pitch. */
+  pitch: number;
   tone: VoiceTone;
   speed: number;
   calledNumbers: number[];
   lastNumber: number | null;
+  nickname: string;
+  tag: string;
+  voiceCuesOn: boolean;
+  wheelMode: boolean;
+  heatmap: boolean;
 }
 
 const DEFAULT_STATE: GameState = {
   mode: "manual",
   language: "en-IN",
+  voiceURI: "",
+  pitch: 1,
   tone: "natural",
   speed: 4000,
   calledNumbers: [],
   lastNumber: null,
+  nickname: "Host",
+  tag: `#${Math.random().toString(16).slice(2, 6).toUpperCase()}`,
+  voiceCuesOn: true,
+  wheelMode: false,
+  heatmap: false,
 };
 
 const BURST_COLORS = [
@@ -83,22 +106,76 @@ function loadState(): GameState | null {
   }
 }
 
-function speakNumber(num: number, lang: AudioLang, tone: VoiceTone): boolean {
+/** Studio recording instead of TTS: Hindi/Telugu packs until a system voice is picked. */
+function usesRecording(lang: AudioLang, voiceURI: string): lang is PackLang {
+  return isPackLang(lang) && voiceURI === "";
+}
+
+/** Resolve a saved voiceURI against the (lazily populated) voice list. */
+function voiceFor(voiceURI: string): SpeechSynthesisVoice | null {
+  if (!voiceURI || !("speechSynthesis" in window)) return null;
+  return (
+    window.speechSynthesis.getVoices().find((v) => v.voiceURI === voiceURI) ??
+    null
+  );
+}
+
+function speakNumber(
+  num: number,
+  lang: AudioLang,
+  tone: VoiceTone,
+  voiceURI: string,
+  pitch: number
+): boolean {
   const toneSpec = voiceTones.find((t) => t.value === tone) ?? voiceTones[0];
-  if (lang === "hi-IN" || lang === "te-IN") {
-    const sub = lang === "hi-IN" ? "hi" : "te";
-    const audio = new Audio(`/audio/${sub}/${num}.mp3`);
-    audio.play().catch(() => false);
-    return true;
-  }
+  if (usesRecording(lang, voiceURI)) return speakRecorded(lang, num, pitch);
   if (!("speechSynthesis" in window)) return false;
   const utterance = new SpeechSynthesisUtterance(String(num));
   utterance.lang = lang;
   utterance.rate = toneSpec.rate;
-  utterance.pitch = toneSpec.pitch;
+  utterance.pitch = pitch;
+  const voice = voiceFor(voiceURI);
+  if (voice) utterance.voice = voice;
   if (speechSynthesis.speaking) speechSynthesis.cancel();
   window.setTimeout(() => speechSynthesis.speak(utterance), 200);
   return true;
+}
+
+/** Phrase spoken after the number itself (Smart voice cues), queued behind it. */
+function speakPhrase(
+  text: string,
+  lang: AudioLang,
+  tone: VoiceTone,
+  pitch: number,
+  delayMs = 1300,
+  voiceURI = ""
+) {
+  if (!("speechSynthesis" in window)) return;
+  const toneSpec = voiceTones.find((t) => t.value === tone) ?? voiceTones[0];
+  const voice = voiceFor(voiceURI);
+  window.setTimeout(() => {
+    if (speechSynthesis.speaking) speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang;
+    u.rate = toneSpec.rate;
+    u.pitch = pitch;
+    if (voice) u.voice = voice;
+    speechSynthesis.speak(u);
+  }, delayMs);
+}
+
+/** Contextual line announced after milestones. Returns null when silent. */
+function cueFor(len: number, lang: AudioLang): string | null {
+  if (len >= 90) return lang === "hi-IN" ? "Full house! Game over." : lang === "te-IN" ? "Full house! Aame aipoyindi." : "Full house! That's the game.";
+  if (len === 89) return lang === "hi-IN" ? "Antim ball!" : lang === "te-IN" ? "Chivari ball!" : "Last ball!";
+  if (len === 5) return lang === "hi-IN" ? "Jaldi five!" : lang === "te-IN" ? "Toli aidu!" : "Early five!";
+  if (len === 10) return lang === "hi-IN" ? "Das ho gaye!" : lang === "te-IN" ? "Padi aipoyayi!" : "Ten called!";
+  if (len === 45) return lang === "hi-IN" ? "Adhe chalis!" : lang === "te-IN" ? "Nalabhai atrai!" : "Forty-five — halfway past!";
+  if (len === 50) return lang === "hi-IN" ? "Pachas! Adha ghar baaki." : lang === "te-IN" ? "Yabhai! Sagam aipoyindi." : "Fifty! Halfway there.";
+  if (len % 10 === 0) {
+    return lang === "hi-IN" ? `${len} ho gaye!` : lang === "te-IN" ? `${len} aipoyayi!` : `${len} called!`;
+  }
+  return null;
 }
 
 const LANG_NAMES: Record<AudioLang, string> = {
@@ -114,12 +191,20 @@ const TONE_NAMES: Record<VoiceTone, string> = {
   quick: "Quick",
 };
 
+/** Short label for whatever voice is currently active. */
+function voiceLabel(state: GameState): string {
+  if (usesRecording(state.language, state.voiceURI)) return "Studio Recording";
+  const v = voiceFor(state.voiceURI);
+  return v ? v.name : "Device default";
+}
+
 function buildReportText(state: GameState) {
   const status = state.calledNumbers.length >= 90 ? "Game Over" : "In Progress";
   return {
     meta: [
+      `Caller: ${state.nickname.trim() || "Host"} ${state.tag}`,
       `Mode: ${state.mode === "auto" ? "Auto" : "Manual"}`,
-      `Voice: ${LANG_NAMES[state.language]} · ${TONE_NAMES[state.tone]}`,
+      `Voice: ${LANG_NAMES[state.language]} · ${voiceLabel(state)} · ${TONE_NAMES[state.tone]} · Pitch ${state.pitch.toFixed(2)}x`,
       `Status: ${status}`,
     ],
     stats: [
@@ -139,9 +224,12 @@ export default function Caller() {
   const [audioOk, setAudioOk] = useState(true);
   const [particles, setParticles] = useState<Particle[]>([]);
   const [lastKey, setLastKey] = useState(0);
+  const [spinNum, setSpinNum] = useState<number | null>(null);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const stateRef = useRef(state);
+  const spinTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const spinTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     stateRef.current = state;
@@ -154,6 +242,47 @@ export default function Caller() {
     const id = window.requestAnimationFrame(() => setState(saved));
     return () => window.cancelAnimationFrame(id);
   }, []);
+
+  // Warm the recorded number packs (Hindi + Telugu) into memory so a draw
+  // speaks on the same tick instead of waiting on a per-number fetch.
+  useEffect(() => {
+    preloadVoicePack("te-IN");
+    preloadVoicePack("hi-IN");
+  }, []);
+
+  // Device voices arrive asynchronously (Chrome), so keep the list fresh.
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  useEffect(() => {
+    if (!("speechSynthesis" in window)) return;
+    const synth = window.speechSynthesis;
+    const load = () => setVoices(synth.getVoices());
+    load();
+    synth.addEventListener("voiceschanged", load);
+    const t1 = window.setTimeout(load, 400);
+    const t2 = window.setTimeout(load, 1500);
+    return () => {
+      synth.removeEventListener("voiceschanged", load);
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    };
+  }, []);
+
+  // Voices for the active language first, everything else after, so every
+  // language (recorded packs included) can still switch to any installed voice.
+  const { voiceMatch, voiceRest, voiceKnown } = useMemo(() => {
+    const prefix = state.language.slice(0, 2).toLowerCase();
+    const match: SpeechSynthesisVoice[] = [];
+    const rest: SpeechSynthesisVoice[] = [];
+    for (const v of voices) {
+      const ok = v.lang.replace("_", "-").toLowerCase().startsWith(prefix);
+      (ok ? match : rest).push(v);
+    }
+    return {
+      voiceMatch: match,
+      voiceRest: rest,
+      voiceKnown: new Set(voices.map((v) => v.voiceURI)),
+    };
+  }, [voices, state.language]);
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
@@ -174,6 +303,32 @@ export default function Caller() {
     }
   }, [state]);
 
+  /** Commit a drawn number to state + voice cues. */
+  const commitNumber = useCallback((num: number) => {
+    const s = stateRef.current;
+    const newLen = s.calledNumbers.length + 1;
+    setState((prev) => ({
+      ...prev,
+      calledNumbers: [...prev.calledNumbers, num],
+      lastNumber: num,
+    }));
+    setLastKey((k) => k + 1);
+    setParticles(makeBurst(num));
+    if (!speakNumber(num, s.language, s.tone, s.voiceURI, s.pitch)) setAudioOk(false);
+    if (s.voiceCuesOn) {
+      const cue = cueFor(newLen, s.language);
+      if (cue) {
+        // Recorded packs: fire the cue when the clip actually ends instead of
+        // guessing a fixed wait (English TTS still uses the 1300 ms default).
+        // A shifted pitch also shortens/lengthens the clip, so duration follows.
+        const dur = usesRecording(s.language, s.voiceURI)
+          ? recordedDuration(s.language, num, s.pitch)
+          : null;
+        speakPhrase(cue, s.language, s.tone, s.pitch, dur ? (dur + 0.2) * 1000 : 1300, s.voiceURI);
+      }
+    }
+  }, []);
+
   const callNext = useCallback(() => {
     const s = stateRef.current;
     if (s.calledNumbers.length >= 90) {
@@ -185,21 +340,65 @@ export default function Caller() {
       (n) => !calledSet.has(n)
     );
     const num = remaining[Math.floor(Math.random() * remaining.length)];
-    setState((prev) => ({
-      ...prev,
-      calledNumbers: [...prev.calledNumbers, num],
-      lastNumber: num,
-    }));
-    setLastKey((k) => k + 1);
-    setParticles(makeBurst(num));
-    if (!speakNumber(num, s.language, s.tone)) setAudioOk(false);
-  }, [showToast]);
+    commitNumber(num);
+  }, [commitNumber, showToast]);
+
+  // Raffle wheel: spin through random numbers, land on the winner, then call it.
+  const spinWheel = useCallback(() => {
+    if (spinTimerRef.current) return;
+    const s = stateRef.current;
+    if (s.calledNumbers.length >= 90) {
+      showToast("🏆 Game Over! Full house called!");
+      return;
+    }
+    const calledSet = new Set(s.calledNumbers);
+    const remaining = Array.from({ length: 90 }, (_, i) => i + 1).filter(
+      (n) => !calledSet.has(n)
+    );
+    const final = remaining[Math.floor(Math.random() * remaining.length)];
+
+    let ticks = 0;
+    spinTimerRef.current = setInterval(() => {
+      ticks += 1;
+      const live = stateRef.current.calledNumbers;
+      const liveSet = new Set(live);
+      const pool = Array.from({ length: 90 }, (_, i) => i + 1).filter(
+        (n) => !liveSet.has(n)
+      );
+      if (pool.length === 0) return;
+      const shown =
+        ticks % 5 === 0
+          ? final
+          : pool[Math.floor(Math.random() * pool.length)];
+      setSpinNum(shown);
+      if (ticks >= 5) {
+        if (spinTimerRef.current) clearInterval(spinTimerRef.current);
+        spinTimerRef.current = null;
+        setSpinNum(final);
+        spinTimeoutRef.current = window.setTimeout(() => {
+          spinTimeoutRef.current = null;
+          setSpinNum(null);
+          commitNumber(final);
+        }, 500);
+      }
+    }, 90);
+  }, [commitNumber, showToast]);
 
   const announceNumber = useCallback((num: number) => {
     const s = stateRef.current;
     if (num < 1 || num > 90) return;
-    if (!speakNumber(num, s.language, s.tone)) setAudioOk(false);
+    if (!speakNumber(num, s.language, s.tone, s.voiceURI, s.pitch)) setAudioOk(false);
   }, []);
+
+  /** Handler bound to the big Draw button (manual mode). */
+  const drawManual = useCallback(() => {
+    const s = stateRef.current;
+    if (s.wheelMode) {
+      spinWheel();
+      return;
+    }
+    callNext();
+  }, [spinWheel, callNext]);
 
   const toggleAuto = useCallback(() => {
     const s = stateRef.current;
@@ -234,7 +433,21 @@ export default function Caller() {
     setAutoRunning(false);
   }, []);
 
-  useEffect(() => () => stopAuto(), [stopAuto]);
+  const clearSpin = useCallback(() => {
+    if (spinTimerRef.current) clearInterval(spinTimerRef.current);
+    spinTimerRef.current = null;
+    if (spinTimeoutRef.current) clearTimeout(spinTimeoutRef.current);
+    spinTimeoutRef.current = null;
+    setSpinNum(null);
+  }, []);
+
+  useEffect(
+    () => () => {
+      stopAuto();
+      clearSpin();
+    },
+    [stopAuto, clearSpin]
+  );
 
   const repeatLast = useCallback(() => {
     const s = stateRef.current;
@@ -254,7 +467,7 @@ export default function Caller() {
         e.preventDefault();
         const s = stateRef.current;
         if (s.mode === "auto") toggleAuto();
-        else callNext();
+        else drawManual();
       }
       if (e.code === "KeyR") setConfirmReset(true);
       if (e.code === "KeyL") repeatLast();
@@ -288,8 +501,9 @@ export default function Caller() {
       "=======================================",
       "",
       `Generated: ${new Date().toLocaleString()}`,
+      `Caller: ${s.nickname.trim() || "Host"} ${s.tag}`,
       `Mode: ${s.mode === "auto" ? "Auto" : "Manual"}`,
-      `Voice: ${LANG_NAMES[s.language]} · ${TONE_NAMES[s.tone]}`,
+      `Voice: ${LANG_NAMES[s.language]} · ${voiceLabel(s)} · ${TONE_NAMES[s.tone]} · Pitch ${s.pitch.toFixed(2)}x`,
       `Status: ${s.calledNumbers.length >= 90 ? "Game Over" : "In Progress"}`,
       "",
       `Numbers Called: ${s.calledNumbers.length} / 90`,
@@ -390,17 +604,20 @@ export default function Caller() {
 
   const resetGame = useCallback(() => {
     stopAuto();
+    clearSpin();
     setState({
       ...DEFAULT_STATE,
       mode: stateRef.current.mode,
       language: stateRef.current.language,
+      voiceURI: stateRef.current.voiceURI,
+      pitch: stateRef.current.pitch,
       tone: stateRef.current.tone,
       speed: stateRef.current.speed,
     });
     setParticles([]);
     setConfirmReset(false);
     showToast("Game reset");
-  }, [stopAuto, showToast]);
+  }, [stopAuto, clearSpin, showToast]);
 
   const status = state.calledNumbers.length >= 90
     ? "Game Over"
@@ -411,6 +628,19 @@ export default function Caller() {
         : "Ready";
 
   const calledSet = new Set(state.calledNumbers);
+
+  // Board heatmap: fraction of each decade (1–9, 10–19, …, 80–90) already drawn.
+  const decadeHeat = Array.from({ length: 9 }, (_, dec) => {
+    const start = dec === 0 ? 1 : dec * 10;
+    const end = Math.min((dec + 1) * 10, 90);
+    let called = 0;
+    let total = 0;
+    for (let n = start; n <= end; n++) {
+      total += 1;
+      if (calledSet.has(n)) called += 1;
+    }
+    return total === 0 ? 0 : called / total;
+  });
 
   const recentNumbers = state.calledNumbers.slice(-5).reverse();
 
@@ -447,6 +677,23 @@ export default function Caller() {
                     called
                   </span>
                 </div>
+              </div>
+
+              {/* Caller identity + session tag */}
+              <div className="flex items-center gap-2.5 bg-surface-container-lowest/80 px-3 py-2 rounded-xl">
+                <span className="material-symbols-outlined text-tertiary text-lg">badge</span>
+                <div className="flex flex-col">
+                  <span className="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-widest">Caller</span>
+                  <input
+                    value={state.nickname}
+                    onChange={(e) => setState((p) => ({ ...p, nickname: e.target.value.slice(0, 24) }))}
+                    className="bg-transparent font-label-md text-label-md text-on-surface focus:outline-none w-28"
+                    aria-label="Caller nickname"
+                  />
+                </div>
+                <span className="px-1.5 py-0.5 rounded bg-surface-container-high font-mono text-[10px] font-bold text-secondary-variant tracking-wider">
+                  {state.tag}
+                </span>
               </div>
 
               {/* Mode segmented control */}
@@ -494,20 +741,31 @@ export default function Caller() {
             <div className="flex min-w-0 items-center justify-center">
               <button
                 type="button"
-                onClick={state.mode === "auto" ? toggleAuto : callNext}
-                disabled={state.mode === "manual" && state.calledNumbers.length >= 90}
+                onClick={state.mode === "auto" ? toggleAuto : drawManual}
+                disabled={
+                  state.mode === "manual" &&
+                  (state.calledNumbers.length >= 90 || spinNum !== null)
+                }
                 className="relative group px-5 sm:px-8 py-3.5 rounded-xl bg-gradient-to-r from-primary-container via-primary-fixed-dim to-primary text-on-primary-container font-headline-sm text-headline-sm font-bold shadow-2xl hover:brightness-110 active:scale-95 transition-all flex items-center gap-2.5 disabled:opacity-40"
               >
                 <span className="absolute inset-0 rounded-xl bg-primary/40 blur-xl group-hover:blur-2xl transition-all -z-10" />
                 <span className="material-symbols-outlined text-2xl text-on-primary-container">
-                  {state.mode === "auto" && autoRunning ? "pause_circle" : "casino"}
+                  {state.mode === "auto"
+                    ? autoRunning
+                      ? "pause_circle"
+                      : "casino"
+                    : state.wheelMode
+                      ? "casino"
+                      : "ad_units"}
                 </span>
                 <span>
                   {state.mode === "auto"
                     ? autoRunning
                       ? "PAUSE AUTO"
                       : "START AUTO"
-                    : "DRAW NEXT NUMBER"}
+                    : state.wheelMode
+                      ? "SPIN WHEEL"
+                      : "DRAW NEXT NUMBER"}
                 </span>
                 <span className="px-2 py-0.5 rounded bg-surface-container-lowest/40 font-label-sm text-label-sm text-on-primary-container tracking-wider uppercase">
                   SPACE
@@ -517,14 +775,21 @@ export default function Caller() {
 
             {/* Right: voice + tone + utilities */}
             <div className="flex flex-wrap items-center gap-3">
-              {/* Voice selector */}
+              {/* Voice selector: language + specific voice */}
               <div className="flex items-center gap-2 bg-surface-container-lowest/80 px-3 py-2 rounded-xl">
                 <span className="material-symbols-outlined text-tertiary text-lg">record_voice_over</span>
-                <div className="flex flex-col">
+                <div className="flex flex-col gap-1">
                   <span className="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-widest">Caller Voice</span>
                   <select
                     value={state.language}
-                    onChange={(e) => setState((p) => ({ ...p, language: e.target.value as AudioLang }))}
+                    onChange={(e) =>
+                      setState((p) => ({
+                        ...p,
+                        language: e.target.value as AudioLang,
+                        // A picked voice belongs to the language it was listed under.
+                        voiceURI: "",
+                      }))
+                    }
                     className="bg-transparent font-label-md text-label-md text-on-surface focus:outline-none cursor-pointer"
                   >
                     {audioLanguages.map((l) => (
@@ -533,6 +798,65 @@ export default function Caller() {
                       </option>
                     ))}
                   </select>
+                  <select
+                    value={state.voiceURI}
+                    onChange={(e) => setState((p) => ({ ...p, voiceURI: e.target.value }))}
+                    className="bg-transparent font-label-sm text-label-sm text-on-surface-variant focus:outline-none cursor-pointer max-w-[200px]"
+                    aria-label="Voice"
+                    title="Voice used to call the numbers"
+                  >
+                    <option value="" className="bg-surface-container text-on-surface">
+                      {isPackLang(state.language)
+                        ? "Studio recording (default)"
+                        : "Device default voice"}
+                    </option>
+                    {state.voiceURI && !voiceKnown.has(state.voiceURI) && (
+                      <option value={state.voiceURI} className="bg-surface-container text-on-surface">
+                        Saved voice (loading…)
+                      </option>
+                    )}
+                    {voiceMatch.length > 0 && (
+                      <optgroup label={`${LANG_NAMES[state.language]} voices`}>
+                        {voiceMatch.map((v) => (
+                          <option key={v.voiceURI} value={v.voiceURI} className="bg-surface-container text-on-surface">
+                            {v.name} · {v.lang}
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
+                    {voiceRest.length > 0 && (
+                      <optgroup label="Other installed voices">
+                        {voiceRest.map((v) => (
+                          <option key={v.voiceURI} value={v.voiceURI} className="bg-surface-container text-on-surface">
+                            {v.name} · {v.lang}
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
+                  </select>
+                </div>
+              </div>
+
+              {/* Pitch */}
+              <div className="flex items-center gap-2 bg-surface-container-lowest/80 px-3 py-2 rounded-xl">
+                <span className="material-symbols-outlined text-tertiary text-lg">graphic_eq</span>
+                <div className="flex flex-col gap-0.5">
+                  <span className="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-widest">
+                    Pitch{" "}
+                    <span className="text-secondary font-bold">{state.pitch.toFixed(2)}x</span>
+                  </span>
+                  <input
+                    type="range"
+                    min={0.5}
+                    max={2}
+                    step={0.05}
+                    value={state.pitch}
+                    onChange={(e) => setState((p) => ({ ...p, pitch: Number(e.target.value) }))}
+                    onDoubleClick={() => setState((p) => ({ ...p, pitch: 1 }))}
+                    className="w-28 cursor-pointer accent-primary"
+                    aria-label="Voice pitch (double-click to reset)"
+                    title="Voice pitch — applies to every language, recordings included. Double-click to reset."
+                  />
                 </div>
               </div>
 
@@ -542,7 +866,7 @@ export default function Caller() {
                   <button
                     key={t.value}
                     type="button"
-                    onClick={() => setState((p) => ({ ...p, tone: t.value }))}
+                    onClick={() => setState((p) => ({ ...p, tone: t.value, pitch: t.pitch }))}
                     className={`px-2 py-1 rounded font-label-sm text-label-sm transition-all ${
                       state.tone === t.value
                         ? "bg-surface-container-high text-primary font-semibold"
@@ -571,6 +895,30 @@ export default function Caller() {
                   title="Copy called numbers"
                 >
                   <span className="material-symbols-outlined text-xl text-secondary">download</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setState((p) => ({ ...p, wheelMode: !p.wheelMode }))}
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${
+                    state.wheelMode
+                      ? "bg-primary-container/25 text-on-primary-container ring-1 ring-primary-fixed-dim/50"
+                      : "bg-surface-container-low hover:bg-surface-container-high text-on-surface"
+                  }`}
+                  title="Wheel / raffle draw mode"
+                >
+                  <span className="material-symbols-outlined text-xl">casino</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setState((p) => ({ ...p, voiceCuesOn: !p.voiceCuesOn }))}
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${
+                    state.voiceCuesOn
+                      ? "bg-tertiary-container/25 text-tertiary ring-1 ring-tertiary/30"
+                      : "bg-surface-container-low hover:bg-surface-container-high text-on-surface-variant"
+                  }`}
+                  title="Smart voice cues (milestones)"
+                >
+                  <span className="material-symbols-outlined text-xl">campaign</span>
                 </button>
               </div>
             </div>
@@ -615,13 +963,19 @@ export default function Caller() {
                 {/* specular highlight */}
                 <div className="absolute top-2 left-6 w-10 h-5 bg-white/40 rounded-full blur-[2px] transform -rotate-45" />
                 <p
-                  key={state.lastNumber ?? "none"}
+                  key={spinNum ?? state.lastNumber ?? "none"}
                   className="animate-slot-flip font-caller-announcement text-caller-announcement text-on-primary-container font-black tracking-tight drop-shadow-md leading-none select-none"
                 >
-                  {state.lastNumber ?? "–"}
+                  {spinNum ?? state.lastNumber ?? "–"}
                 </p>
-                <span className="font-label-sm text-[9px] font-bold text-on-primary-container/80 tracking-widest uppercase mt-0.5">
-                  BALL DRAWN
+                <span
+                  className={`font-label-sm text-[9px] font-bold tracking-widest uppercase mt-0.5 ${
+                    spinNum !== null
+                      ? "text-amber-200 animate-pulse"
+                      : "text-on-primary-container/80"
+                  }`}
+                >
+                  {spinNum !== null ? "WHEEL SPINNING…" : "BALL DRAWN"}
                 </span>
               </div>
             </div>
@@ -642,7 +996,7 @@ export default function Caller() {
               </h2>
               <p className="font-body-sm text-body-sm text-on-surface-variant">
                 {state.lastNumber !== null
-                  ? `${LANG_NAMES[state.language]} · ${TONE_NAMES[state.tone]}`
+                  ? `${LANG_NAMES[state.language]} · ${voiceLabel(state)} · ${TONE_NAMES[state.tone]} · ${state.pitch.toFixed(2)}x`
                   : "Ready for first ball"}
               </p>
               <div className="mt-1 flex items-center gap-2">
@@ -749,16 +1103,32 @@ export default function Caller() {
             {Array.from({ length: 90 }, (_, i) => i + 1).map((num) => {
               const called = calledSet.has(num);
               const isLast = state.lastNumber === num;
+              const dec = num === 90 ? 8 : Math.floor((num - 1) / 10);
+              const heat = state.heatmap && !called && !isLast ? decadeHeat[dec] : 0;
               return (
                 <div
                   key={num}
+                  style={
+                    state.heatmap && !called && !isLast
+                      ? {
+                          backgroundColor: `rgba(245,158,11,${(0.03 + heat * 0.4).toFixed(3)})`,
+                        }
+                      : undefined
+                  }
                   className={`flex aspect-square items-center justify-center rounded-lg font-ticket-digit text-ticket-digit font-bold transition-all duration-200 ${
                     isLast
                       ? "animate-board-pop bg-secondary text-on-secondary-container shadow-lg shadow-secondary/30 scale-105 z-10 ring-2 ring-white/50"
                       : called
                         ? "bg-gradient-to-br from-primary-fixed via-primary-container to-amber-700 text-on-primary-container shadow-sm"
-                        : "bg-surface-container-high/60 text-on-surface-variant/40 hover:bg-surface-container-highest hover:text-on-surface"
+                        : state.heatmap
+                          ? "bg-surface-container-high/60 text-on-surface-variant/50"
+                          : "bg-surface-container-high/60 text-on-surface-variant/40 hover:bg-surface-container-highest hover:text-on-surface"
                   }`}
+                  title={
+                    state.heatmap && !called
+                      ? `${decadeHeat[dec] === 0 ? "No" : Math.round(decadeHeat[dec] * 10)} of 10 numbers drawn in this row`
+                      : undefined
+                  }
                 >
                   {num}
                 </div>
@@ -780,6 +1150,18 @@ export default function Caller() {
             <div className="flex items-center gap-2">
               <button
                 type="button"
+                onClick={() => setState((p) => ({ ...p, heatmap: !p.heatmap }))}
+                className={`px-2.5 py-1 rounded transition-colors ${
+                  state.heatmap
+                    ? "bg-primary/20 text-primary"
+                    : "bg-surface-container-high hover:bg-surface-bright text-on-surface"
+                }`}
+              >
+                <span className="material-symbols-outlined text-sm align-middle -mt-0.5 mr-1">local_fire_department</span>
+                Heatmap
+              </button>
+              <button
+                type="button"
                 onClick={() => {
                   const uncalledEls = document.querySelectorAll<HTMLElement>("[data-uncalled-flash]");
                   uncalledEls.forEach((el) => {
@@ -793,6 +1175,35 @@ export default function Caller() {
               </button>
             </div>
           </div>
+
+          {/* Heatmap legend */}
+          {state.heatmap && (
+            <div className="flex flex-wrap items-center gap-3 pt-2 text-xs text-on-surface-variant">
+              <span className="font-label-md text-label-md font-semibold uppercase tracking-wider">
+                Decade coverage
+              </span>
+              <div className="flex items-center gap-0.5">
+                {decadeHeat.map((h, i) => (
+                  <span
+                    key={i}
+                    className={`h-5 w-8 rounded flex items-center justify-center font-ticket-digit text-[11px] font-bold ${
+                      h >= 0.8
+                        ? "bg-gradient-to-br from-amber-300 to-amber-500 text-amber-950"
+                        : h >= 0.5
+                          ? "bg-gradient-to-br from-amber-400/80 to-amber-600/80 text-amber-50"
+                          : h > 0
+                            ? "bg-gradient-to-br from-surface-container-highest to-surface-container-high text-on-surface-variant"
+                            : "bg-surface-container-lowest text-on-surface-variant/40"
+                    }`}
+                    title={`${i === 0 ? 1 : i * 10}–${i === 8 ? 90 : (i + 1) * 10}: ${Math.round(h * 100)}% drawn`}
+                  >
+                    {Math.round(h * 100)}
+                  </span>
+                ))}
+              </div>
+              <span className="text-on-surface-variant/70">% drawn per row (01–90)</span>
+            </div>
+          )}
         </div>
 
         {/* ── AUDIO WARNING ── */}

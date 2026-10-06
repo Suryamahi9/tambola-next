@@ -131,7 +131,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-white",
     filled: "bg-white/[0.08]",
     called: "bg-[#22d3ee] text-[#062a33]",
-    watermark: "rgba(125,211,252,0.12)",
+    watermark: "rgba(125,211,252,0.26)",
   },
   rosegold: {
     foilDark: true,
@@ -146,7 +146,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#6d2f2a]",
     filled: "bg-[#6d2f2a]/[0.07]",
     called: "bg-[#d94f5e] text-white",
-    watermark: "rgba(180,86,94,0.14)",
+    watermark: "rgba(180,86,94,0.3)",
   },
   emerald: {
     card: "bg-gradient-to-b from-[#0f3d2e] to-[#0a241c] rounded-[6px] border border-[#3f8a68] shadow-[0_10px_28px_rgba(0,0,0,0.4)]",
@@ -160,7 +160,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-white",
     filled: "bg-white/[0.08]",
     called: "bg-[#f6c453] text-[#3b2a05]",
-    watermark: "rgba(251,191,36,0.11)",
+    watermark: "rgba(251,191,36,0.24)",
   },
   sunset: {
     foilDark: true,
@@ -175,7 +175,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#5d340e]",
     filled: "bg-[#5d340e]/[0.07]",
     called: "bg-[#f2730f] text-white",
-    watermark: "rgba(217,106,29,0.12)",
+    watermark: "rgba(217,106,29,0.26)",
   },
   paperwhite: {
     foilDark: true,
@@ -189,7 +189,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-black",
     filled: "bg-black/[0.06]",
     called: "bg-[#d23c2e] text-white",
-    watermark: "rgba(0,0,0,0.09)",
+    watermark: "rgba(0,0,0,0.2)",
   },
   mint: {
     foilDark: true,
@@ -204,7 +204,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#0d4f33]",
     filled: "bg-[#0d4f33]/[0.07]",
     called: "bg-[#10b981] text-white",
-    watermark: "rgba(43,145,96,0.13)",
+    watermark: "rgba(43,145,96,0.29)",
   },
   lavender: {
     foilDark: true,
@@ -219,7 +219,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#46357e]",
     filled: "bg-[#46357e]/[0.08]",
     called: "bg-[#8b5cf6] text-white",
-    watermark: "rgba(139,120,209,0.13)",
+    watermark: "rgba(139,120,209,0.29)",
   },
   charcoalgold: {
     card: "bg-gradient-to-b from-[#262626] to-[#171717] rounded-[6px] border border-[#57534e] shadow-[0_10px_28px_rgba(0,0,0,0.4)]",
@@ -233,7 +233,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-white",
     filled: "bg-white/[0.08]",
     called: "bg-[#fbbf24] text-[#422006]",
-    watermark: "rgba(251,191,36,0.11)",
+    watermark: "rgba(251,191,36,0.24)",
   },
   navycream: {
     foilDark: true,
@@ -248,7 +248,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#16324f]",
     filled: "bg-[#16324f]/[0.08]",
     called: "bg-[#d92d20] text-white",
-    watermark: "rgba(30,58,95,0.16)",
+    watermark: "rgba(30,58,95,0.3)",
   },
   plum: {
     card: "bg-gradient-to-b from-[#2e1a47] to-[#1a0f2e] rounded-[6px] border border-[#6b4b96] shadow-[0_10px_28px_rgba(0,0,0,0.42)]",
@@ -262,7 +262,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-white",
     filled: "bg-white/[0.08]",
     called: "bg-[#e0398f] text-white",
-    watermark: "rgba(240,171,252,0.11)",
+    watermark: "rgba(240,171,252,0.24)",
   },
   crimson: {
     foilDark: true,
@@ -277,7 +277,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#6d1428]",
     filled: "bg-[#6d1428]/[0.07]",
     called: "bg-[#16324f] text-white",
-    watermark: "rgba(195,30,58,0.09)",
+    watermark: "rgba(195,30,58,0.2)",
   },
   cobalt: {
     foilDark: true,
@@ -292,7 +292,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#1c3a5e]",
     filled: "bg-[#1c3a5e]/[0.07]",
     called: "bg-[#e0783a] text-white",
-    watermark: "rgba(27,79,137,0.10)",
+    watermark: "rgba(27,79,137,0.22)",
   },
   honey: {
     foilDark: true,
@@ -307,7 +307,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#5d3a06]",
     filled: "bg-[#5d3a06]/[0.07]",
     called: "bg-[#0f6878] text-white",
-    watermark: "rgba(122,80,18,0.10)",
+    watermark: "rgba(122,80,18,0.22)",
   },
   matcha: {
     foilDark: true,
@@ -322,7 +322,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#2e521f]",
     filled: "bg-[#2e521f]/[0.07]",
     called: "bg-[#6b3f9e] text-white",
-    watermark: "rgba(74,122,63,0.10)",
+    watermark: "rgba(74,122,63,0.22)",
   },
   wine: {
     foilDark: true,
@@ -337,7 +337,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#5c1730]",
     filled: "bg-[#5c1730]/[0.07]",
     called: "bg-[#0f766e] text-white",
-    watermark: "rgba(125,42,74,0.10)",
+    watermark: "rgba(125,42,74,0.22)",
   },
   onyx: {
     card: "bg-gradient-to-b from-[#24272c] to-[#16181c] rounded-[6px] border border-[#63666d] shadow-[0_10px_28px_rgba(0,0,0,0.45)]",
@@ -351,7 +351,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#f4f4f5]",
     filled: "bg-white/[0.08]",
     called: "bg-[#e2b714] text-[#3a2f00]",
-    watermark: "rgba(255,255,255,0.05)",
+    watermark: "rgba(255,255,255,0.12)",
   },
   graphite: {
     card: "bg-gradient-to-b from-[#1e2430] to-[#131722] rounded-[6px] border border-[#55617a] shadow-[0_10px_28px_rgba(0,0,0,0.45)]",
@@ -365,7 +365,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#eef2fa]",
     filled: "bg-white/[0.08]",
     called: "bg-[#22d3ee] text-[#083344]",
-    watermark: "rgba(90,123,184,0.07)",
+    watermark: "rgba(90,123,184,0.15)",
   },
   peach: {
     foilDark: true,
@@ -380,7 +380,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#7a3d0e]",
     filled: "bg-[#7a3d0e]/[0.07]",
     called: "bg-[#0e7c74] text-white",
-    watermark: "rgba(192,99,28,0.09)",
+    watermark: "rgba(192,99,28,0.2)",
   },
   beryl: {
     foilDark: true,
@@ -395,7 +395,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#0b4a3a]",
     filled: "bg-[#0b4a3a]/[0.07]",
     called: "bg-[#d23c2e] text-white",
-    watermark: "rgba(20,138,110,0.10)",
+    watermark: "rgba(20,138,110,0.22)",
   },
   storm: {
     card: "bg-gradient-to-b from-[#1b1f3a] to-[#12142a] rounded-[6px] border border-[#4f5486] shadow-[0_10px_28px_rgba(0,0,0,0.45)]",
@@ -409,7 +409,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#f2f3ff]",
     filled: "bg-white/[0.08]",
     called: "bg-[#f59e0b] text-[#3b2a05]",
-    watermark: "rgba(106,113,214,0.08)",
+    watermark: "rgba(106,113,214,0.18)",
   },
   mocha: {
     foilDark: true,
@@ -424,7 +424,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#4a331c]",
     filled: "bg-[#4a331c]/[0.08]",
     called: "bg-[#0f766e] text-white",
-    watermark: "rgba(122,92,53,0.10)",
+    watermark: "rgba(122,92,53,0.22)",
   },
   lagoon: {
     card: "bg-gradient-to-b from-[#0f4a52] to-[#083138] rounded-[6px] border border-[#2e8e9c] shadow-[0_10px_28px_rgba(0,0,0,0.4)]",
@@ -438,7 +438,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#f0feff]",
     filled: "bg-white/[0.08]",
     called: "bg-[#ffb52e] text-[#3b2a05]",
-    watermark: "rgba(45,227,246,0.09)",
+    watermark: "rgba(45,227,246,0.2)",
   },
   arctic: {
     foilDark: true,
@@ -453,7 +453,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#1c3f6e]",
     filled: "bg-[#1c3f6e]/[0.07]",
     called: "bg-[#f53b57] text-white",
-    watermark: "rgba(83,137,203,0.14)",
+    watermark: "rgba(83,137,203,0.3)",
   },
   iris: {
     card: "bg-gradient-to-b from-[#2a1f4d] to-[#191130] rounded-[6px] border border-[#7a6cc0] shadow-[0_10px_28px_rgba(0,0,0,0.42)]",
@@ -467,7 +467,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#f5f2ff]",
     filled: "bg-white/[0.08]",
     called: "bg-[#2dd4bf] text-[#00352b]",
-    watermark: "rgba(167,139,250,0.08)",
+    watermark: "rgba(167,139,250,0.18)",
   },
   pines: {
     card: "bg-gradient-to-b from-[#17382a] to-[#0a2117] rounded-[6px] border border-[#3e7a57] shadow-[0_10px_28px_rgba(0,0,0,0.4)]",
@@ -481,7 +481,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#f0fbf3]",
     filled: "bg-white/[0.08]",
     called: "bg-[#fbab19] text-[#3b2a05]",
-    watermark: "rgba(74,222,128,0.08)",
+    watermark: "rgba(74,222,128,0.18)",
   },
   stone: {
     foilDark: true,
@@ -496,7 +496,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#33332c]",
     filled: "bg-[#33332c]/[0.07]",
     called: "bg-[#d64541] text-white",
-    watermark: "rgba(106,106,99,0.08)",
+    watermark: "rgba(106,106,99,0.18)",
   },
   print: {
     foilDark: true,
@@ -511,7 +511,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#0a0a0a]",
     filled: "bg-[#111111]/[0.12]",
     called: "bg-[#111111] text-white",
-    watermark: "rgba(0,0,0,0.06)",
+    watermark: "rgba(0,0,0,0.13)",
   },
   dots: {
     foilDark: true,
@@ -526,7 +526,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#161616]",
     filled: "bg-[radial-gradient(circle,rgba(0,0,0,0.5)_1px,transparent_1.4px)] bg-[length:5px_5px]",
     called: "bg-[#141414] text-white",
-    watermark: "rgba(0,0,0,0.05)",
+    watermark: "rgba(0,0,0,0.12)",
   },
   custom: {
     foilDark: true,
@@ -541,7 +541,7 @@ const THEMES: Record<Exclude<TicketTheme, never>, ThemeSpec> = {
     num: "text-[#18222c]",
     filled: "bg-[#18222c]/[0.07]",
     called: "bg-[#18222c] text-white",
-    watermark: "rgba(70,88,108,0.10)",
+    watermark: "rgba(70,88,108,0.22)",
   },
 };
 
@@ -560,6 +560,57 @@ const CARNIVAL_CARD =
   "relative overflow-hidden rounded-[6px] border border-[#2a211a] bg-gradient-to-b from-[#fdf8ec] to-[#f1e6cd] shadow-[inset_0_0_0_3px_#fffdf5,0_10px_28px_rgba(0,0,0,0.3)]";
 const CARNIVAL_STAIN =
   "after:pointer-events-none after:absolute after:inset-0 after:z-[1] after:content-[''] after:bg-[radial-gradient(ellipse_at_14%_6%,rgba(120,88,38,0.13),transparent_46%),radial-gradient(ellipse_at_92%_94%,rgba(96,68,30,0.11),transparent_52%)]";
+
+/** Identity name pinned in the header, centred between the set label and the ticket number. */
+function HeaderName({ className = "" }: { className?: string }) {
+  return (
+    <span
+      className={`font-vintage-display min-w-0 flex-1 truncate text-center text-[10px] font-bold uppercase tracking-[0.24em] ${className}`}
+    >
+      NAVEEN CHERRY
+    </span>
+  );
+}
+
+/** Full-bleed watermark: SVG text stretched edge-to-edge so it fills the ticket.
+ *  `textLength` guarantees the line spans the card whatever the font metrics. */
+function Watermark({
+  color,
+  className = "",
+}: {
+  color: string;
+  className?: string;
+}) {
+  return (
+    <div
+      aria-hidden="true"
+      className={`pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden ${className}`}
+    >
+      <svg
+        viewBox="0 0 200 24"
+        className="h-auto w-[94%]"
+        style={{ color, opacity: 0.42 }}
+      >
+        <text
+          x="100"
+          y="18"
+          textAnchor="middle"
+          textLength={196}
+          lengthAdjust="spacingAndGlyphs"
+          fontSize={18}
+          fontWeight={700}
+          fill="currentColor"
+          stroke="currentColor"
+          strokeWidth={0.5}
+          className="font-vintage-display"
+          style={{ paintOrder: "stroke" }}
+        >
+          ♚ NAVEEN CHERRY
+        </text>
+      </svg>
+    </div>
+  );
+}
 
 /** Shared 3×9 number grid. `line` feeds the per-cell hairline via --ticket-line. */
 function TicketGrid({
@@ -601,17 +652,7 @@ function CarnivalCard({ grid, name, index, total, called }: Omit<Props, "style" 
   const brand = name || "Tambola";
   return (
     <div className={`break-inside-avoid flex ${CARNIVAL_CARD} ${CARNIVAL_STAIN}`}>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-[1] flex items-center justify-center"
-      >
-        <span
-          className="font-vintage-display whitespace-nowrap text-[22px] font-bold tracking-[0.22em] sm:text-[26px]"
-          style={{ color: "rgba(90,60,25,0.13)" }}
-        >
-          NAVEEN CHERRY
-        </span>
-      </div>
+      <Watermark color="rgba(90,60,25,0.3)" className="z-[1]" />
       <div className={`relative z-[2] w-[14px] rounded-l-[5px] bg-gradient-to-b ${a.ramp}`} aria-hidden="true">
         <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[#fff7e6]">
           <span
@@ -623,17 +664,18 @@ function CarnivalCard({ grid, name, index, total, called }: Omit<Props, "style" 
         </span>
       </div>
       <div className="min-w-0 flex-1">
-        <div className="relative z-[2] flex items-center gap-2 py-1.5 pl-2 pr-3">
-          <span className="font-vintage-display min-w-0 flex-1 truncate text-[11px] font-bold uppercase leading-none tracking-[0.22em] text-[#3a2b1c]">
+        <div className="relative z-[2] flex items-center gap-2 py-1 pl-2 pr-2.5">
+          <span className="font-vintage-display min-w-0 shrink truncate text-[11px] font-bold uppercase leading-none tracking-[0.22em] text-[#3a2b1c]">
             ✦ {brand}
           </span>
+          <HeaderName className="text-[#8a6f4d]" />
           <span className={`font-vintage-display shrink-0 text-[10px] font-bold italic tracking-wide ${a.text}`}>
             No. {String(index + 1).padStart(2, "0")}
             <span className="text-[#8a6f4d]"> / {String(total).padStart(2, "0")}</span>
           </span>
         </div>
         <div className={`${a.fill} relative z-[2] mx-2 h-[3px]`} />
-        <div className="relative z-[2] p-2 pt-1.5">
+        <div className="relative z-[2] p-1.5 pt-1">
           <div className="rounded-[4px] border border-[#2a211a]/90 p-[3px]">
             <div className={`ticket-grid font-vintage-serif text-[#2a211a]`}>
               {grid.flatMap((row, r) =>
@@ -666,36 +708,27 @@ function ClassicCard({
   const foil = t.foilDark ? "ticket-foil-deep" : "ticket-foil";
   return (
     <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center"
-      >
-        <span
-          className="font-vintage-display whitespace-nowrap text-[24px] font-bold uppercase tracking-[0.28em] sm:text-[34px] rotate-[-8deg]"
-          style={{ color: t.watermark }}
-        >
-          NAVEEN CHERRY
-        </span>
-      </div>
+      <Watermark color={t.watermark} className="z-0" />
 
-      <div className={`relative z-[2] flex items-center gap-2.5 ${t.band ? t.band : ""} px-3 py-2`}>
+      <div className={`relative z-[2] flex items-center gap-2 ${t.band ? t.band : ""} px-2.5 py-1`}>
         <span
           className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[15px] ${t.rule ? t.rule : ""} text-white shadow`}
         >
           <span className="material-symbols-outlined text-[15px]">military_tech</span>
         </span>
-        <span className={`font-vintage-display min-w-0 flex-1 truncate text-[12px] font-bold uppercase leading-none tracking-[0.2em] ${foil}`}>
+        <span className={`font-vintage-display min-w-0 shrink truncate text-[12px] font-bold uppercase leading-none tracking-[0.2em] ${foil}`}>
           ✦ {brand}
         </span>
+        <HeaderName className={foil} />
         <span className={`font-vintage-display shrink-0 text-[11px] font-bold italic tracking-wide ${foil}`}>
           No. {String(index + 1).padStart(2, "0")}
           <span className={t.serialMuted}> / {String(total).padStart(2, "0")}</span>
         </span>
       </div>
 
-      {t.rule && <div className={`relative z-[2] mx-3 mt-0 h-[3px] ${t.rule}`} />}
+      {t.rule && <div className={`relative z-[2] mx-2.5 mt-0 h-[3px] ${t.rule}`} />}
 
-      <div className="relative z-[2] p-2 pt-1.5">
+      <div className="relative z-[2] p-1.5 pt-1">
         <div
           className="rounded-[4px] border p-[3px]"
           style={{ borderColor: t.line }}
@@ -719,22 +752,13 @@ function StubCard({
   const foil = t.foilDark ? "ticket-foil-deep" : "ticket-foil";
   return (
     <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center"
-      >
-        <span
-          className="font-vintage-display whitespace-nowrap text-[24px] font-bold uppercase tracking-[0.28em] sm:text-[34px] rotate-[-8deg]"
-          style={{ color: t.watermark }}
-        >
-          NAVEEN CHERRY
-        </span>
-      </div>
+      <Watermark color={t.watermark} className="z-0" />
 
-      <div className="relative z-[2] flex items-center justify-between gap-2 px-3 py-2">
-        <span className={`font-vintage-display min-w-0 flex-1 truncate text-[12px] font-bold uppercase tracking-[0.18em] ${foil}`}>
+      <div className="relative z-[2] flex items-center justify-between gap-2 px-2.5 py-1">
+        <span className={`font-vintage-display min-w-0 shrink truncate text-[12px] font-bold uppercase tracking-[0.18em] ${foil}`}>
           ✦ {brand}
         </span>
+        <HeaderName className={foil} />
         <span className={`font-mono shrink-0 text-[9px] font-bold tracking-[0.18em] ${t.serial}`}>
           NO. {String(index + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
         </span>
@@ -742,7 +766,7 @@ function StubCard({
 
       <div className="relative z-[2] border-t-2 border-dashed" style={{ borderColor: `${t.line}55` }} />
 
-      <div className="relative z-[2] p-2 pt-2">
+      <div className="relative z-[2] p-1.5 pt-1.5">
         <div className="rounded-[4px] border p-[3px]" style={{ borderColor: `${t.line}88` }}>
           <TicketGrid grid={grid} called={called} t={t} />
         </div>
@@ -765,24 +789,15 @@ function MetroCard({
   const stripes = `repeating-linear-gradient(-45deg, ${t.line}33 0 8px, transparent 8px 16px)`;
   return (
     <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center"
-      >
-        <span
-          className="font-vintage-display whitespace-nowrap text-[24px] font-bold uppercase tracking-[0.28em] sm:text-[34px] rotate-[-8deg]"
-          style={{ color: t.watermark }}
-        >
-          NAVEEN CHERRY
-        </span>
-      </div>
+      <Watermark color={t.watermark} className="z-0" />
 
-      <div className="relative z-[2] h-2.5" style={{ backgroundImage: stripes }} />
+      <div className="relative z-[2] h-2" style={{ backgroundImage: stripes }} />
 
-      <div className="relative z-[2] flex items-center justify-between gap-3 px-4 py-2">
-        <span className={`font-vintage-display min-w-0 flex-1 truncate text-[16px] font-black uppercase tracking-[0.28em] ${foil}`}>
+      <div className="relative z-[2] flex items-center justify-between gap-3 px-3 py-1">
+        <span className={`font-vintage-display min-w-0 shrink truncate text-[14px] font-black uppercase tracking-[0.28em] ${foil}`}>
           ✦ {brand}
         </span>
+        <HeaderName className={foil} />
         <span
           className={`shrink-0 rounded-sm border px-2 py-0.5 font-mono text-[9px] font-bold ${t.serial}`}
           style={{ borderColor: `${t.line}88` }}
@@ -793,13 +808,13 @@ function MetroCard({
 
       {t.rule && <div className={`relative z-[2] mx-4 h-[3px] ${t.rule}`} />}
 
-      <div className="relative z-[2] p-2 pt-2">
+      <div className="relative z-[2] p-1.5 pt-1.5">
         <div className="rounded-[2px] border-2 p-[2px]" style={{ borderColor: t.line }}>
           <TicketGrid grid={grid} called={called} t={t} />
         </div>
       </div>
 
-      <div className="relative z-[2] h-2.5" style={{ backgroundImage: stripes }} />
+      <div className="relative z-[2] h-2" style={{ backgroundImage: stripes }} />
     </div>
   );
 }
@@ -813,25 +828,16 @@ function AuraCard({
   const brand = name || "Tambola";
   return (
     <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center"
-      >
-        <span
-          className="font-vintage-display whitespace-nowrap text-[24px] font-bold uppercase tracking-[0.28em] sm:text-[34px] rotate-[-8deg]"
-          style={{ color: t.watermark }}
-        >
-          NAVEEN CHERRY
-        </span>
-      </div>
+      <Watermark color={t.watermark} className="z-0" />
 
-      <div className="relative z-[2] flex items-center justify-start gap-2 px-3 py-2">
-        <span className={`font-vintage-display min-w-0 flex-1 truncate text-[11px] font-bold uppercase tracking-[0.3em] ${t.serial}`}>
+      <div className="relative z-[2] flex items-center justify-start gap-2 px-2.5 py-1">
+        <span className={`font-vintage-display min-w-0 shrink truncate text-[11px] font-bold uppercase tracking-[0.3em] ${t.serial}`}>
           ✦ {brand}
         </span>
+        <HeaderName className={t.serialMuted} />
       </div>
 
-      <div className="relative z-[2] mx-3 rounded-[6px] p-[3px]" style={{ border: `1px solid ${t.line}44` }}>
+      <div className="relative z-[2] mx-2.5 rounded-[6px] p-[3px]" style={{ border: `1px solid ${t.line}44` }}>
         <TicketGrid grid={grid} called={called} t={t} />
       </div>
     </div>
@@ -850,33 +856,24 @@ function BlueprintCard({
   const foil = t.foilDark ? "ticket-foil-deep" : "ticket-foil";
   return (
     <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center"
-      >
-        <span
-          className="font-vintage-display whitespace-nowrap text-[24px] font-bold uppercase tracking-[0.28em] sm:text-[34px] rotate-[-8deg]"
-          style={{ color: t.watermark }}
-        >
-          NAVEEN CHERRY
-        </span>
-      </div>
+      <Watermark color={t.watermark} className="z-0" />
 
-      <div className="relative z-[2] flex items-center justify-between gap-2 px-3 pt-2">
-        <span className="font-mono text-[8px] font-bold uppercase tracking-[0.2em]" style={{ color: t.line }}>
+      <div className="relative z-[2] flex items-center justify-between gap-2 px-2.5 pt-1.5">
+        <span className="shrink-0 font-mono text-[8px] font-bold uppercase tracking-[0.2em]" style={{ color: t.line }}>
           DWG-{String(index + 1).padStart(3, "0")}
         </span>
-        <span className={`font-vintage-display whitespace-nowrap text-[13px] font-bold uppercase tracking-[0.24em] ${foil}`}>
+        <span className={`font-vintage-display min-w-0 shrink truncate text-[13px] font-bold uppercase tracking-[0.24em] ${foil}`}>
           ✦ {brand}
         </span>
-        <span className="font-mono text-[8px] font-bold" style={{ color: t.line }}>
+        <HeaderName className={foil} />
+        <span className="shrink-0 font-mono text-[8px] font-bold" style={{ color: t.line }}>
           SH.{index + 1}/{total}
         </span>
       </div>
 
-      <div className="relative z-[2] mx-3 mt-1.5 border-t" style={{ borderColor: `${t.line}55` }} />
+      <div className="relative z-[2] mx-2.5 mt-1 border-t" style={{ borderColor: `${t.line}55` }} />
 
-      <div className="relative z-[2] p-3 pt-2">
+      <div className="relative z-[2] p-2 pt-1.5">
         <div className="relative">
           <span className="pointer-events-none absolute -left-1 -top-1 z-[1] text-[10px] font-bold leading-none" style={{ color: t.line }}>+</span>
           <span className="pointer-events-none absolute -right-1 -top-1 z-[1] text-[10px] font-bold leading-none" style={{ color: t.line }}>+</span>

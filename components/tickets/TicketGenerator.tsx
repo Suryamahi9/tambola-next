@@ -198,7 +198,7 @@ export default function TicketGenerator() {
       num: `text-[${ink}]`,
       filled: dark ? "bg-white/[0.09]" : `bg-[${ink}]/[0.08]`,
       called: `bg-[${acc}] ${accDark ? "text-white" : "text-[#151515]"}`,
-      watermark: rgba(wat, dark ? 0.12 : 0.1),
+      watermark: rgba(wat, dark ? 0.26 : 0.22),
     };
   }, [customColors]);
 
@@ -306,13 +306,24 @@ export default function TicketGenerator() {
         doc.roundedRect(x, y, w, h, 5, 5, "FD");
         doc.setFont("helvetica", "bold");
         doc.setTextColor(210, 210, 210);
+        const wm = "NAVEEN CHERRY";
         doc.setFontSize(24);
-        doc.text("NAVEEN CHERRY", x + w / 2, y + h / 2, { angle: -8, align: "center" });
+        const wmW = doc.getTextWidth(wm);
+        // Watermark: scaled to span the ticket width, faint grey.
+        doc.setFontSize(Math.min(34, (24 * (w - 14)) / wmW));
+        doc.text(wm, x + w / 2, y + h / 2, { align: "center" });
         doc.setFillColor(20, 20, 20);
         doc.roundedRect(x, y, w, 12, 3, 3, "F");
         doc.setTextColor(255, 255, 255);
         doc.setFontSize(8);
-        doc.text(`${label}  ·  #${String(i + 1).padStart(2, "0")} / ${tickets.length}`, x + 2, y + 8);
+        doc.text(label, x + 2, y + 8);
+        doc.text("NAVEEN CHERRY", x + w / 2, y + 8, { align: "center" });
+        doc.text(
+          `#${String(i + 1).padStart(2, "0")} / ${tickets.length}`,
+          x + w - 2,
+          y + 8,
+          { align: "right" }
+        );
         const cw = w / 9;
         const ch = (h - 14) / 3;
         doc.setFontSize(9);
