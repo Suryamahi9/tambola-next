@@ -630,26 +630,6 @@ export default function Caller() {
     announceNumber(s.lastNumber);
   }, [announceNumber, showToast]);
 
-  const undoLast = useCallback(() => {
-    const s = stateRef.current;
-    if (s.calledNumbers.length === 0) {
-      showToast("No numbers called yet");
-      return;
-    }
-    setState((p) => {
-      const nums = p.calledNumbers.slice(0, -1);
-      return {
-        ...p,
-        calledNumbers: nums,
-        calledAt: (p.calledAt || []).slice(0, -1),
-        lastNumber: nums.length > 0 ? nums[nums.length - 1] : null,
-      };
-    });
-    burstSeqRef.current += 1;
-    setParticles([]);
-    showToast("Undid last call");
-  }, [showToast]);
-
   // Keyboard shortcuts
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -663,14 +643,10 @@ export default function Caller() {
       }
       if (e.code === "KeyR") setConfirmReset(true);
       if (e.code === "KeyL") repeatLast();
-      if (e.code === "KeyZ" && (e.ctrlKey || e.metaKey)) {
-        e.preventDefault();
-        undoLast();
-      }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [toggleAuto, drawManual, repeatLast, undoLast]);
+  }, [toggleAuto, drawManual, repeatLast]);
 
   const copyCalled = useCallback(() => {
     const s = stateRef.current;
@@ -1136,14 +1112,6 @@ export default function Caller() {
 
               {/* Repeat last + Copy */}
               <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={undoLast}
-                  className="w-10 h-10 rounded-xl bg-surface-container-low hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors"
-                  title="Undo last call (Ctrl+Z)"
-                >
-                  <span className="material-symbols-outlined text-xl text-tertiary">undo</span>
-                </button>
                 <button
                   type="button"
                   onClick={repeatLast}
