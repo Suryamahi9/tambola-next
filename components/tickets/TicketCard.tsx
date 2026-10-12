@@ -56,7 +56,13 @@ interface Props {
   style?: TicketStyle;
   design?: TicketDesign;
   customTheme?: ThemeSpec;
+  /** Watermark / header text. Defaults to "NAVEEN CHERRY". */
+  watermarkText?: string;
+  /** Optional image logo (data URL) painted into the watermark. */
+  logo?: string;
 }
+
+export const DEFAULT_WATERMARK = "NAVEEN CHERRY";
 
 const THEME_LABELS: Record<TicketTheme, string> = {
   paperwhite: "⚪ Paper White (default)",
@@ -562,25 +568,61 @@ const CARNIVAL_STAIN =
   "after:pointer-events-none after:absolute after:inset-0 after:z-[1] after:content-[''] after:bg-[radial-gradient(ellipse_at_14%_6%,rgba(120,88,38,0.13),transparent_46%),radial-gradient(ellipse_at_92%_94%,rgba(96,68,30,0.11),transparent_52%)]";
 
 /** Identity name pinned in the header, centred between the set label and the ticket number. */
-function HeaderName({ className = "" }: { className?: string }) {
+function HeaderName({
+  className = "",
+  text = DEFAULT_WATERMARK,
+}: {
+  className?: string;
+  text?: string;
+}) {
   return (
     <span
       className={`font-vintage-display min-w-0 flex-1 truncate text-center text-[10px] font-bold uppercase tracking-[0.24em] ${className}`}
     >
-      NAVEEN CHERRY
+      {text}
     </span>
   );
 }
 
 /** Full-bleed watermark: SVG text stretched edge-to-edge so it fills the ticket.
- *  `textLength` guarantees the line spans the card whatever the font metrics. */
+ *  `textLength` guarantees the line spans the card whatever the font metrics.
+ *  When a logo is supplied it is painted instead, with the text beneath it. */
 function Watermark({
   color,
   className = "",
+  text = DEFAULT_WATERMARK,
+  logo,
 }: {
   color: string;
   className?: string;
+  text?: string;
+  logo?: string;
 }) {
+  if (logo) {
+    return (
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-1 overflow-hidden px-4 ${className}`}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={logo}
+          alt=""
+          className="max-h-[58%] max-w-[68%] object-contain"
+          style={{ opacity: 0.5 }}
+        />
+        {text && (
+          <span
+            className="font-vintage-display text-center text-[9px] font-bold uppercase tracking-[0.3em]"
+            style={{ color, opacity: 0.5 }}
+          >
+            {text}
+          </span>
+        )}
+      </div>
+    );
+  }
+  const isDefault = text === DEFAULT_WATERMARK;
   return (
     <div
       aria-hidden="true"
@@ -605,7 +647,7 @@ function Watermark({
           className="font-vintage-display"
           style={{ paintOrder: "stroke" }}
         >
-          ♚ NAVEEN CHERRY
+          {isDefault ? `♚ ${text}` : text}
         </text>
       </svg>
     </div>
@@ -647,12 +689,13 @@ function TicketGrid({
   );
 }
 
-function CarnivalCard({ grid, name, index, total, called }: Omit<Props, "style" | "design">) {
+function CarnivalCard({ grid, name, index, total, called, watermarkText, logo }: Omit<Props, "style" | "design">) {
   const a = ACCENTS[index % ACCENTS.length];
   const brand = name || "Tambola";
+  const wm = watermarkText?.trim() || DEFAULT_WATERMARK;
   return (
     <div className={`break-inside-avoid flex ${CARNIVAL_CARD} ${CARNIVAL_STAIN}`}>
-      <Watermark color="rgba(90,60,25,0.3)" className="z-[1]" />
+      <Watermark color="rgba(90,60,25,0.3)" className="z-[1]" text={wm} logo={logo} />
       <div className={`relative z-[2] w-[14px] rounded-l-[5px] bg-gradient-to-b ${a.ramp}`} aria-hidden="true">
         <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[#fff7e6]">
           <span
@@ -668,7 +711,7 @@ function CarnivalCard({ grid, name, index, total, called }: Omit<Props, "style" 
           <span className="font-vintage-display min-w-0 shrink truncate text-[11px] font-bold uppercase leading-none tracking-[0.22em] text-[#3a2b1c]">
             ✦ {brand}
           </span>
-          <HeaderName className="text-[#8a6f4d]" />
+          <HeaderName className="text-[#8a6f4d]" text={wm} />
           <span className={`font-vintage-display shrink-0 text-[10px] font-bold italic tracking-wide ${a.text}`}>
             No. {String(index + 1).padStart(2, "0")}
             <span className="text-[#8a6f4d]"> / {String(total).padStart(2, "0")}</span>
@@ -703,12 +746,15 @@ function ClassicCard({
   total,
   called,
   t,
+  watermarkText,
+  logo,
 }: Omit<Props, "style" | "design"> & { t: ThemeSpec }) {
   const brand = name || "Tambola";
+  const wm = watermarkText?.trim() || DEFAULT_WATERMARK;
   const foil = t.foilDark ? "ticket-foil-deep" : "ticket-foil";
   return (
     <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
-      <Watermark color={t.watermark} className="z-0" />
+      <Watermark color={t.watermark} className="z-0" text={wm} logo={logo} />
 
       <div className={`relative z-[2] flex items-center gap-2 ${t.band ? t.band : ""} px-2.5 py-1`}>
         <span
@@ -719,7 +765,7 @@ function ClassicCard({
         <span className={`font-vintage-display min-w-0 shrink truncate text-[12px] font-bold uppercase leading-none tracking-[0.2em] ${foil}`}>
           ✦ {brand}
         </span>
-        <HeaderName className={foil} />
+        <HeaderName className={foil} text={wm} />
         <span className={`font-vintage-display shrink-0 text-[11px] font-bold italic tracking-wide ${foil}`}>
           No. {String(index + 1).padStart(2, "0")}
           <span className={t.serialMuted}> / {String(total).padStart(2, "0")}</span>
@@ -747,18 +793,21 @@ function StubCard({
   total,
   called,
   t,
+  watermarkText,
+  logo,
 }: Omit<Props, "style" | "design"> & { t: ThemeSpec }) {
   const brand = name || "Tambola";
+  const wm = watermarkText?.trim() || DEFAULT_WATERMARK;
   const foil = t.foilDark ? "ticket-foil-deep" : "ticket-foil";
   return (
     <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
-      <Watermark color={t.watermark} className="z-0" />
+      <Watermark color={t.watermark} className="z-0" text={wm} logo={logo} />
 
       <div className="relative z-[2] flex items-center justify-between gap-2 px-2.5 py-1">
         <span className={`font-vintage-display min-w-0 shrink truncate text-[12px] font-bold uppercase tracking-[0.18em] ${foil}`}>
           ✦ {brand}
         </span>
-        <HeaderName className={foil} />
+        <HeaderName className={foil} text={wm} />
         <span className={`font-mono shrink-0 text-[9px] font-bold tracking-[0.18em] ${t.serial}`}>
           NO. {String(index + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
         </span>
@@ -783,13 +832,16 @@ function MetroCard({
   index,
   called,
   t,
+  watermarkText,
+  logo,
 }: Omit<Props, "style" | "design"> & { t: ThemeSpec }) {
   const brand = name || "Tambola";
+  const wm = watermarkText?.trim() || DEFAULT_WATERMARK;
   const foil = t.foilDark ? "ticket-foil-deep" : "ticket-foil";
   const stripes = `repeating-linear-gradient(-45deg, ${t.line}33 0 8px, transparent 8px 16px)`;
   return (
     <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
-      <Watermark color={t.watermark} className="z-0" />
+      <Watermark color={t.watermark} className="z-0" text={wm} logo={logo} />
 
       <div className="relative z-[2] h-2" style={{ backgroundImage: stripes }} />
 
@@ -797,7 +849,7 @@ function MetroCard({
         <span className={`font-vintage-display min-w-0 shrink truncate text-[14px] font-black uppercase tracking-[0.28em] ${foil}`}>
           ✦ {brand}
         </span>
-        <HeaderName className={foil} />
+        <HeaderName className={foil} text={wm} />
         <span
           className={`shrink-0 rounded-sm border px-2 py-0.5 font-mono text-[9px] font-bold ${t.serial}`}
           style={{ borderColor: `${t.line}88` }}
@@ -824,17 +876,20 @@ function AuraCard({
   name,
   called,
   t,
+  watermarkText,
+  logo,
 }: Omit<Props, "style" | "design"> & { t: ThemeSpec }) {
   const brand = name || "Tambola";
+  const wm = watermarkText?.trim() || DEFAULT_WATERMARK;
   return (
     <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
-      <Watermark color={t.watermark} className="z-0" />
+      <Watermark color={t.watermark} className="z-0" text={wm} logo={logo} />
 
       <div className="relative z-[2] flex items-center justify-start gap-2 px-2.5 py-1">
         <span className={`font-vintage-display min-w-0 shrink truncate text-[11px] font-bold uppercase tracking-[0.3em] ${t.serial}`}>
           ✦ {brand}
         </span>
-        <HeaderName className={t.serialMuted} />
+        <HeaderName className={t.serialMuted} text={wm} />
       </div>
 
       <div className="relative z-[2] mx-2.5 rounded-[6px] p-[3px]" style={{ border: `1px solid ${t.line}44` }}>
@@ -851,12 +906,15 @@ function BlueprintCard({
   total,
   called,
   t,
+  watermarkText,
+  logo,
 }: Omit<Props, "style" | "design"> & { t: ThemeSpec }) {
   const brand = name || "Tambola";
+  const wm = watermarkText?.trim() || DEFAULT_WATERMARK;
   const foil = t.foilDark ? "ticket-foil-deep" : "ticket-foil";
   return (
     <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
-      <Watermark color={t.watermark} className="z-0" />
+      <Watermark color={t.watermark} className="z-0" text={wm} logo={logo} />
 
       <div className="relative z-[2] flex items-center justify-between gap-2 px-2.5 pt-1.5">
         <span className="shrink-0 font-mono text-[8px] font-bold uppercase tracking-[0.2em]" style={{ color: t.line }}>
@@ -865,7 +923,7 @@ function BlueprintCard({
         <span className={`font-vintage-display min-w-0 shrink truncate text-[13px] font-bold uppercase tracking-[0.24em] ${foil}`}>
           ✦ {brand}
         </span>
-        <HeaderName className={foil} />
+        <HeaderName className={foil} text={wm} />
         <span className="shrink-0 font-mono text-[8px] font-bold" style={{ color: t.line }}>
           SH.{index + 1}/{total}
         </span>

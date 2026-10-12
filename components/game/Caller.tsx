@@ -44,6 +44,10 @@ interface GameState {
   heatmap: boolean;
 }
 
+function randomTag(): string {
+  return `#${Math.random().toString(16).slice(2, 6).toUpperCase()}`;
+}
+
 const DEFAULT_STATE: GameState = {
   mode: "manual",
   language: "en-IN",
@@ -54,7 +58,9 @@ const DEFAULT_STATE: GameState = {
   calledNumbers: [],
   lastNumber: null,
   nickname: "Host",
-  tag: `#${Math.random().toString(16).slice(2, 6).toUpperCase()}`,
+  // Empty on the server; a random session tag is assigned after mount so the
+  // server and client first renders match (avoids a hydration mismatch).
+  tag: "",
   voiceCuesOn: true,
   wheelMode: false,
   heatmap: false,
@@ -238,8 +244,13 @@ export default function Caller() {
   // Restore a saved game after mount so server and client first renders match.
   useEffect(() => {
     const saved = loadState();
-    if (!saved) return;
-    const id = window.requestAnimationFrame(() => setState(saved));
+    const id = window.requestAnimationFrame(() =>
+      setState(
+        saved
+          ? { ...saved, tag: saved.tag || randomTag() }
+          : { ...DEFAULT_STATE, tag: randomTag() }
+      )
+    );
     return () => window.cancelAnimationFrame(id);
   }, []);
 
@@ -273,14 +284,19 @@ export default function Caller() {
     const prefix = state.language.slice(0, 2).toLowerCase();
     const match: SpeechSynthesisVoice[] = [];
     const rest: SpeechSynthesisVoice[] = [];
+    const seen = new Set<string>();
     for (const v of voices) {
+      // Some platforms list the same voice more than once; keep the first so
+      // the selector's option keys stay unique.
+      if (seen.has(v.voiceURI)) continue;
+      seen.add(v.voiceURI);
       const ok = v.lang.replace("_", "-").toLowerCase().startsWith(prefix);
       (ok ? match : rest).push(v);
     }
     return {
       voiceMatch: match,
       voiceRest: rest,
-      voiceKnown: new Set(voices.map((v) => v.voiceURI)),
+      voiceKnown: seen,
     };
   }, [voices, state.language]);
 
@@ -613,6 +629,7 @@ export default function Caller() {
       pitch: stateRef.current.pitch,
       tone: stateRef.current.tone,
       speed: stateRef.current.speed,
+      tag: randomTag(),
     });
     setParticles([]);
     setConfirmReset(false);
@@ -938,7 +955,7 @@ export default function Caller() {
               {/* Particle burst */}
               {state.lastNumber !== null && particles.length > 0 && (
                 <>
-                  <span className="animate-glow-ring pointer-events-none absolute inset-0 mx-auto my-auto block h-24 w-24 rounded-full border-2 border-primary/80" />
+                  <span className="pop-halo-ring pointer-events-none absolute inset-0 mx-auto my-auto block h-24 w-24 rounded-full border-2 border-primary/40" aria-hidden="true" />
                   {particles.map((p) => (
                     <span
                       key={p.id}
@@ -959,9 +976,10 @@ export default function Caller() {
                 </>
               )}
               {/* 3D sphere card */}
-              <div className="relative w-32 h-32 rounded-full bg-gradient-to-br from-primary-fixed via-primary-container to-amber-900 shadow-2xl flex flex-col items-center justify-center text-center p-2">
+              <div className="relative w-32 h-32 rounded-full bg-gradient-to-br from-primary-fixed via-primary-container to-amber-900 shadow-2xl flex flex-col items-center justify-center text-center p-2 pop-halo">
                 {/* specular highlight */}
-                <div className="absolute top-2 left-6 w-10 h-5 bg-white/40 rounded-full blur-[2px] transform -rotate-45" />
+                <div className="absolute top-2 left-6 w-10 h-5 bg-white/40 rounded-full blur-[2px] transform -rotate-45 pointer-events-none" />
+                <span className="pop-halo-ring border border-primary/40" aria-hidden="true" />
                 <p
                   key={spinNum ?? state.lastNumber ?? "none"}
                   className="animate-slot-flip font-caller-announcement text-caller-announcement text-on-primary-container font-black tracking-tight drop-shadow-md leading-none select-none"

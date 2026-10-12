@@ -77,6 +77,8 @@ export default function TicketGenerator() {
   const [showCoverage, setShowCoverage] = useState(false);
   const [ticketSize, setTicketSize] = useState<"sm" | "md" | "lg">("md");
   const [customColors, setCustomColors] = useState<CustomPalette>(DEFAULT_CUSTOM);
+  const [watermark, setWatermark] = useState("");
+  const [logo, setLogo] = useState("");
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
@@ -99,7 +101,7 @@ export default function TicketGenerator() {
         hydratedRef.current = true; // nothing to protect — arm persistence immediately
         return;
       }
-      const p = JSON.parse(raw) as Partial<Record<"mode" | "count" | "name" | "style" | "design" | "ticketSize" | "custom", unknown>>;
+      const p = JSON.parse(raw) as Partial<Record<"mode" | "count" | "name" | "style" | "design" | "ticketSize" | "custom" | "watermark" | "logo", unknown>>;
       const id = window.requestAnimationFrame(() => {
         if (p.mode === "random" || p.mode === "fullset" || p.mode === "halfset") setMode(p.mode);
         if (typeof p.count === "number") {
@@ -118,6 +120,8 @@ export default function TicketGenerator() {
           (p.custom as unknown[]).every((c) => typeof c === "string" && /^#[0-9a-f]{6}$/i.test(c as string))
         )
           setCustomColors(p.custom as CustomPalette);
+        if (typeof p.watermark === "string") setWatermark(p.watermark);
+        if (typeof p.logo === "string") setLogo(p.logo);
         hydratedRef.current = true;
       });
       return () => window.cancelAnimationFrame(id);
@@ -130,11 +134,14 @@ export default function TicketGenerator() {
   useEffect(() => {
     if (!hydratedRef.current) return;
     try {
-      localStorage.setItem(PREF_KEY, JSON.stringify({ mode, count, name, style, design, ticketSize, custom: customColors }));
+      localStorage.setItem(
+        PREF_KEY,
+        JSON.stringify({ mode, count, name, style, design, ticketSize, custom: customColors, watermark, logo })
+      );
     } catch {
       /* storage full / private mode */
     }
-  }, [mode, count, name, style, design, ticketSize, customColors]);
+  }, [mode, count, name, style, design, ticketSize, customColors, watermark, logo]);
 
   const analysis = useMemo(() => {
     let duplicateLines = 0;
@@ -209,6 +216,49 @@ export default function TicketGenerator() {
       return next;
     });
   }, []);
+
+  // Downscale uploaded logos to a small data URL so prefs stay inside the
+  // localStorage quota; SVGs are kept as-is (canvas can't rasterise them).
+  const onLogoFile = useCallback(
+    (file: File | undefined) => {
+      if (!file) return;
+      if (!file.type.startsWith("image/")) {
+        showToast("Pick an image file (PNG, JPG, WebP or SVG)");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const src = String(reader.result || "");
+        if (file.type === "image/svg+xml") {
+          setLogo(src);
+          showToast("Logo added");
+          return;
+        }
+        const img = new Image();
+        img.onload = () => {
+          const max = 256;
+          const scale = Math.min(1, max / Math.max(img.width, img.height));
+          const w = Math.max(1, Math.round(img.width * scale));
+          const h = Math.max(1, Math.round(img.height * scale));
+          const canvas = document.createElement("canvas");
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) {
+            setLogo(src);
+          } else {
+            ctx.drawImage(img, 0, 0, w, h);
+            setLogo(canvas.toDataURL("image/png"));
+          }
+          showToast("Logo added");
+        };
+        img.onerror = () => showToast("Could not read that image");
+        img.src = src;
+      };
+      reader.readAsDataURL(file);
+    },
+    [showToast]
+  );
 
   const generate = useCallback(() => {
     if (mode === "fullset") {
@@ -306,18 +356,34 @@ export default function TicketGenerator() {
         doc.roundedRect(x, y, w, h, 5, 5, "FD");
         doc.setFont("helvetica", "bold");
         doc.setTextColor(210, 210, 210);
-        const wm = "NAVEEN CHERRY";
+        const wm = watermark.trim() || "NAVEEN CHERRY";
+        let logoDrawn = false;
+        if (logo.startsWith("data:image/")) {
+          try {
+            const fmt = logo.startsWith("data:image/jpeg") ? "JPEG" : "PNG";
+            const props = doc.getImageProperties(logo);
+            const maxW = w * 0.5;
+            const maxH = h * 0.55;
+            const s = Math.min(maxW / props.width, maxH / props.height, 1);
+            const iw = props.width * s;
+            const ih = props.height * s;
+            doc.addImage(logo, fmt, x + (w - iw) / 2, y + (h - ih) / 2 - 4, iw, ih, undefined, "FAST");
+            logoDrawn = true;
+          } catch {
+            /* unsupported image — fall back to text watermark */
+          }
+        }
         doc.setFontSize(24);
         const wmW = doc.getTextWidth(wm);
         // Watermark: scaled to span the ticket width, faint grey.
         doc.setFontSize(Math.min(34, (24 * (w - 14)) / wmW));
-        doc.text(wm, x + w / 2, y + h / 2, { align: "center" });
+        doc.text(wm, x + w / 2, logoDrawn ? y + h - 8 : y + h / 2, { align: "center" });
         doc.setFillColor(20, 20, 20);
         doc.roundedRect(x, y, w, 12, 3, 3, "F");
         doc.setTextColor(255, 255, 255);
         doc.setFontSize(8);
         doc.text(label, x + 2, y + 8);
-        doc.text("NAVEEN CHERRY", x + w / 2, y + 8, { align: "center" });
+        doc.text(wm, x + w / 2, y + 8, { align: "center" });
         doc.text(
           `#${String(i + 1).padStart(2, "0")} / ${tickets.length}`,
           x + w - 2,
@@ -350,7 +416,7 @@ export default function TicketGenerator() {
     } catch {
       showToast("PDF unavailable — use Print instead");
     }
-  }, [tickets, labels, showToast]);
+  }, [tickets, labels, showToast, watermark, logo]);
 
   return (
     <div>
@@ -471,6 +537,80 @@ export default function TicketGenerator() {
             <span className="font-label-sm text-label-sm text-secondary font-mono">
               {THEME_OPTIONS.length} Themes · {DESIGN_OPTIONS.length} Designs
             </span>
+          </div>
+        </div>
+
+        {/* Branding: watermark text + logo */}
+        <div className="rounded-2xl bg-surface-container-highest/60 border border-primary-container/30 p-4 space-y-3">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-bold flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-sm">brand_awareness</span>
+              Watermark &amp; Logo
+            </span>
+            <span className="font-label-sm text-label-sm text-secondary">
+              Printed on every ticket · defaults to “NAVEEN CHERRY”
+            </span>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <label className="space-y-2">
+              <span className="font-label-sm text-label-sm text-on-surface-variant font-bold flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-sm">water_drop</span>
+                Watermark Text
+              </span>
+              <input
+                type="text"
+                value={watermark}
+                maxLength={40}
+                onChange={(e) => setWatermark(e.target.value)}
+                placeholder="NAVEEN CHERRY"
+                className="w-full bg-surface-container-highest text-on-surface px-4 py-3 rounded-xl font-label-md text-label-md font-semibold tracking-wide uppercase focus:outline-none focus:bg-surface-container shadow-inner transition-colors"
+              />
+            </label>
+            <div className="space-y-2">
+              <span className="font-label-sm text-label-sm text-on-surface-variant font-bold flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-sm">image</span>
+                Logo (optional)
+              </span>
+              <div className="flex items-center gap-3">
+                <label
+                  htmlFor="logo-upload"
+                  className="cursor-pointer rounded-xl bg-surface-container hover:bg-surface-bright text-on-surface px-4 py-3 font-label-md text-label-md font-bold flex items-center gap-2 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-lg">upload</span>
+                  {logo ? "Replace logo" : "Upload logo"}
+                </label>
+                <input
+                  id="logo-upload"
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                  className="hidden"
+                  onChange={(e) => {
+                    onLogoFile(e.target.files?.[0]);
+                    e.target.value = "";
+                  }}
+                />
+                {logo ? (
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-lg bg-white/90 p-1">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={logo} alt="Logo preview" className="max-h-full max-w-full object-contain" />
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setLogo("")}
+                      className="rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface px-3 py-2 font-label-sm text-label-sm font-bold flex items-center gap-1 transition-all"
+                    >
+                      <span className="material-symbols-outlined text-sm">close</span>
+                      Remove
+                    </button>
+                  </div>
+                ) : (
+                  <span className="font-label-sm text-label-sm text-on-surface-variant">
+                    PNG, JPG or SVG · shown faintly behind the numbers
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -716,6 +856,8 @@ export default function TicketGenerator() {
                   style={style}
                   design={design === "all" ? DESIGN_ORDER[i % DESIGN_ORDER.length] : design}
                   customTheme={style === "custom" ? customTheme : undefined}
+                  watermarkText={watermark || undefined}
+                  logo={logo || undefined}
                 />
               </div>
             ))}
