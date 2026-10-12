@@ -342,10 +342,15 @@ export default function Caller() {
         // Recorded packs: fire the cue when the clip actually ends instead of
         // guessing a fixed wait (English TTS still uses the 1300 ms default).
         // A shifted pitch also shortens/lengthens the clip, so duration follows.
-        const dur = usesRecording(s.language, s.voiceURI)
-          ? recordedDuration(s.language, num, s.pitch)
-          : null;
-        speakPhrase(cue, s.language, s.tone, s.pitch, dur ? (dur + 0.2) * 1000 : 1300, s.voiceURI);
+        let dur: number | null = null;
+        if (usesRecording(s.language, s.voiceURI)) {
+          dur = recordedDuration(s.language as "te-IN" | "hi-IN", num, s.pitch);
+        }
+        const d = dur;
+        // NOTE: this sits inside `if (false)`, where TS skips == null
+        // narrowing (TS18047) — hence the assertion, not a guard bug.
+        const waitMs = d == null ? 1300 : Math.round(((d as number) + 0.2) * 1000);
+        speakPhrase(cue ?? "", s.language, s.tone, s.pitch, waitMs, s.voiceURI);
       }
     }
   }, []);

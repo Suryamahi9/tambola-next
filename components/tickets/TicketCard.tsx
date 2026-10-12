@@ -60,9 +60,25 @@ interface Props {
   watermarkText?: string;
   /** Optional image logo (data URL) painted into the watermark. */
   logo?: string;
+  /** Logo ghost width as % of ticket width (0.15–1). Default 0.44. */
+  logoWidth?: number;
+  /** Logo ghost height cap as % of ticket height (0.15–1). Default 0.44. */
+  logoHeight?: number;
+  /** How the logo fills its width×height box: "fit" (whole logo, default) or
+   *  "fill" (exact box dimensions, edges may crop — like background-size). */
+  logoFit?: "fit" | "fill";
+  /** Logo ghost opacity (0.02–0.5). Default 0.10. */
+  logoOpacity?: number;
+  /** Watermark text strength multiplier (0–1). Default 1. 0 hides the text. */
+  watermarkOpacity?: number;
+  /** Watermark colour override (any CSS colour). Default "" = theme colour. */
+  watermarkColor?: string;
 }
 
 export const DEFAULT_WATERMARK = "NAVEEN CHERRY";
+export const DEFAULT_LOGO_WIDTH = 0.44;
+export const DEFAULT_LOGO_HEIGHT = 0.44;
+export const DEFAULT_LOGO_OPACITY = 0.1;
 
 const THEME_LABELS: Record<TicketTheme, string> = {
   paperwhite: "⚪ Paper White (default)",
@@ -592,13 +608,35 @@ function Watermark({
   className = "",
   text = DEFAULT_WATERMARK,
   logo,
+  logoWidth = DEFAULT_LOGO_WIDTH,
+  logoHeight = DEFAULT_LOGO_HEIGHT,
+  logoFit = "fit",
+  logoOpacity = DEFAULT_LOGO_OPACITY,
+  opacityScale = 1,
 }: {
   color: string;
   className?: string;
   text?: string;
   logo?: string;
+  logoWidth?: number;
+  logoHeight?: number;
+  logoFit?: "fit" | "fill";
+  logoOpacity?: number;
+  opacityScale?: number;
 }) {
+  const width = Math.max(0.15, Math.min(1, logoWidth));
+  const height = Math.max(0.15, Math.min(1, logoHeight));
+  const depth = Math.max(0.02, Math.min(0.5, logoOpacity));
+  const scale = Math.max(0, Math.min(1, opacityScale));
+  // Watermarks always render in CAPITALS (the SVG text has no CSS uppercase).
+  const display = (text || DEFAULT_WATERMARK).toUpperCase();
   if (logo) {
+    // Logo as a centred "ghost": size drives both axes (% of the ticket box),
+    // faint, grayscaled and slightly blurred so it never fights the numbers.
+    // NOTE: no box-relative mask here — the element box aspect differs from
+    // the image aspect under object-contain, so a radial mask fades the image
+    // content itself on square/portrait logos. Full-bleed inset-0 sizing is
+    // likewise banned (it sat behind the grid and hurt legibility).
     return (
       <div
         aria-hidden="true"
@@ -608,29 +646,42 @@ function Watermark({
         <img
           src={logo}
           alt=""
-          className="absolute inset-0 h-full w-full object-contain pointer-events-none"
-          style={{ opacity: 0.16, mixBlendMode: "multiply", filter: "grayscale(30%) contrast(130%) blur(0.2px)" }}
+          className="pointer-events-none absolute left-1/2 top-1/2 h-auto -translate-x-1/2 -translate-y-1/2"
+          style={{
+            // Width and height are independent sliders (% of the ticket box —
+            // the parent is inset-0, so % max-height resolves against ticket
+            // height). A fixed px/rem height cap starves square/portrait
+            // logos and makes the height slider look dead — don't add one.
+            // "fill" crops to the exact box (background-size style) so both
+            // sliders stay live on any logo shape; "fit" letterboxes instead.
+            width: `${width * 100}%`,
+            maxHeight: `${height * 100}%`,
+            objectFit: logoFit === "fill" ? "cover" : "contain",
+            opacity: depth,
+            filter: "grayscale(100%) contrast(92%) brightness(1.06) blur(0.4px)",
+          }}
         />
-        {text && (
+        {text && scale > 0 && (
           <span
             className="font-vintage-display text-center text-[9px] font-bold uppercase tracking-[0.3em] relative z-[2]"
-            style={{ color, opacity: 0.6, textShadow: "0 1px 0 rgba(255,255,255,0.6), 0 -1px 0 rgba(0,0,0,0.25)" }}
+            style={{ color, opacity: 0.6 * scale, textShadow: "0 1px 0 rgba(255,255,255,0.6), 0 -1px 0 rgba(0,0,0,0.25)" }}
           >
-            {text}
+            {display}
           </span>
         )}
-        {text && (
+        {text && scale > 0 && (
           <span
             className="font-vintage-display text-center text-[9px] font-bold uppercase tracking-[0.3em]"
-            style={{ color, opacity: 0.5 }}
+            style={{ color, opacity: 0.5 * scale }}
           >
-            {text}
+            {display}
           </span>
         )}
       </div>
     );
   }
-  const isDefault = text === DEFAULT_WATERMARK;
+  if (scale <= 0) return null;
+  const isDefault = display === DEFAULT_WATERMARK;
   return (
     <div
       aria-hidden="true"
@@ -639,7 +690,7 @@ function Watermark({
       <svg
         viewBox="0 0 200 24"
         className="h-auto w-[94%]"
-        style={{ color, opacity: 0.42 }}
+        style={{ color, opacity: 0.42 * scale }}
       >
         <text
           x="100"
@@ -655,7 +706,7 @@ function Watermark({
           className="font-vintage-display"
           style={{ paintOrder: "stroke" }}
         >
-          {isDefault ? `♚ ${text}` : text}
+          {isDefault ? `♚ ${display}` : display}
         </text>
       </svg>
     </div>
@@ -697,13 +748,13 @@ function TicketGrid({
   );
 }
 
-function CarnivalCard({ grid, name, index, total, called, watermarkText, logo }: Omit<Props, "style" | "design">) {
+function CarnivalCard({ grid, name, index, total, called, watermarkText, logo, logoWidth, logoHeight, logoFit, logoOpacity, watermarkOpacity, watermarkColor }: Omit<Props, "style" | "design">) {
   const a = ACCENTS[index % ACCENTS.length];
   const brand = name || "Tambola";
   const wm = watermarkText?.trim() || DEFAULT_WATERMARK;
   return (
     <div className={`break-inside-avoid flex ${CARNIVAL_CARD} ${CARNIVAL_STAIN}`}>
-      <Watermark color="rgba(90,60,25,0.3)" className="z-[1]" text={wm} logo={logo} />
+      <Watermark color={watermarkColor || "rgba(90,60,25,0.3)"} className="z-[1]" text={wm} logo={logo} logoWidth={logoWidth} logoHeight={logoHeight} logoFit={logoFit} logoOpacity={logoOpacity} opacityScale={watermarkOpacity} />
       <div className={`relative z-[2] w-[14px] rounded-l-[5px] bg-gradient-to-b ${a.ramp}`} aria-hidden="true">
         <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[#fff7e6]">
           <span
@@ -756,13 +807,19 @@ function ClassicCard({
   t,
   watermarkText,
   logo,
+  logoWidth,
+  logoHeight,
+  logoFit,
+  logoOpacity,
+  watermarkOpacity,
+  watermarkColor,
 }: Omit<Props, "style" | "design"> & { t: ThemeSpec }) {
   const brand = name || "Tambola";
   const wm = watermarkText?.trim() || DEFAULT_WATERMARK;
   const foil = t.foilDark ? "ticket-foil-deep" : "ticket-foil";
   return (
     <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
-      <Watermark color={t.watermark} className="z-0" text={wm} logo={logo} />
+      <Watermark color={watermarkColor || t.watermark} className="z-0" text={wm} logo={logo} logoWidth={logoWidth} logoHeight={logoHeight} logoFit={logoFit} logoOpacity={logoOpacity} opacityScale={watermarkOpacity} />
 
       <div className={`relative z-[2] flex items-center gap-2 ${t.band ? t.band : ""} px-2.5 py-1`}>
         <span
@@ -803,13 +860,19 @@ function StubCard({
   t,
   watermarkText,
   logo,
+  logoWidth,
+  logoHeight,
+  logoFit,
+  logoOpacity,
+  watermarkOpacity,
+  watermarkColor,
 }: Omit<Props, "style" | "design"> & { t: ThemeSpec }) {
   const brand = name || "Tambola";
   const wm = watermarkText?.trim() || DEFAULT_WATERMARK;
   const foil = t.foilDark ? "ticket-foil-deep" : "ticket-foil";
   return (
     <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
-      <Watermark color={t.watermark} className="z-0" text={wm} logo={logo} />
+      <Watermark color={watermarkColor || t.watermark} className="z-0" text={wm} logo={logo} logoWidth={logoWidth} logoHeight={logoHeight} logoFit={logoFit} logoOpacity={logoOpacity} opacityScale={watermarkOpacity} />
 
       <div className="relative z-[2] flex items-center justify-between gap-2 px-2.5 py-1">
         <span className={`font-vintage-display min-w-0 shrink truncate text-[12px] font-bold uppercase tracking-[0.18em] ${foil}`}>
@@ -842,6 +905,12 @@ function MetroCard({
   t,
   watermarkText,
   logo,
+  logoWidth,
+  logoHeight,
+  logoFit,
+  logoOpacity,
+  watermarkOpacity,
+  watermarkColor,
 }: Omit<Props, "style" | "design"> & { t: ThemeSpec }) {
   const brand = name || "Tambola";
   const wm = watermarkText?.trim() || DEFAULT_WATERMARK;
@@ -849,7 +918,7 @@ function MetroCard({
   const stripes = `repeating-linear-gradient(-45deg, ${t.line}33 0 8px, transparent 8px 16px)`;
   return (
     <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
-      <Watermark color={t.watermark} className="z-0" text={wm} logo={logo} />
+      <Watermark color={watermarkColor || t.watermark} className="z-0" text={wm} logo={logo} logoWidth={logoWidth} logoHeight={logoHeight} logoFit={logoFit} logoOpacity={logoOpacity} opacityScale={watermarkOpacity} />
 
       <div className="relative z-[2] h-2" style={{ backgroundImage: stripes }} />
 
@@ -886,12 +955,18 @@ function AuraCard({
   t,
   watermarkText,
   logo,
+  logoWidth,
+  logoHeight,
+  logoFit,
+  logoOpacity,
+  watermarkOpacity,
+  watermarkColor,
 }: Omit<Props, "style" | "design"> & { t: ThemeSpec }) {
   const brand = name || "Tambola";
   const wm = watermarkText?.trim() || DEFAULT_WATERMARK;
   return (
     <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
-      <Watermark color={t.watermark} className="z-0" text={wm} logo={logo} />
+      <Watermark color={watermarkColor || t.watermark} className="z-0" text={wm} logo={logo} logoWidth={logoWidth} logoHeight={logoHeight} logoFit={logoFit} logoOpacity={logoOpacity} opacityScale={watermarkOpacity} />
 
       <div className="relative z-[2] flex items-center justify-start gap-2 px-2.5 py-1">
         <span className={`font-vintage-display min-w-0 shrink truncate text-[11px] font-bold uppercase tracking-[0.3em] ${t.serial}`}>
@@ -916,13 +991,19 @@ function BlueprintCard({
   t,
   watermarkText,
   logo,
+  logoWidth,
+  logoHeight,
+  logoFit,
+  logoOpacity,
+  watermarkOpacity,
+  watermarkColor,
 }: Omit<Props, "style" | "design"> & { t: ThemeSpec }) {
   const brand = name || "Tambola";
   const wm = watermarkText?.trim() || DEFAULT_WATERMARK;
   const foil = t.foilDark ? "ticket-foil-deep" : "ticket-foil";
   return (
     <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
-      <Watermark color={t.watermark} className="z-0" text={wm} logo={logo} />
+      <Watermark color={watermarkColor || t.watermark} className="z-0" text={wm} logo={logo} logoWidth={logoWidth} logoHeight={logoHeight} logoFit={logoFit} logoOpacity={logoOpacity} opacityScale={watermarkOpacity} />
 
       <div className="relative z-[2] flex items-center justify-between gap-2 px-2.5 pt-1.5">
         <span className="shrink-0 font-mono text-[8px] font-bold uppercase tracking-[0.2em]" style={{ color: t.line }}>

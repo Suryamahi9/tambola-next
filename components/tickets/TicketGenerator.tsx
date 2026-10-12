@@ -12,6 +12,9 @@ import {
 import TicketCard, {
   THEME_LABELS,
   DESIGN_LABELS,
+  DEFAULT_LOGO_HEIGHT,
+  DEFAULT_LOGO_OPACITY,
+  DEFAULT_LOGO_WIDTH,
   type TicketTheme,
   type TicketDesign,
   type ThemeSpec,
@@ -56,7 +59,7 @@ function rgba(hex: string, a: number): string {
   const [r, g, b] = hexToRgb(hex);
   return `rgba(${r},${g},${b},${a})`;
 }
-const THEME_OPTIONS = Object.entries(THEME_LABELS) as [TicketTheme, string][];
+const THEME_OPTIONS = Object.entries(THEME_LABELS) as [TicketTheme, string][]; 
 const DESIGN_OPTIONS = Object.entries(DESIGN_LABELS) as [TicketDesign, string][];
 const DESIGN_ORDER: TicketDesign[] = ["classic", "carnival", "stub", "metro", "aura", "blueprint"];
 const SET_LABELS = [
@@ -64,6 +67,47 @@ const SET_LABELS = [
   "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", "AN",
   "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV", "AW", "AX",
 ];
+
+/** Labelled % slider for the Watermark & Logo panel. */
+function TuneSlider({
+  icon,
+  label,
+  value,
+  min,
+  max,
+  disabled,
+  onChange,
+}: {
+  icon: string;
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  disabled?: boolean;
+  onChange: (v: number) => void;
+}) {
+  return (
+    <label className={`space-y-2 ${disabled ? "opacity-40" : ""}`}>
+      <span className="font-label-sm text-label-sm text-on-surface-variant font-bold flex items-center justify-between gap-1.5">
+        <span className="flex items-center gap-1.5">
+          <span className="material-symbols-outlined text-sm">{icon}</span>
+          {label}
+        </span>
+        <span className="font-mono text-secondary">{value}%</span>
+      </span>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        value={value}
+        disabled={disabled}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="w-full accent-secondary disabled:cursor-not-allowed"
+        aria-label={label}
+      />
+    </label>
+  );
+}
 
 export default function TicketGenerator() {
   const [mode, setMode] = useState<Mode>("random");
@@ -79,6 +123,16 @@ export default function TicketGenerator() {
   const [customColors, setCustomColors] = useState<CustomPalette>(DEFAULT_CUSTOM);
   const [watermark, setWatermark] = useState("");
   const [logo, setLogo] = useState("");
+  // Background tuning (percent units in state; card takes fractions).
+  // Logo width/height = ghost % of ticket box · logo depth = ghost opacity % ·
+  // watermark depth = text strength % (0 hides the text).
+  const [logoWidth, setLogoWidth] = useState(Math.round(DEFAULT_LOGO_WIDTH * 100));
+  const [logoHeight, setLogoHeight] = useState(Math.round(DEFAULT_LOGO_HEIGHT * 100));
+  const [logoFit, setLogoFit] = useState<"fit" | "fill">("fit");
+  const [logoDepth, setLogoDepth] = useState(Math.round(DEFAULT_LOGO_OPACITY * 100));
+  const [wmDepth, setWmDepth] = useState(100);
+  // Watermark text colour override — "" means the theme's own colour.
+  const [wmColor, setWmColor] = useState("");
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
@@ -101,7 +155,8 @@ export default function TicketGenerator() {
         hydratedRef.current = true; // nothing to protect — arm persistence immediately
         return;
       }
-      const p = JSON.parse(raw) as Partial<Record<"mode" | "count" | "name" | "style" | "design" | "ticketSize" | "custom" | "watermark" | "logo", unknown>>;
+      // "logoSize" is legacy (pre-split single slider) — migrated below, never written.
+      const p = JSON.parse(raw) as Partial<Record<"mode" | "count" | "name" | "style" | "design" | "ticketSize" | "custom" | "watermark" | "logo" | "logoSize" | "logoWidth" | "logoHeight" | "logoFit" | "logoDepth" | "wmDepth" | "wmColor", unknown>>;
       const id = window.requestAnimationFrame(() => {
         if (p.mode === "random" || p.mode === "fullset" || p.mode === "halfset") setMode(p.mode);
         if (typeof p.count === "number") {
@@ -122,6 +177,18 @@ export default function TicketGenerator() {
           setCustomColors(p.custom as CustomPalette);
         if (typeof p.watermark === "string") setWatermark(p.watermark);
         if (typeof p.logo === "string") setLogo(p.logo);
+        if (typeof p.logoWidth === "number") setLogoWidth(Math.max(15, Math.min(100, Math.round(p.logoWidth))));
+        else if (typeof p.logoSize === "number") {
+          // Migrate pre-split prefs: one size drove both axes.
+          const v = Math.max(15, Math.min(100, Math.round(p.logoSize)));
+          setLogoWidth(v);
+          setLogoHeight(v);
+        }
+        if (typeof p.logoHeight === "number") setLogoHeight(Math.max(15, Math.min(100, Math.round(p.logoHeight))));
+        if (p.logoFit === "fit" || p.logoFit === "fill") setLogoFit(p.logoFit);
+        if (typeof p.logoDepth === "number") setLogoDepth(Math.max(2, Math.min(50, Math.round(p.logoDepth))));
+        if (typeof p.wmDepth === "number") setWmDepth(Math.max(0, Math.min(100, Math.round(p.wmDepth))));
+        if (typeof p.wmColor === "string" && (/^#[0-9a-f]{6}$/i.test(p.wmColor) || p.wmColor === "")) setWmColor(p.wmColor);
         hydratedRef.current = true;
       });
       return () => window.cancelAnimationFrame(id);
@@ -136,12 +203,12 @@ export default function TicketGenerator() {
     try {
       localStorage.setItem(
         PREF_KEY,
-        JSON.stringify({ mode, count, name, style, design, ticketSize, custom: customColors, watermark, logo })
+        JSON.stringify({ mode, count, name, style, design, ticketSize, custom: customColors, watermark, logo, logoWidth, logoHeight, logoFit, logoDepth, wmDepth, wmColor })
       );
     } catch {
       /* storage full / private mode */
     }
-  }, [mode, count, name, style, design, ticketSize, customColors, watermark, logo]);
+  }, [mode, count, name, style, design, ticketSize, customColors, watermark, logo, logoWidth, logoHeight, logoFit, logoDepth, wmDepth, wmColor]);
 
   const analysis = useMemo(() => {
     let duplicateLines = 0;
@@ -355,19 +422,42 @@ export default function TicketGenerator() {
         doc.setFillColor(255, 255, 255);
         doc.roundedRect(x, y, w, h, 5, 5, "FD");
         doc.setFont("helvetica", "bold");
-        doc.setTextColor(210, 210, 210);
-        const wm = watermark.trim() || "NAVEEN CHERRY";
+        const wm = (watermark.trim() || "NAVEEN CHERRY").toUpperCase();
+        if (/^#[0-9a-f]{6}$/i.test(wmColor)) {
+          const [r, g, b] = hexToRgb(wmColor);
+          doc.setTextColor(r, g, b);
+        } else {
+          doc.setTextColor(210, 210, 210);
+        }
         let logoDrawn = false;
         if (logo.startsWith("data:image/")) {
           try {
             const fmt = logo.startsWith("data:image/jpeg") ? "JPEG" : "PNG";
             const props = doc.getImageProperties(logo);
-            const maxW = w * 0.5;
-            const maxH = h * 0.55;
+            // Ghost logo, honouring the Width / Height / Depth sliders.
+            // Print always uses fit (whole logo) even in Fill mode — cropping
+            // on paper is a worse surprise than letterboxing.
+            const widthF = Math.max(0.15, Math.min(1, logoWidth / 100));
+            const heightF = Math.max(0.15, Math.min(1, logoHeight / 100));
+            const depthF = Math.max(0.02, Math.min(0.5, logoDepth / 100));
+            const maxW = w * widthF;
+            const maxH = h * heightF;
             const s = Math.min(maxW / props.width, maxH / props.height, 1);
             const iw = props.width * s;
             const ih = props.height * s;
+            try {
+              const gs = new (doc as unknown as { GState: new (o: object) => object }).GState({ opacity: depthF });
+              (doc as unknown as { setGState: (g: object) => void }).setGState(gs);
+            } catch {
+              /* old jsPDF without GState — full-opacity small logo still fine */
+            }
             doc.addImage(logo, fmt, x + (w - iw) / 2, y + (h - ih) / 2 - 4, iw, ih, undefined, "FAST");
+            try {
+              const gs = new (doc as unknown as { GState: new (o: object) => object }).GState({ opacity: 1 });
+              (doc as unknown as { setGState: (g: object) => void }).setGState(gs);
+            } catch {
+              /* ignore */
+            }
             logoDrawn = true;
           } catch {
             /* unsupported image — fall back to text watermark */
@@ -416,7 +506,7 @@ export default function TicketGenerator() {
     } catch {
       showToast("PDF unavailable — use Print instead");
     }
-  }, [tickets, labels, showToast, watermark, logo]);
+  }, [tickets, labels, showToast, watermark, logo, logoWidth, logoHeight, logoDepth, wmColor]);
 
   return (
     <div>
@@ -565,6 +655,32 @@ export default function TicketGenerator() {
                 placeholder="NAVEEN CHERRY"
                 className="w-full bg-surface-container-highest text-on-surface px-4 py-3 rounded-xl font-label-md text-label-md font-semibold tracking-wide uppercase focus:outline-none focus:bg-surface-container shadow-inner transition-colors"
               />
+              <span className="font-label-sm text-label-sm text-on-surface-variant font-bold flex items-center gap-1.5 pt-1">
+                <span className="material-symbols-outlined text-sm">format_color_text</span>
+                Watermark Colour
+              </span>
+              <span className="flex items-center gap-2 rounded-xl bg-surface-container-highest p-1.5 shadow-inner">
+                <input
+                  type="color"
+                  value={wmColor || "#8a6f4d"}
+                  onChange={(e) => setWmColor(e.target.value)}
+                  className="h-8 w-10 shrink-0 cursor-pointer rounded-md border-0 bg-transparent p-0"
+                  aria-label="Watermark colour"
+                />
+                <span className="truncate font-mono text-[11px] text-on-surface-variant">
+                  {wmColor || "Theme default"}
+                </span>
+                {wmColor && (
+                  <button
+                    type="button"
+                    onClick={() => setWmColor("")}
+                    className="ml-auto rounded-lg bg-surface-container text-on-surface-variant hover:text-on-surface px-3 py-1.5 font-label-sm text-label-sm font-bold flex items-center gap-1 transition-all"
+                  >
+                    <span className="material-symbols-outlined text-sm">restart_alt</span>
+                    Auto
+                  </button>
+                )}
+              </span>
             </label>
             <div className="space-y-2">
               <span className="font-label-sm text-label-sm text-on-surface-variant font-bold flex items-center gap-1.5">
@@ -611,6 +727,75 @@ export default function TicketGenerator() {
                 )}
               </div>
             </div>
+          </div>
+          {/* Width + height + depth tuning — live on every ticket, saved to this browser */}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <TuneSlider
+              icon="swap_horiz"
+              label="Logo width"
+              value={logoWidth}
+              min={15}
+              max={100}
+              disabled={!logo}
+              onChange={setLogoWidth}
+            />
+            <TuneSlider
+              icon="swap_vert"
+              label="Logo height"
+              value={logoHeight}
+              min={15}
+              max={100}
+              disabled={!logo}
+              onChange={setLogoHeight}
+            />
+            <TuneSlider
+              icon="opacity"
+              label="Logo depth"
+              value={logoDepth}
+              min={2}
+              max={50}
+              disabled={!logo}
+              onChange={setLogoDepth}
+            />
+            <TuneSlider
+              icon="water_drop"
+              label="Watermark depth"
+              value={wmDepth}
+              min={0}
+              max={100}
+              onChange={setWmDepth}
+            />
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="font-label-sm text-label-sm text-on-surface-variant font-bold flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-sm">aspect_ratio</span>
+              Logo fit
+            </span>
+            <div className={`grid grid-cols-2 gap-2 bg-surface-container-highest p-1 rounded-xl w-full sm:w-96 ${!logo ? "opacity-40" : ""}`}>
+              {(
+                [
+                  ["fit", "Fit · whole logo"],
+                  ["fill", "Fill · exact box"],
+                ] as ["fit" | "fill", string][]
+              ).map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  disabled={!logo}
+                  onClick={() => setLogoFit(value)}
+                  className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg transition-all disabled:cursor-not-allowed ${
+                    logoFit === value
+                      ? "bg-primary-container text-on-primary-container font-label-md text-label-md font-bold"
+                      : "text-on-surface-variant hover:text-on-surface font-label-md text-label-md font-medium"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <span className="font-label-sm text-label-sm text-on-surface-variant">
+              Fill crops edges to match your exact width × height
+            </span>
           </div>
         </div>
 
@@ -858,6 +1043,12 @@ export default function TicketGenerator() {
                   customTheme={style === "custom" ? customTheme : undefined}
                   watermarkText={watermark || undefined}
                   logo={logo || undefined}
+                  logoWidth={logoWidth / 100}
+                  logoHeight={logoHeight / 100}
+                  logoFit={logoFit}
+                  logoOpacity={logoDepth / 100}
+                  watermarkOpacity={wmDepth / 100}
+                  watermarkColor={wmColor || undefined}
                 />
               </div>
             ))}
