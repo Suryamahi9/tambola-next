@@ -61,7 +61,7 @@ const DEFAULT_STATE: GameState = {
   // Empty on the server; a random session tag is assigned after mount so the
   // server and client first renders match (avoids a hydration mismatch).
   tag: "",
-  voiceCuesOn: true,
+  voiceCuesOn: false,
   wheelMode: false,
   heatmap: false,
 };
@@ -105,6 +105,7 @@ function loadState(): GameState | null {
     return {
       ...DEFAULT_STATE,
       ...data,
+      voiceCuesOn: false,
       lastNumber: data.lastNumber ?? null,
     };
   } catch {
@@ -331,7 +332,7 @@ export default function Caller() {
     setLastKey((k) => k + 1);
     setParticles(makeBurst(num));
     if (!speakNumber(num, s.language, s.tone, s.voiceURI, s.pitch)) setAudioOk(false);
-    if (s.voiceCuesOn) {
+    if (false) {
       const cue = cueFor(newLen, s.language);
       if (cue) {
         // Recorded packs: fire the cue when the clip actually ends instead of
@@ -925,18 +926,7 @@ export default function Caller() {
                 >
                   <span className="material-symbols-outlined text-xl">casino</span>
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setState((p) => ({ ...p, voiceCuesOn: !p.voiceCuesOn }))}
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${
-                    state.voiceCuesOn
-                      ? "bg-tertiary-container/25 text-tertiary ring-1 ring-tertiary/30"
-                      : "bg-surface-container-low hover:bg-surface-container-high text-on-surface-variant"
-                  }`}
-                  title="Smart voice cues (milestones)"
-                >
-                  <span className="material-symbols-outlined text-xl">campaign</span>
-                </button>
+                {/* Smart voice cues removed per request */}
               </div>
             </div>
           </div>
