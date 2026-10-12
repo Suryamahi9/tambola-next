@@ -608,13 +608,13 @@ function Watermark({
         <img
           src={logo}
           alt=""
-          className="absolute inset-0 h-full w-full object-contain"
-          style={{ opacity: 0.28, mixBlendMode: "soft-light", filter: "grayscale(0%) contrast(120%) drop-shadow(0 4px 24px rgba(0,0,0,0.12))" }}
+          className="absolute inset-0 h-full w-full object-contain pointer-events-none"
+          style={{ opacity: 0.16, mixBlendMode: "multiply", filter: "grayscale(30%) contrast(130%) blur(0.2px)" }}
         />
         {text && (
           <span
-            className="font-vintage-display text-center text-[9px] font-bold uppercase tracking-[0.3em]"
-            style={{ color, opacity: 0.5, zIndex: 1 }}
+            className="font-vintage-display text-center text-[9px] font-bold uppercase tracking-[0.3em] relative z-[2]"
+            style={{ color, opacity: 0.6, textShadow: "0 1px 0 rgba(255,255,255,0.6), 0 -1px 0 rgba(0,0,0,0.25)" }}
           >
             {text}
           </span>
