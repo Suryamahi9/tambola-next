@@ -1022,7 +1022,9 @@ export default function TicketGenerator() {
           </div>
         ) : (
           <div
-        className={`grid gap-4 ${
+        // Mobile-first 2-col deck: a whole 6-ticket set fits one phone frame
+        // for screenshots. Keep the phone gap tight (gap-2); sm+ stays airy.
+        className={`grid grid-cols-2 gap-2 sm:gap-4 ${
           ticketSize === "sm"
             ? "sm:grid-cols-3 xl:grid-cols-4"
             : ticketSize === "lg"
