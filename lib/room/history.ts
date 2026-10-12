@@ -23,8 +23,9 @@ export interface PlayerGameHistory {
   rooms: PlayerRoomRecord[];
 }
 
-/** Aggregate every room a player has been in. Prizes are matched by player id
- *  (current round) plus each stored round summary's winner. */
+/** Aggregate every room a player has been in. Every prize counts — current
+ *  round plus all stored round summaries (matched by player id, falling back
+ *  to name for summaries written before ids were stored). */
 export function playerGameHistory(rooms: Room[], playerId: string): PlayerGameHistory {
   const records: PlayerRoomRecord[] = [];
   let totalPrizes = 0;
@@ -35,18 +36,23 @@ export function playerGameHistory(rooms: Room[], playerId: string): PlayerGameHi
     if (!player) continue;
 
     const myPrizes = room.prizes.filter((p) => p.playerId === playerId);
-    const historyWins = room.history.filter((h) => h.winnerId === playerId).length;
-    const wins = (room.standings[playerId] ?? 0);
-    const labels = [
-      ...myPrizes.map((p) => p.label),
-    ];
-    // History summaries only store the round winner's name — surface those too.
+    const labels = [...myPrizes.map((p) => p.label)];
+    let pastWins = 0;
+    let pastCalls = 0;
     for (const h of room.history) {
-      if (h.winnerId === playerId) labels.push(`Round ${h.round} — ${h.winnerName ?? "win"}`);
+      pastCalls += h.calledCount;
+      for (const prize of h.prizes) {
+        if (prize.playerId ? prize.playerId === playerId : prize.playerName === player.name) {
+          pastWins += 1;
+          labels.push(`Round ${h.round} — ${prize.label}`);
+        }
+      }
     }
 
-    totalPrizes += myPrizes.length + historyWins;
-    totalCalls += room.calledNumbers.length;
+    const wins = myPrizes.length + pastWins;
+    const calls = room.calledNumbers.length + pastCalls;
+    totalPrizes += wins;
+    totalCalls += calls;
 
     records.push({
       roomId: room.id,
@@ -55,7 +61,7 @@ export function playerGameHistory(rooms: Room[], playerId: string): PlayerGameHi
       status: room.status,
       startedAt: room.startedAt,
       finishedAt: room.finishedAt,
-      calledCount: room.calledNumbers.length,
+      calledCount: calls,
       ticketsOwned: player.tickets.length,
       wins,
       prizeLabels: labels,
@@ -64,7 +70,8 @@ export function playerGameHistory(rooms: Room[], playerId: string): PlayerGameHi
     });
   }
 
-  records.sort((a, b) => Date.parse(b.startedAt ?? b.roomId) - Date.parse(a.startedAt ?? a.roomId));
+  const startedMs = (iso: string | null) => (iso ? Date.parse(iso) || 0 : 0);
+  records.sort((a, b) => startedMs(b.startedAt) - startedMs(a.startedAt));
 
   return {
     totalGames: records.length,

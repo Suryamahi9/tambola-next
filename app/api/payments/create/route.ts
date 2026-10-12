@@ -4,10 +4,12 @@ import {
   addPendingPlayer,
   createRoomForPlayer,
   findJoinableRoom,
+  recordPendingOrder,
   signPlayerToken,
   PLAYER_COOKIE,
   MAX_TICKETS_PER_PLAYER,
 } from "@/lib/room/engine";
+import { PLAYER_TOKEN_DAYS, secureCookieFlag } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
 
@@ -65,11 +67,15 @@ export async function POST(request: Request) {
     let playerId: string;
     if (roomCode) {
       const join = await findJoinableRoom(roomCode);
-      if ("error" in join) return NextResponse.json({ error: join.error }, { status: 409 });
+      if ("error" in join) {
+        return NextResponse.json({ error: join.error }, { status: join.status ?? 409 });
+      }
       roomId = join.room.id;
       pricePerTicket = join.room.pricePerTicket;
       const pending = await addPendingPlayer(roomId, name, rawCount);
-      if ("error" in pending) return NextResponse.json({ error: pending.error }, { status: 409 });
+      if ("error" in pending) {
+        return NextResponse.json({ error: pending.error }, { status: pending.status ?? 409 });
+      }
       playerId = pending.player.id;
     } else {
       const room = await createRoomForPlayer(name, rawCount);
@@ -83,10 +89,10 @@ export async function POST(request: Request) {
     const cookieStore = await cookies();
     cookieStore.set(PLAYER_COOKIE, await signPlayerToken(playerId), {
       httpOnly: true,
-      secure: process.env.COOKIE_SECURE === "true",
+      secure: secureCookieFlag(),
       sameSite: "lax",
       path: "/",
-      maxAge: 60 * 60 * 24 * 30,
+      maxAge: 60 * 60 * 24 * PLAYER_TOKEN_DAYS,
     });
 
     // Test mode: without Razorpay keys we auto-approve so the flow runs end-to-end.
@@ -101,6 +107,9 @@ export async function POST(request: Request) {
     }
 
     const order = await createRazorpayOrder(amount, `room_${roomId}`);
+    // Bind this order to this player + amount so verify can enforce both
+    // (amount match, single use) instead of trusting any valid signature.
+    await recordPendingOrder(roomId, order.id, playerId, amount);
     return NextResponse.json({
       test: false,
       orderId: order.id,

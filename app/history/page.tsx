@@ -22,7 +22,7 @@ export default async function HistoryPage() {
 
   const rooms = await getAllRooms();
   const history = playerGameHistory(rooms, payload.uid);
-  const cashWon = history.rooms.reduce((n, r) => n + r.wins, 0);
+  const careerWins = history.rooms.reduce((n, r) => n + r.wins, 0);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
@@ -43,7 +43,7 @@ export default async function HistoryPage() {
         {[
           { label: "Games played", value: history.totalGames, icon: "🕹️" },
           { label: "Patterns won", value: history.totalPrizes, icon: "🏆" },
-          { label: "Career wins", value: cashWon, icon: "⭐" },
+          { label: "Career wins", value: careerWins, icon: "⭐" },
           { label: "Numbers called", value: history.totalCalls, icon: "🔢" },
         ].map((card) => (
           <div key={card.label} className="glass rounded-2xl border border-white/10 p-5">

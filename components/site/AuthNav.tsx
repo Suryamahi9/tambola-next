@@ -13,16 +13,23 @@ export default function AuthNav({ variant }: { variant: "desktop" | "mobile" }) 
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/me", { cache: "no-store" })
-      .then((res) => res.json())
-      .then((data: MeResponse) => {
-        if (!cancelled) setUser(data.user);
-      })
-      .catch(() => {
-        if (!cancelled) setUser(null);
-      });
+    function fetchMe() {
+      fetch("/api/me", { cache: "no-store" })
+        .then((res) => res.json())
+        .then((data: MeResponse) => {
+          if (!cancelled) setUser(data.user);
+        })
+        .catch(() => {
+          if (!cancelled) setUser(null);
+        });
+    }
+    fetchMe();
+    window.addEventListener("focus", fetchMe);
+    const iv = window.setInterval(fetchMe, 60_000);
     return () => {
       cancelled = true;
+      window.removeEventListener("focus", fetchMe);
+      window.clearInterval(iv);
     };
   }, []);
 
@@ -65,7 +72,7 @@ export default function AuthNav({ variant }: { variant: "desktop" | "mobile" }) 
 
   // mobile
   if (user === "loading") {
-    return null;
+    return <span className="mt-2 block h-2 w-16 animate-pulse rounded-full bg-white/10" aria-hidden />;
   }
   if (!user) {
     return (

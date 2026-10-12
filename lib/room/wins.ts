@@ -1,5 +1,5 @@
 import type { Grid } from "@/lib/ticket";
-import type { PatternId, Player, Prize, Room, Win } from "./types";
+import type { PatternId, Player, Prize, Room } from "./types";
 import { DEFAULT_ROOM_SETTINGS } from "./types";
 
 export const PATTERNS = [
@@ -28,6 +28,23 @@ const LINE_SETTING: Record<"top" | "middle" | "bottom", BooleanSettingKey> = {
   middle: "middleLine",
   bottom: "bottomLine",
 };
+
+/** Dynamic award rank for one pattern: full house first, early five last,
+ *  lines ordered by the host's lineOrder (falls back to bottom→middle→top
+ *  when the setting is missing or corrupt). Mirrors activePatterns(). */
+export function patternRank(room: Pick<Room, "settings">, pattern: PatternId): number {
+  if (pattern === "fullhouse") return 0;
+  if (pattern === "corners") return 1;
+  if (pattern === "early5") return 5;
+  const s = room.settings ?? DEFAULT_ROOM_SETTINGS;
+  const order = s.lineOrder ?? DEFAULT_ROOM_SETTINGS.lineOrder;
+  const uniq = [...new Set(order)].filter(
+    (l): l is "top" | "middle" | "bottom" => l === "top" || l === "middle" || l === "bottom"
+  );
+  const lines = uniq.length === 3 ? uniq : [...DEFAULT_ROOM_SETTINGS.lineOrder];
+  const idx = lines.indexOf(pattern as "top" | "middle" | "bottom");
+  return 2 + (idx >= 0 ? idx : 0);
+}
 
 /** Is this pattern active for the room (respects host prize settings)? */
 export function isPatternEnabled(room: Pick<Room, "settings">, pattern: PatternId): boolean {
@@ -112,29 +129,6 @@ export function ticketWins(
     .filter((v): v is number => v !== null && calledSet.has(v)).length;
   if (calledOnTicket >= 5) hits.push({ id: "early5", label: "Early Five" });
   return hits;
-}
-
-/** First paid player whose ticket has a complete pattern (in priority order). */
-export function findWinner(room: Room): Win | null {
-  const calledSet = new Set(room.calledNumbers);
-  for (const player of room.players) {
-    if (!player.paid) continue;
-    for (let ti = 0; ti < player.tickets.length; ti++) {
-      const hits = ticketWins(player.tickets[ti], calledSet);
-      if (hits.length > 0) {
-        const best = hits[0];
-        return {
-          playerId: player.id,
-          playerName: player.name,
-          ticketIndex: ti,
-          pattern: best.id,
-          label: best.label,
-          grid: player.tickets[ti],
-        };
-      }
-    }
-  }
-  return null;
 }
 
 /** Every pattern a player's tickets currently complete (across all tickets). */

@@ -44,10 +44,15 @@ export default function ChatPanel({
 
   // Adjust state when a new message arrives: while pinned we follow it, so
   // "seen" advances; while scrolled up we leave it so unread accumulates.
-  if (latest && latest.id !== prevLatestId) {
-    setPrevLatestId(latest.id);
-    if (pinned) setLastSeenId(latest.id);
-  }
+  useEffect(() => {
+    if (latest && latest.id !== prevLatestId) {
+      // Render-time setState moved here so new arrivals advance "seen" without
+      // updating state during render (id guard prevents loops).
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPrevLatestId(latest.id);
+      if (pinned) setLastSeenId(latest.id);
+    }
+  }, [latest, pinned, prevLatestId]);
 
   // Follow the newest line while the list is pinned to the bottom.
   useEffect(() => {

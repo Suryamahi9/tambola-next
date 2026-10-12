@@ -1,7 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { markPaid, readPlayerToken, PLAYER_COOKIE } from "@/lib/room/engine";
+import { consumePendingOrder, markPaid, readPlayerToken, PLAYER_COOKIE } from "@/lib/room/engine";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +35,12 @@ export async function POST(request: Request) {
     // Test mode: no Razorpay keys means payments are auto-approved.
     if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
       const result = await markPaid(roomId, playerId);
-      if ("error" in result) return NextResponse.json({ error: result.error }, { status: 409 });
+      if ("error" in result) {
+        return NextResponse.json(
+          { error: result.error },
+          { status: result.status ?? 409 }
+        );
+      }
       return NextResponse.json({ ok: true, test: true, roomId });
     }
 
@@ -47,8 +52,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Payment signature invalid." }, { status: 400 });
     }
 
-    const result = await markPaid(roomId, playerId);
-    if ("error" in result) return NextResponse.json({ error: result.error }, { status: 409 });
+    // The signature alone isn't enough: the order must be one this server
+    // created for this player, for the right amount, and never reused.
+    const result = await consumePendingOrder(roomId, orderId, playerId);
+    if ("error" in result) {
+      return NextResponse.json(
+        { error: result.error },
+        { status: result.status ?? 409 }
+      );
+    }
     return NextResponse.json({ ok: true, test: false, roomId });
   } catch (err) {
     console.error("[payments] verify failed:", err);

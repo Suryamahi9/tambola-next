@@ -14,6 +14,43 @@ const SUB_DIR: Record<PackLang, string> = { "hi-IN": "hi", "te-IN": "te" };
 const buffers = new Map<PackLang, Map<number, AudioBuffer>>();
 const inFlight = new Set<string>();
 let audioCtx: AudioContext | null = null;
+let activeSrc: AudioBufferSourceNode | null = null;
+let activeEl: HTMLAudioElement | null = null;
+let audioFailed = false;
+
+/** Stop any in-flight recorded clip so rapid draws never overlap. */
+function stopActive(): void {
+  if (activeSrc) {
+    const src = activeSrc;
+    activeSrc = null;
+    try {
+      src.stop();
+    } catch {
+      /* already stopped */
+    }
+    try {
+      src.disconnect();
+    } catch {
+      /* ignore */
+    }
+  }
+  if (activeEl) {
+    const el = activeEl;
+    activeEl = null;
+    try {
+      el.pause();
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
+/** True when a recorded-clip play() rejected since the last call; consumes the flag. */
+export function didAudioFail(): boolean {
+  const f = audioFailed;
+  audioFailed = false;
+  return f;
+}
 
 export const isPackLang = (lang: string): lang is PackLang =>
   lang === "hi-IN" || lang === "te-IN";
@@ -144,23 +181,36 @@ export function speakRecorded(lang: PackLang, num: number, pitch = 1): boolean {
     // that got us here; queued sources start the moment it does.
     if (c.state === "suspended") void c.resume().catch(() => undefined);
     try {
+      stopActive();
       const src = c.createBufferSource();
       src.buffer = buf;
       if (p !== 1) src.detune.value = Math.round(1200 * Math.log2(p));
       src.connect(c.destination);
+      activeSrc = src;
+      src.onended = () => {
+        if (activeSrc === src) activeSrc = null;
+      };
       src.start(0);
       return true;
     } catch {
       /* fall through to streaming */
     }
   }
+  stopActive();
   const live = new Audio(packUrl(lang, num));
   if (p !== 1) {
     // Media elements keep pitch when playbackRate changes unless told otherwise.
     (live as HTMLMediaElement & { preservePitch?: boolean }).preservePitch = false;
     live.playbackRate = p;
   }
-  void live.play().catch(() => undefined);
+  activeEl = live;
+  live.addEventListener("ended", () => {
+    if (activeEl === live) activeEl = null;
+  });
+  void live.play().catch(() => {
+    audioFailed = true;
+    if (activeEl === live) activeEl = null;
+  });
   cacheInBackground(lang, num);
   return true;
 }

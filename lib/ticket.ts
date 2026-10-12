@@ -171,8 +171,10 @@ export function generateUniqueGrids(count: number): Grid[] {
 
 // ---------------------------------------------------------------------------
 // Party-room sets: a unique full 90-number book (strip of 6) sliced to size.
-// Every number from 1-90 appears exactly once across the strip, so a player's
-// tickets never repeat a number and every player's set is unique.
+// Every number from 1-90 appears exactly once across the strip, so one
+// player's tickets never repeat a number. NOTE: each call mints a FRESH
+// strip, so two calls can deal identical tickets — cross-player uniqueness
+// comes from the room engine's shared-book cursor (dealFromRoom), not here.
 // ---------------------------------------------------------------------------
 
 export function generateSetTickets(ticketCount: number): Grid[] {

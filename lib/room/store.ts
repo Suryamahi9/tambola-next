@@ -75,16 +75,21 @@ function persistAll(rooms: Room[]): Promise<void> {
 }
 
 /** Serialize a room mutation: read latest (always fresh from the backend so
- *  concurrent lambdas don't clobber each other), apply, cache, persist. */
+ *  concurrent lambdas don't clobber each other), apply, persist the FULL
+ *  fresh list. NOTE: never persist `cache.values()` here — on a cold
+ *  serverless instance the cache holds only this room and persisting it
+ *  would delete every other room. */
 export function withRoom<T>(roomId: string, fn: (room: Room | null) => T): Promise<T> {
   const prev = writeQueues.get(roomId) ?? Promise.resolve();
   const next = prev.then(async () => {
-    const room: Room | null =
-      (await loadAllRooms()).find((r) => r.id === roomId) ?? null;
+    const all = await loadAllRooms();
+    const room: Room | null = all.find((r) => r.id === roomId) ?? null;
     if (room) cache.set(roomId, room);
     const result = fn(room);
     if (room) {
-      await persistAll(Array.from(cache.values()));
+      // `room` is the same object reference inside `all`, so its mutations
+      // are included — persist everything we just loaded, not the cache.
+      await persistAll(all);
     }
     return result;
   });
@@ -109,8 +114,12 @@ export async function getRoomByCode(code: string): Promise<Room | null> {
 }
 
 export async function insertRoom(room: Room): Promise<Room> {
+  const all = await loadAllRooms();
+  const i = all.findIndex((r) => r.id === room.id);
+  if (i >= 0) all[i] = room;
+  else all.push(room);
   cache.set(room.id, room);
-  await persistAll(Array.from(cache.values()));
+  await persistAll(all);
   return room;
 }
 

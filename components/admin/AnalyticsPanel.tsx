@@ -46,14 +46,15 @@ export default function AnalyticsPanel({ rooms }: { rooms: Room[] }) {
     return n + (room?.pricePerTicket ?? 2000) * p.tickets.length;
   }, 0);
 
-  // Top players by win count across all rooms.
+  // Top players by win count across all rooms, merged by player name so the
+  // same human merges across rooms (per-join ids are random each join).
   const winMap = new Map<string, { name: string; wins: number; games: number }>();
   for (const room of rooms) {
     for (const p of room.players) {
-      const entry = winMap.get(p.id) ?? { name: p.name, wins: 0, games: 0 };
+      const entry = winMap.get(p.name) ?? { name: p.name, wins: 0, games: 0 };
       entry.wins += room.standings[p.id] ?? 0;
       entry.games += 1;
-      winMap.set(p.id, entry);
+      winMap.set(p.name, entry);
     }
   }
   const topPlayers = [...winMap.values()].sort((a, b) => b.wins - a.wins).slice(0, 10);
@@ -94,7 +95,7 @@ export default function AnalyticsPanel({ rooms }: { rooms: Room[] }) {
           p.name,
           p.tickets.length,
           formatRupees(r.pricePerTicket),
-          formatRupees(p.tickets.length * r.pricePerTicket),
+          formatRupees(p.paid ? p.tickets.length * r.pricePerTicket : 0),
           p.paid ? "paid" : "pending",
           p.joinedAt,
         ])

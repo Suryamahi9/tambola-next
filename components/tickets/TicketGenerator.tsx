@@ -18,6 +18,7 @@ import TicketCard, {
   type TicketTheme,
   type TicketDesign,
   type ThemeSpec,
+  type CustomStyles,
 } from "./TicketCard";
 
 type Mode = "random" | "fullset" | "halfset";
@@ -38,6 +39,7 @@ const CUSTOM_FIELDS: { key: string; label: string }[] = [
 
 function hexToRgb(hex: string): [number, number, number] {
   const h = hex.replace("#", "");
+  if (!/^[0-9a-fA-F]{6}$/.test(h)) return [0, 0, 0];
   return [
     parseInt(h.slice(0, 2), 16),
     parseInt(h.slice(2, 4), 16),
@@ -119,7 +121,7 @@ export default function TicketGenerator() {
   const [style, setStyle] = useState<TicketTheme>("paperwhite");
   const [design, setDesign] = useState<SelectedDesign>("all");
   const [showCoverage, setShowCoverage] = useState(false);
-  const [ticketSize, setTicketSize] = useState<"sm" | "md" | "lg">("md");
+  const [zoomPct, setZoomPct] = useState(100);
   const [customColors, setCustomColors] = useState<CustomPalette>(DEFAULT_CUSTOM);
   const [watermark, setWatermark] = useState("");
   const [logo, setLogo] = useState("");
@@ -134,18 +136,26 @@ export default function TicketGenerator() {
   // Watermark text colour override — "" means the theme's own colour.
   const [wmColor, setWmColor] = useState("");
 
+  const toastTimer = useRef<number | null>(null);
+
   const showToast = useCallback((msg: string) => {
     setToast(msg);
-    window.setTimeout(() => setToast(null), 2600);
+    if (toastTimer.current !== null) window.clearTimeout(toastTimer.current);
+    toastTimer.current = window.setTimeout(() => {
+      setToast(null);
+      toastTimer.current = null;
+    }, 2600);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimer.current !== null) window.clearTimeout(toastTimer.current);
+    };
   }, []);
 
   const hydratedRef = useRef(false);
 
-  useEffect(() => {
-    if (!toast) return;
-    const t = window.setTimeout(() => setToast(null), 2600);
-    return () => window.clearTimeout(t);
-  }, [toast]);
+  // Toast auto-dismiss is handled by the single stored timer in showToast.
 
   // Template memory — restore last controls after mount so server and client renders match.
   useEffect(() => {
@@ -156,7 +166,8 @@ export default function TicketGenerator() {
         return;
       }
       // "logoSize" is legacy (pre-split single slider) — migrated below, never written.
-      const p = JSON.parse(raw) as Partial<Record<"mode" | "count" | "name" | "style" | "design" | "ticketSize" | "custom" | "watermark" | "logo" | "logoSize" | "logoWidth" | "logoHeight" | "logoFit" | "logoDepth" | "wmDepth" | "wmColor", unknown>>;
+      // "ticketSize" is legacy (pre-slider Compact/Standard/Large) — migrated below, never written.
+      const p = JSON.parse(raw) as Partial<Record<"mode" | "count" | "name" | "style" | "design" | "ticketSize" | "ticketZoom" | "custom" | "watermark" | "logo" | "logoSize" | "logoWidth" | "logoHeight" | "logoFit" | "logoDepth" | "wmDepth" | "wmColor", unknown>>;
       const id = window.requestAnimationFrame(() => {
         if (p.mode === "random" || p.mode === "fullset" || p.mode === "halfset") setMode(p.mode);
         if (typeof p.count === "number") {
@@ -167,8 +178,12 @@ export default function TicketGenerator() {
         if (typeof p.style === "string" && p.style in THEME_LABELS) setStyle(p.style as TicketTheme);
         if (p.design === "all" || (typeof p.design === "string" && p.design in DESIGN_LABELS))
           setDesign(p.design as SelectedDesign);
-        if (p.ticketSize === "sm" || p.ticketSize === "md" || p.ticketSize === "lg")
-          setTicketSize(p.ticketSize);
+        if (typeof p.ticketZoom === "number") {
+          setZoomPct(Math.max(70, Math.min(130, Math.round(p.ticketZoom))));
+        } else if (p.ticketSize === "sm" || p.ticketSize === "md" || p.ticketSize === "lg") {
+          // Migrate pre-slider prefs: Compact 90 / Standard 100 / Large 105.
+          setZoomPct(p.ticketSize === "sm" ? 90 : p.ticketSize === "lg" ? 105 : 100);
+        }
         if (
           Array.isArray(p.custom) &&
           p.custom.length === 6 &&
@@ -193,7 +208,8 @@ export default function TicketGenerator() {
       });
       return () => window.cancelAnimationFrame(id);
     } catch {
-      /* corrupt storage — keep defaults */
+      /* corrupt storage — keep defaults, arm saving */
+      hydratedRef.current = true;
     }
   }, []);
 
@@ -203,12 +219,12 @@ export default function TicketGenerator() {
     try {
       localStorage.setItem(
         PREF_KEY,
-        JSON.stringify({ mode, count, name, style, design, ticketSize, custom: customColors, watermark, logo, logoWidth, logoHeight, logoFit, logoDepth, wmDepth, wmColor })
+        JSON.stringify({ mode, count, name, style, design, ticketZoom: zoomPct, custom: customColors, watermark, logo, logoWidth, logoHeight, logoFit, logoDepth, wmDepth, wmColor })
       );
     } catch {
       /* storage full / private mode */
     }
-  }, [mode, count, name, style, design, ticketSize, customColors, watermark, logo, logoWidth, logoHeight, logoFit, logoDepth, wmDepth, wmColor]);
+  }, [mode, count, name, style, design, zoomPct, customColors, watermark, logo, logoWidth, logoHeight, logoFit, logoDepth, wmDepth, wmColor]);
 
   const analysis = useMemo(() => {
     let duplicateLines = 0;
@@ -217,7 +233,10 @@ export default function TicketGenerator() {
     const seenGrids = new Set<string>();
     const seenLines = new Map<string, number>();
     for (const g of tickets) {
-      if (!isValidTicket(g)) invalid++;
+      // Validate against the loosest generation rule (strips are minted with
+      // maxRun 4): a 3-in-a-row run is legal in set books, so the default
+      // maxRun 3 would falsely flag fresh full/half-set tickets "invalid".
+      if (!isValidTicket(g, 4)) invalid++;
       const key = gridKey(g);
       if (seenGrids.has(key)) gridDupes++;
       seenGrids.add(key);
@@ -249,30 +268,56 @@ export default function TicketGenerator() {
     return { counts, total, missing: counts.filter((_, n) => n >= 1 && counts[n] === 0).length, peak };
   }, [tickets]);
 
+  // Static class shell for the custom theme (all classes exist at build
+  // time); the live hex values ride via `customStyles` inline styles below.
+  // `line`, `watermark` and `foilDark` stay dynamic — they are plain colour
+  // strings / a boolean, never Tailwind classes.
   const customTheme = useMemo<ThemeSpec>(() => {
-    const [cardF, cardT, cB, ink, acc, wat] = customColors;
+    const [cardF, , , ink, , wat] = customColors;
     const dark = luminance(cardF) < 0.45;
-    const band = `bg-gradient-to-r from-[${cB}] to-[${shade(cB, 0.68)}]`;
-    const brand = luminance(cB) < 0.55 ? "text-white" : "text-[#111111]";
-    const line = dark ? shade(ink, 0.78) : shade(ink, 0.88);
-    const card = dark
-      ? `bg-gradient-to-b from-[${cardF}] to-[${cardT}] rounded-[6px] border border-[${shade(cB, 1.35)}] shadow-[0_10px_28px_rgba(0,0,0,0.4)]`
-      : `bg-gradient-to-b from-[${cardF}] to-[${cardT}] rounded-[6px] border border-[${shade(cB, 0.62)}] shadow-[0_10px_28px_rgba(0,0,0,0.2)]`;
-    const accDark = luminance(acc) < 0.5;
     return {
       foilDark: dark,
-      card,
-      band,
-      brand,
-      serial: dark ? `text-[${shade(acc, 1.3)}]` : `text-[${ink}]`,
-      serialMuted: dark ? `text-[${shade(acc, 0.85)}]` : `text-[${shade(ink, 0.85)}]`,
-      rule: `bg-[${acc}]`,
-      line,
-      gridText: `text-[${line}]`,
-      num: `text-[${ink}]`,
-      filled: dark ? "bg-white/[0.09]" : `bg-[${ink}]/[0.08]`,
-      called: `bg-[${acc}] ${accDark ? "text-white" : "text-[#151515]"}`,
+      card: "bg-gradient-to-b from-[#ffffff] to-[#eef1f5] rounded-[6px] border border-[#c3ccd6] shadow-[0_10px_28px_rgba(0,0,0,0.18)]",
+      band: "bg-gradient-to-r from-[#46586c] to-[#33424f]",
+      brand: "text-white",
+      serial: "text-[#33424f]",
+      serialMuted: "text-[#7d8a99]",
+      rule: "bg-[#46586c]",
+      line: dark ? shade(ink, 0.78) : shade(ink, 0.88),
+      gridText: "text-[#546375]",
+      num: "text-[#18222c]",
+      filled: "bg-[#18222c]/[0.07]",
+      called: "bg-[#18222c] text-white",
       watermark: rgba(wat, dark ? 0.26 : 0.22),
+    };
+  }, [customColors]);
+
+  const customStyles = useMemo<CustomStyles>(() => {
+    const [cardF, cardT, cB, ink, acc] = customColors;
+    const dark = luminance(cardF) < 0.45;
+    const line = dark ? shade(ink, 0.78) : shade(ink, 0.88);
+    const accDark = luminance(acc) < 0.5;
+    return {
+      card: {
+        backgroundImage: `linear-gradient(to bottom, ${cardF}, ${cardT})`,
+        borderColor: dark ? shade(cB, 1.35) : shade(cB, 0.62),
+      },
+      band: {
+        backgroundImage: `linear-gradient(to right, ${cB}, ${shade(cB, 0.68)})`,
+      },
+      brand: { color: luminance(cB) < 0.55 ? "#ffffff" : "#111111" },
+      serial: { color: dark ? shade(acc, 1.3) : ink },
+      serialMuted: { color: dark ? shade(acc, 0.85) : shade(ink, 0.85) },
+      rule: { backgroundColor: acc },
+      gridText: { color: line },
+      num: { color: ink },
+      filled: {
+        backgroundColor: dark ? "rgba(255,255,255,0.09)" : rgba(ink, 0.08),
+      },
+      called: {
+        backgroundColor: acc,
+        color: accDark ? "#ffffff" : "#151515",
+      },
     };
   }, [customColors]);
 
@@ -291,6 +336,10 @@ export default function TicketGenerator() {
       if (!file) return;
       if (!file.type.startsWith("image/")) {
         showToast("Pick an image file (PNG, JPG, WebP or SVG)");
+        return;
+      }
+      if (file.size > 800 * 1024) {
+        showToast("Logo too large — pick an image under 800KB");
         return;
       }
       const reader = new FileReader();
@@ -357,8 +406,8 @@ export default function TicketGenerator() {
     const n = Math.max(1, Math.min(RANDOM_MAX, count));
     const grids = generateUniqueGrids(n);
     setTickets(grids);
-    setLabels(Array(n).fill(name.trim() || null));
-    showToast(`Generated ${n} unique tickets`);
+    setLabels(Array(grids.length).fill(name.trim() || null));
+    showToast(`Generated ${grids.length} unique tickets`);
   }, [mode, count, name, showToast]);
 
   const fillNames = useCallback(() => {
@@ -374,7 +423,9 @@ export default function TicketGenerator() {
     const n = Math.max(1, Math.min(RANDOM_MAX, count));
     const grids = generateUniqueGrids(n);
     setTickets(grids);
-    setLabels(names.map((base, i) => `${base}-${i + 1}`));
+    setLabels(
+      grids.map((_, i) => `${names[i % names.length]}-${Math.floor(i / names.length) + 1}`)
+    );
     showToast("Tickets with names generated");
   }, [mode, name, count, showToast]);
 
@@ -407,10 +458,16 @@ export default function TicketGenerator() {
       showToast("Generate tickets first");
       return;
     }
+    if (tickets.length > 200) {
+      showToast("Too many tickets — export 200 or fewer at a time");
+      return;
+    }
     try {
       const { jsPDF } = await import("jspdf");
       const doc = new jsPDF();
-      tickets.forEach((grid, i) => {
+      for (let i = 0; i < tickets.length; i++) {
+        const grid = tickets[i];
+        if (i > 0 && i % 10 === 0) await new Promise((r) => setTimeout(r, 0));
         if (i > 0) doc.addPage();
         const label = labels[i] || "Tambola Ticket";
         const w = 176;
@@ -500,7 +557,7 @@ export default function TicketGenerator() {
         doc.setFont("helvetica", "normal");
         doc.setFontSize(8);
         doc.text(`${label} — 15 numbers.  Generated ${new Date().toLocaleString()}`, x, y + h + 6);
-      });
+      }
       doc.save(`tambola-tickets-${new Date().toISOString().slice(0, 10)}.pdf`);
       showToast("PDF downloaded");
     } catch {
@@ -511,7 +568,7 @@ export default function TicketGenerator() {
   return (
     <div>
       {/* Master Customizer Panel */}
-      <div className="w-full bg-surface-container-low rounded-2xl p-6 lg:p-8 space-y-8 shadow-xl">
+      <div className="no-print w-full bg-surface-container-low rounded-2xl p-6 lg:p-8 space-y-8 shadow-xl">
         {/* Upper config row */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
           <div className="md:col-span-5 space-y-2">
@@ -610,19 +667,14 @@ export default function TicketGenerator() {
               </select>
             </div>
             <div className="space-y-2">
-              <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-bold flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-sm">zoom_out_map</span>
-                Ticket Size
-              </span>
-              <select
-                value={ticketSize}
-                onChange={(e) => setTicketSize(e.target.value as "sm" | "md" | "lg")}
-                className="w-full bg-surface-container-highest text-on-surface px-4 py-3 rounded-xl font-label-md text-label-md focus:outline-none focus:bg-surface-container shadow-inner transition-colors"
-              >
-                <option value="sm">Compact</option>
-                <option value="md">Standard</option>
-                <option value="lg">Large</option>
-              </select>
+              <TuneSlider
+                icon="zoom_in"
+                label="Ticket zoom"
+                value={zoomPct}
+                min={70}
+                max={130}
+                onChange={setZoomPct}
+              />
             </div>
             <span className="font-label-sm text-label-sm text-secondary font-mono">
               {THEME_OPTIONS.length} Themes · {DESIGN_OPTIONS.length} Designs
@@ -1022,16 +1074,20 @@ export default function TicketGenerator() {
           </div>
         ) : (
           <div
-        // Mobile-first 2-col deck: a whole 6-ticket set fits one phone frame
-        // for screenshots. Keep the phone gap tight (gap-2); sm+ stays airy.
-        className={`grid grid-cols-2 gap-2 sm:gap-4 ${
-          ticketSize === "sm"
+        // Single column on phones (stacked top-to-bottom); sm+ decks follow
+        // the zoom: dense multi-col when small, roomy 1–2 col when large.
+        // NOTE: base MUST be grid-cols-1, not bare `grid` — an implicit auto
+        // track sizes to max-content, so a long watermark blows the ticket
+        // past the phone frame (Tailwind grid-cols-* uses minmax(0,1fr),
+        // which caps the track). Tight phone gap, airy sm+ gap.
+        className={`grid grid-cols-1 gap-2 sm:gap-4 ${
+          zoomPct <= 92
             ? "sm:grid-cols-3 xl:grid-cols-4"
-            : ticketSize === "lg"
+            : zoomPct >= 103
               ? "sm:grid-cols-1 lg:grid-cols-2"
               : "sm:grid-cols-2 xl:grid-cols-3"
         }`}
-        style={ticketSize !== "md" ? { zoom: ticketSize === "sm" ? 0.9 : 1.05 } : undefined}
+        style={zoomPct !== 100 ? { zoom: zoomPct / 100 } : undefined}
       >
             {tickets.map((grid, i) => (
               <div key={i} className="break-inside-avoid">
@@ -1043,6 +1099,7 @@ export default function TicketGenerator() {
                   style={style}
                   design={design === "all" ? DESIGN_ORDER[i % DESIGN_ORDER.length] : design}
                   customTheme={style === "custom" ? customTheme : undefined}
+                  customStyles={style === "custom" ? customStyles : undefined}
                   watermarkText={watermark || undefined}
                   logo={logo || undefined}
                   logoWidth={logoWidth / 100}

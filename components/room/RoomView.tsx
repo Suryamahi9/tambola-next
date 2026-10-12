@@ -93,6 +93,9 @@ export default function RoomView({ roomId }: { roomId: string }) {
   const [settingsSaving, setSettingsSaving] = useState(false);
   const [calling, setCalling] = useState(false);
   const [claiming, setClaiming] = useState(false);
+  const [takingOver, setTakingOver] = useState(false);
+  const [starting, setStarting] = useState(false);
+  const [rounding, setRounding] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [drawSpeedMs, setDrawSpeedMs] = useState(5000);
   const pendingCall = useRef(false);
@@ -170,16 +173,28 @@ export default function RoomView({ roomId }: { roomId: string }) {
   }, [data, room, calledSet]);
   const canClaim = myComplete.length > 0 && room?.status === "live";
 
+  async function readError(res: Response, fallback: string): Promise<string> {
+    const json = (await res.json().catch(() => ({}))) as { error?: string };
+    return json.error ?? fallback;
+  }
+
   async function saveSettings(patch: Partial<RoomSettings>) {
-    if (!roomId) return;
+    if (!roomId || settingsSaving) return;
     setSettingsSaving(true);
     try {
-      await fetch(`/api/rooms/${roomId}/settings`, {
+      const res = await fetch(`/api/rooms/${roomId}/settings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(patch),
       });
-      showToast("Prize settings saved");
+      if (res.ok) {
+        showToast("Prize settings saved");
+        await refresh();
+      } else {
+        showToast(await readError(res, "Could not save settings."));
+      }
+    } catch {
+      showToast("Lost connection — settings not saved.");
     } finally {
       setSettingsSaving(false);
     }
@@ -206,7 +221,13 @@ export default function RoomView({ roomId }: { roomId: string }) {
     setCalling(true);
     try {
       const res = await fetch(`/api/rooms/${roomId}/call`, { method: "POST" });
-      if (res.ok) await refresh();
+      if (res.ok) {
+        await refresh();
+      } else {
+        showToast(await readError(res, "Could not draw a number."));
+      }
+    } catch {
+      showToast("Lost connection — draw failed.");
     } finally {
       pendingCall.current = false;
       setCalling(false);
@@ -246,15 +267,37 @@ export default function RoomView({ roomId }: { roomId: string }) {
   }, [roomId, room?.status, room?.callerId, me, auto, drawSpeedMs]);
 
   async function takeOver() {
-    if (!roomId) return;
-    const res = await fetch(`/api/rooms/${roomId}/caller`, { method: "POST" });
-    if (res.ok) await refresh();
+    if (!roomId || takingOver) return;
+    setTakingOver(true);
+    try {
+      const res = await fetch(`/api/rooms/${roomId}/caller`, { method: "POST" });
+      if (res.ok) {
+        await refresh();
+      } else {
+        showToast(await readError(res, "Could not take over calling."));
+      }
+    } catch {
+      showToast("Lost connection — try again.");
+    } finally {
+      setTakingOver(false);
+    }
   }
 
   async function startNow() {
-    if (!roomId) return;
-    const res = await fetch(`/api/rooms/${roomId}/start`, { method: "POST" });
-    if (res.ok) await refresh();
+    if (!roomId || starting) return;
+    setStarting(true);
+    try {
+      const res = await fetch(`/api/rooms/${roomId}/start`, { method: "POST" });
+      if (res.ok) {
+        await refresh();
+      } else {
+        showToast(await readError(res, "Could not start the game."));
+      }
+    } catch {
+      showToast("Lost connection — try again.");
+    } finally {
+      setStarting(false);
+    }
   }
 
   async function claimBingo() {
@@ -276,9 +319,20 @@ export default function RoomView({ roomId }: { roomId: string }) {
   }
 
   async function nextRound() {
-    if (!roomId) return;
-    const res = await fetch(`/api/rooms/${roomId}/round`, { method: "POST" });
-    if (res.ok) await refresh();
+    if (!roomId || rounding) return;
+    setRounding(true);
+    try {
+      const res = await fetch(`/api/rooms/${roomId}/round`, { method: "POST" });
+      if (res.ok) {
+        await refresh();
+      } else {
+        showToast(await readError(res, "Could not start the next round."));
+      }
+    } catch {
+      showToast("Lost connection — try again.");
+    } finally {
+      setRounding(false);
+    }
   }
 
   async function shareTicket(grid: Grid, idx: number) {

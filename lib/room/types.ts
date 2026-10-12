@@ -79,7 +79,15 @@ export interface RoundSummary {
   winnerId: string | null;
   winnerName: string | null;
   calledCount: number;
-  prizes: { label: string; playerName: string }[];
+  prizes: { label: string; playerName: string; playerId: string | null }[];
+}
+
+/** Razorpay orders awaiting verification (live mode only). Test mode never
+ *  writes here. `used` marks consumed orders so a payment can't replay. */
+export interface PendingOrder {
+  playerId: string;
+  amount: number;
+  used: boolean;
 }
 
 export interface Room {
@@ -108,6 +116,8 @@ export interface Room {
   messages: ChatMessage[];
   /** Prize configuration chosen by the host (defaults to all patterns on). */
   settings: RoomSettings;
+  /** Live-mode Razorpay orders awaiting verification. Absent on old rooms. */
+  pendingOrders?: Record<string, PendingOrder>;
 }
 
 export interface PublicPlayer {

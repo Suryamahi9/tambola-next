@@ -8,6 +8,7 @@ import {
   type VoiceTone,
 } from "@/lib/site";
 import {
+  didAudioFail,
   isPackLang,
   preloadVoicePack,
   recordedDuration,
@@ -102,14 +103,77 @@ function loadState(): GameState | null {
   try {
     const raw = localStorage.getItem(SAVE_KEY);
     if (!raw) return null;
-    const data = JSON.parse(raw) as GameState;
+    const data = JSON.parse(raw) as Partial<GameState>;
     if (!Array.isArray(data.calledNumbers)) return null;
+    const langValues = audioLanguages.map((l) => l.value);
+    const toneValues = voiceTones.map((t) => t.value);
+    const language: AudioLang = langValues.includes(
+      data.language as AudioLang
+    )
+      ? (data.language as AudioLang)
+      : DEFAULT_STATE.language;
+    const tone: VoiceTone = toneValues.includes(data.tone as VoiceTone)
+      ? (data.tone as VoiceTone)
+      : DEFAULT_STATE.tone;
+    const pitch =
+      typeof data.pitch === "number" &&
+      isFinite(data.pitch) &&
+      data.pitch >= 0.5 &&
+      data.pitch <= 2
+        ? data.pitch
+        : DEFAULT_STATE.pitch;
+    const speed =
+      typeof data.speed === "number" &&
+      isFinite(data.speed) &&
+      data.speed >= 1000 &&
+      data.speed <= 15000
+        ? data.speed
+        : DEFAULT_STATE.speed;
+    const seen = new Set<number>();
+    const calledNumbers: number[] = [];
+    for (const n of data.calledNumbers as unknown[]) {
+      if (
+        typeof n === "number" &&
+        Number.isInteger(n) &&
+        n >= 1 &&
+        n <= 90 &&
+        !seen.has(n)
+      ) {
+        seen.add(n);
+        calledNumbers.push(n);
+      }
+    }
+    const calledAt = Array.isArray(data.calledAt)
+      ? (data.calledAt as unknown[])
+          .filter((t): t is number => typeof t === "number" && isFinite(t))
+          .slice(0, calledNumbers.length)
+      : [];
+    const mode =
+      data.mode === "auto" || data.mode === "manual"
+        ? data.mode
+        : DEFAULT_STATE.mode;
     return {
       ...DEFAULT_STATE,
-      ...data,
+      mode,
+      language,
+      voiceURI: typeof data.voiceURI === "string" ? data.voiceURI : "",
+      pitch,
+      tone,
+      speed,
+      calledNumbers,
+      calledAt,
+      lastNumber:
+        calledNumbers.length > 0
+          ? calledNumbers[calledNumbers.length - 1]
+          : null,
+      nickname:
+        typeof data.nickname === "string" && data.nickname
+          ? data.nickname.slice(0, 24)
+          : DEFAULT_STATE.nickname,
+      tag: typeof data.tag === "string" ? data.tag : "",
       voiceCuesOn: false,
-      calledAt: Array.isArray(data.calledAt) ? data.calledAt : [],
-      lastNumber: data.lastNumber ?? null,
+      wheelMode: data.wheelMode === true,
+      heatmap: data.heatmap === true,
     };
   } catch {
     return null;
@@ -130,6 +194,16 @@ function voiceFor(voiceURI: string): SpeechSynthesisVoice | null {
   );
 }
 
+/** Queued TTS timeouts, so Reset can cancel speech scheduled after a draw. */
+const pendingSpeechTimeouts = new Set<number>();
+
+/** Clear queued speech timeouts and stop in-flight synthesis. */
+function clearQueuedSpeech(): void {
+  pendingSpeechTimeouts.forEach((id) => window.clearTimeout(id));
+  pendingSpeechTimeouts.clear();
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+}
+
 function speakNumber(
   num: number,
   lang: AudioLang,
@@ -147,7 +221,11 @@ function speakNumber(
   const voice = voiceFor(voiceURI);
   if (voice) utterance.voice = voice;
   if (speechSynthesis.speaking) speechSynthesis.cancel();
-  window.setTimeout(() => speechSynthesis.speak(utterance), 200);
+  const speakId = window.setTimeout(() => {
+    pendingSpeechTimeouts.delete(speakId);
+    speechSynthesis.speak(utterance);
+  }, 200);
+  pendingSpeechTimeouts.add(speakId);
   return true;
 }
 
@@ -163,7 +241,8 @@ function speakPhrase(
   if (!("speechSynthesis" in window)) return;
   const toneSpec = voiceTones.find((t) => t.value === tone) ?? voiceTones[0];
   const voice = voiceFor(voiceURI);
-  window.setTimeout(() => {
+  const phraseId = window.setTimeout(() => {
+    pendingSpeechTimeouts.delete(phraseId);
     if (speechSynthesis.speaking) speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.lang = lang;
@@ -172,6 +251,7 @@ function speakPhrase(
     if (voice) u.voice = voice;
     speechSynthesis.speak(u);
   }, delayMs);
+  pendingSpeechTimeouts.add(phraseId);
 }
 
 /** Contextual line announced after milestones. Returns null when silent. */
@@ -233,13 +313,15 @@ export default function Caller() {
   const [confirmReset, setConfirmReset] = useState(false);
   const [audioOk, setAudioOk] = useState(true);
   const [particles, setParticles] = useState<Particle[]>([]);
-  const [lastKey, setLastKey] = useState(0);
   const [spinNum, setSpinNum] = useState<number | null>(null);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const stateRef = useRef(state);
   const spinTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const spinTimeoutRef = useRef<number | null>(null);
+  const hydratedRef = useRef(false);
+  const toastTimerRef = useRef<number | null>(null);
+  const burstSeqRef = useRef(0);
 
   useEffect(() => {
     stateRef.current = state;
@@ -248,13 +330,14 @@ export default function Caller() {
   // Restore a saved game after mount so server and client first renders match.
   useEffect(() => {
     const saved = loadState();
-    const id = window.requestAnimationFrame(() =>
+    const id = window.requestAnimationFrame(() => {
       setState(
         saved
           ? { ...saved, tag: saved.tag || randomTag() }
           : { ...DEFAULT_STATE, tag: randomTag() }
-      )
-    );
+      );
+      hydratedRef.current = true;
+    });
     return () => window.cancelAnimationFrame(id);
   }, []);
 
@@ -306,16 +389,25 @@ export default function Caller() {
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
+    if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = window.setTimeout(() => {
+      toastTimerRef.current = null;
+      setToast(null);
+    }, 2600);
   }, []);
 
-  useEffect(() => {
-    if (!toast) return;
-    const t = window.setTimeout(() => setToast(null), 2600);
-    return () => window.clearTimeout(t);
-  }, [toast]);
+  // Clear a pending toast timer on unmount.
+  useEffect(
+    () => () => {
+      if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+    },
+    []
+  );
 
-  // Persist on every change
+  // Persist on every change, but only after the saved game has been restored
+  // so a mount-time write can't clobber the save.
   useEffect(() => {
+    if (!hydratedRef.current) return;
     try {
       localStorage.setItem(SAVE_KEY, JSON.stringify(state));
     } catch {
@@ -326,16 +418,39 @@ export default function Caller() {
   /** Commit a drawn number to state + voice cues. */
   const commitNumber = useCallback((num: number) => {
     const s = stateRef.current;
+    if (!Number.isInteger(num) || num < 1 || num > 90) return;
+    if (s.calledNumbers.includes(num)) return;
+    // Reserve synchronously so a rapid second draw sees the first one.
+    stateRef.current = {
+      ...s,
+      calledNumbers: [...s.calledNumbers, num],
+      calledAt: [...(s.calledAt || []), Date.now()],
+      lastNumber: num,
+    };
     const newLen = s.calledNumbers.length + 1;
-    setState((prev) => ({
-      ...prev,
-        calledNumbers: [...prev.calledNumbers, num],
-        calledAt: [...(prev.calledAt || []), Date.now()],
-        lastNumber: num,
-      }));
-    setLastKey((k) => k + 1);
-    setParticles(makeBurst(num));
-    if (!speakNumber(num, s.language, s.tone, s.voiceURI, s.pitch)) setAudioOk(false);
+    setState((prev) =>
+      prev.calledNumbers.includes(num)
+        ? prev
+        : {
+            ...prev,
+            calledNumbers: [...prev.calledNumbers, num],
+            calledAt: [...(prev.calledAt || []), Date.now()],
+            lastNumber: num,
+          }
+    );
+    const burst = makeBurst(num);
+    const seq = (burstSeqRef.current += 1);
+    setParticles(burst);
+    window.setTimeout(() => {
+      if (burstSeqRef.current === seq) setParticles([]);
+    }, 1200);
+    const ok = speakNumber(num, s.language, s.tone, s.voiceURI, s.pitch);
+    if (!ok || didAudioFail()) setAudioOk(false);
+    else {
+      window.setTimeout(() => {
+        if (didAudioFail()) setAudioOk(false);
+      }, 500);
+    }
     if (false) {
       const cue = cueFor(newLen, s.language);
       if (cue) {
@@ -404,7 +519,20 @@ export default function Caller() {
         spinTimeoutRef.current = window.setTimeout(() => {
           spinTimeoutRef.current = null;
           setSpinNum(null);
-          commitNumber(final);
+          // Re-validate: another draw may have taken `final` mid-spin.
+          const live = stateRef.current.calledNumbers;
+          if (live.includes(final)) {
+            const pool = Array.from({ length: 90 }, (_, i) => i + 1).filter(
+              (n) => !live.includes(n)
+            );
+            if (pool.length === 0) {
+              showToast("🏆 Game Over! Full house called!");
+              return;
+            }
+            commitNumber(pool[Math.floor(Math.random() * pool.length)]);
+          } else {
+            commitNumber(final);
+          }
         }, 500);
       }
     }, 90);
@@ -413,7 +541,13 @@ export default function Caller() {
   const announceNumber = useCallback((num: number) => {
     const s = stateRef.current;
     if (num < 1 || num > 90) return;
-    if (!speakNumber(num, s.language, s.tone, s.voiceURI, s.pitch)) setAudioOk(false);
+    const ok = speakNumber(num, s.language, s.tone, s.voiceURI, s.pitch);
+    if (!ok || didAudioFail()) setAudioOk(false);
+    else {
+      window.setTimeout(() => {
+        if (didAudioFail()) setAudioOk(false);
+      }, 500);
+    }
   }, []);
 
   /** Handler bound to the big Draw button (manual mode). */
@@ -440,7 +574,13 @@ export default function Caller() {
     }
     setAutoRunning(true);
     callNext();
-    timerRef.current = setInterval(() => {
+  }, [autoRunning, callNext, showToast]);
+
+  // Own the auto-draw interval while running, keyed on speed so changing the
+  // pace restarts the timer instead of drawing at the stale rate.
+  useEffect(() => {
+    if (!autoRunning) return;
+    const id = setInterval(() => {
       const cur = stateRef.current;
       if (cur.calledNumbers.length >= 90) {
         if (timerRef.current) clearInterval(timerRef.current);
@@ -450,8 +590,13 @@ export default function Caller() {
         return;
       }
       callNext();
-    }, s.speed);
-  }, [autoRunning, callNext, showToast]);
+    }, state.speed);
+    timerRef.current = id;
+    return () => {
+      clearInterval(id);
+      if (timerRef.current === id) timerRef.current = null;
+    };
+  }, [autoRunning, state.speed, callNext, showToast]);
 
   const stopAuto = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -471,6 +616,7 @@ export default function Caller() {
     () => () => {
       stopAuto();
       clearSpin();
+      clearQueuedSpeech();
     },
     [stopAuto, clearSpin]
   );
@@ -490,14 +636,17 @@ export default function Caller() {
       showToast("No numbers called yet");
       return;
     }
-    const prev = s.calledNumbers.slice(0, -1);
-    const newLast = prev.length > 0 ? prev[prev.length - 1] : null;
-    setState((p) => ({
-      ...p,
-      calledNumbers: prev,
-      calledAt: s.calledAt.slice(0, -1),
-      lastNumber: newLast,
-    }));
+    setState((p) => {
+      const nums = p.calledNumbers.slice(0, -1);
+      return {
+        ...p,
+        calledNumbers: nums,
+        calledAt: (p.calledAt || []).slice(0, -1),
+        lastNumber: nums.length > 0 ? nums[nums.length - 1] : null,
+      };
+    });
+    burstSeqRef.current += 1;
+    setParticles([]);
     showToast("Undid last call");
   }, [showToast]);
 
@@ -521,8 +670,7 @@ export default function Caller() {
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [toggleAuto, drawManual, repeatLast, undoLast]);
 
   const copyCalled = useCallback(() => {
     const s = stateRef.current;
@@ -530,10 +678,35 @@ export default function Caller() {
       showToast("No numbers called yet");
       return;
     }
-    navigator.clipboard
-      .writeText(s.calledNumbers.join(", "))
-      .then(() => showToast(`Copied ${s.calledNumbers.length} numbers`))
-      .catch(() => showToast("Copy failed — select manually"));
+    const text = s.calledNumbers.join(", ");
+    const fallbackCopy = () => {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+        showToast(
+          ok
+            ? `Copied ${s.calledNumbers.length} numbers`
+            : "Copy failed — select manually"
+        );
+      } catch {
+        showToast("Copy failed — select manually");
+      }
+    };
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard
+        .writeText(text)
+        .then(() => showToast(`Copied ${s.calledNumbers.length} numbers`))
+        .catch(fallbackCopy);
+    } else {
+      fallbackCopy();
+    }
   }, [showToast]);
 
   const downloadTxt = useCallback(() => {
@@ -607,10 +780,18 @@ export default function Caller() {
       y += 7;
       doc.setFont("helvetica", "normal");
       doc.setFontSize(11);
-      meta.forEach((line) => {
-        doc.text(line, margin, y);
-        y += 6;
-      });
+      const putLine = (line: string) => {
+        const lines = doc.splitTextToSize(line, contentWidth) as string[];
+        for (const w of lines) {
+          if (y > 285) {
+            doc.addPage();
+            y = 20;
+          }
+          doc.text(w, margin, y);
+          y += 6;
+        }
+      };
+      meta.forEach(putLine);
 
       y += 6;
       doc.setFont("helvetica", "bold");
@@ -619,10 +800,7 @@ export default function Caller() {
       y += 7;
       doc.setFont("helvetica", "normal");
       doc.setFontSize(11);
-      stats.forEach((line) => {
-        doc.text(line, margin, y);
-        y += 6;
-      });
+      stats.forEach(putLine);
 
       y += 6;
       doc.setFont("helvetica", "bold");
@@ -652,14 +830,18 @@ export default function Caller() {
   const resetGame = useCallback(() => {
     stopAuto();
     clearSpin();
+    clearQueuedSpeech();
+    burstSeqRef.current += 1;
+    const s = stateRef.current;
     setState({
       ...DEFAULT_STATE,
-      mode: stateRef.current.mode,
-      language: stateRef.current.language,
-      voiceURI: stateRef.current.voiceURI,
-      pitch: stateRef.current.pitch,
-      tone: stateRef.current.tone,
-      speed: stateRef.current.speed,
+      mode: s.mode,
+      language: s.language,
+      voiceURI: s.voiceURI,
+      pitch: s.pitch,
+      tone: s.tone,
+      speed: s.speed,
+      nickname: s.nickname,
       tag: randomTag(),
       calledAt: [],
     });
@@ -678,10 +860,10 @@ export default function Caller() {
 
   const calledSet = new Set(state.calledNumbers);
 
-  // Board heatmap: fraction of each decade (1–9, 10–19, …, 80–90) already drawn.
+  // Board heatmap: fraction of each bucket (1–9, 10–19, …, 80–90) already drawn.
   const decadeHeat = Array.from({ length: 9 }, (_, dec) => {
     const start = dec === 0 ? 1 : dec * 10;
-    const end = Math.min((dec + 1) * 10, 90);
+    const end = dec === 8 ? 90 : dec * 10 + 9;
     let called = 0;
     let total = 0;
     for (let n = start; n <= end; n++) {
@@ -749,8 +931,19 @@ export default function Caller() {
               <button
                 type="button"
                 onClick={() => {
-                  if (document.fullscreenElement) document.exitFullscreen?.();
-                  else document.documentElement.requestFullscreen?.();
+                  try {
+                    const p = document.fullscreenElement
+                      ? document.exitFullscreen?.()
+                      : document.documentElement.requestFullscreen?.();
+                    if (
+                      p &&
+                      typeof (p as Promise<void>).catch === "function"
+                    ) {
+                      (p as Promise<void>).catch(() => undefined);
+                    }
+                  } catch {
+                    /* fullscreen unavailable */
+                  }
                 }}
                 className="flex items-center gap-1.5 bg-surface-container-lowest/80 px-2.5 py-1.5 rounded-xl text-on-surface-variant hover:text-on-surface transition-colors"
                 title="Fullscreen board (TV/Projector)"
@@ -929,7 +1122,7 @@ export default function Caller() {
                   <button
                     key={t.value}
                     type="button"
-                    onClick={() => setState((p) => ({ ...p, tone: t.value, pitch: t.pitch }))}
+                    onClick={() => setState((p) => ({ ...p, tone: t.value }))}
                     className={`px-2 py-1 rounded font-label-sm text-label-sm transition-all ${
                       state.tone === t.value
                         ? "bg-surface-container-high text-primary font-semibold"
@@ -1158,17 +1351,19 @@ export default function Caller() {
 
           {/* Grid */}
           <div
-            key={lastKey}
             className="grid grid-cols-6 gap-1.5 sm:grid-cols-9 sm:gap-2 lg:grid-cols-10 min-w-0 select-none"
           >
             {Array.from({ length: 90 }, (_, i) => i + 1).map((num) => {
               const called = calledSet.has(num);
               const isLast = state.lastNumber === num;
-              const dec = num === 90 ? 8 : Math.floor((num - 1) / 10);
+              const dec = num === 90 ? 8 : Math.floor(num / 10);
               const heat = state.heatmap && !called && !isLast ? decadeHeat[dec] : 0;
+              const bucketTotal = dec === 8 ? 11 : dec === 0 ? 9 : 10;
+              const bucketDrawn = Math.round(decadeHeat[dec] * bucketTotal);
               return (
                 <div
                   key={num}
+                  data-uncalled-flash={!called && !isLast ? "" : undefined}
                   style={
                     state.heatmap && !called && !isLast
                       ? {
@@ -1187,7 +1382,7 @@ export default function Caller() {
                   }`}
                   title={
                     state.heatmap && !called
-                      ? `${decadeHeat[dec] === 0 ? "No" : Math.round(decadeHeat[dec] * 10)} of 10 numbers drawn in this row`
+                      ? `${bucketDrawn === 0 ? "No" : bucketDrawn} of ${bucketTotal} numbers drawn in this row`
                       : undefined
                   }
                 >
@@ -1256,7 +1451,7 @@ export default function Caller() {
                             ? "bg-gradient-to-br from-surface-container-highest to-surface-container-high text-on-surface-variant"
                             : "bg-surface-container-lowest text-on-surface-variant/40"
                     }`}
-                    title={`${i === 0 ? 1 : i * 10}–${i === 8 ? 90 : (i + 1) * 10}: ${Math.round(h * 100)}% drawn`}
+                    title={`${i === 0 ? 1 : i * 10}–${i === 8 ? 90 : i * 10 + 9}: ${Math.round(h * 100)}% drawn`}
                   >
                     {Math.round(h * 100)}
                   </span>

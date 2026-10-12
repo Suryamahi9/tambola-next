@@ -14,6 +14,8 @@ export interface Member {
   salt: string;
   role: MemberRole;
   createdAt: string;
+  /** Bumped on password reset — older session tokens stop verifying. */
+  sessionVersion?: number;
 }
 
 export type MemberPublic = Omit<Member, "passwordHash" | "salt">;
@@ -62,6 +64,15 @@ function toPublic(m: Member): MemberPublic {
   return { id: m.id, name: m.name, email: m.email, role: m.role, createdAt: m.createdAt };
 }
 
+// Mutations are serialized so concurrent admin operations (add/remove/reset)
+// can't interleave a load-modify-write and clobber each other.
+let storeQueue: Promise<unknown> = Promise.resolve();
+function withStoreWrite<T>(fn: () => Promise<T>): Promise<T> {
+  const next = storeQueue.then(fn);
+  storeQueue = next.catch(() => undefined);
+  return next;
+}
+
 async function readStore(): Promise<string | null> {
   if (usingBlobStore()) return readBlob(BLOB_MEMBERS_PATH);
   return existsSync(membersPath) ? readFileSync(membersPath, "utf8") : null;
@@ -78,7 +89,20 @@ async function writeStore(store: Store): Promise<void> {
 
 async function bootstrap(): Promise<Store> {
   const adminEmail = process.env.ADMIN_EMAIL || "admin@tambola.local";
-  const adminPassword = process.env.ADMIN_PASSWORD || randomBytes(6).toString("hex");
+  // Never bootstrap a weak or well-known password. Fall back to a random one
+  // (not printed) and tell the operator how to set a known password.
+  const WEAK_PASSWORDS = new Set([
+    "change-me", "changeme", "password", "password123", "admin", "admin123",
+    "letmein", "tambola", "qwerty", "123456",
+  ]);
+  const provided = process.env.ADMIN_PASSWORD;
+  const providedIsStrong =
+    !!provided && provided.length >= 6 && !WEAK_PASSWORDS.has(provided.toLowerCase());
+  if (provided && !providedIsStrong) {
+    console.warn("[auth] Ignoring weak ADMIN_PASSWORD (min 6 chars, no common defaults).");
+  }
+  const adminPassword =
+    providedIsStrong && provided ? provided : randomBytes(12).toString("hex");
   const { hash, salt } = hashPassword(adminPassword);
   const store: Store = {
     members: [
@@ -90,15 +114,16 @@ async function bootstrap(): Promise<Store> {
         salt,
         role: "admin",
         createdAt: new Date().toISOString(),
+        sessionVersion: 0,
       },
     ],
   };
   await writeStore(store);
   console.log(`[auth] Admin account created: ${adminEmail}`);
-  if (!process.env.ADMIN_PASSWORD) {
+  if (!providedIsStrong) {
     console.log(
-      `[auth] Set ADMIN_EMAIL / ADMIN_PASSWORD in your environment and delete the members blob/file to change it.\n` +
-        `[auth] Bootstrap password: ${adminPassword}`
+      "[auth] A random admin password was generated (not shown). " +
+        "Set a strong ADMIN_PASSWORD and delete the members store to use a known password."
     );
   }
   return store;
@@ -145,47 +170,56 @@ export async function addMember(input: {
   if (input.password.length < 6) {
     return { error: "Password must be at least 6 characters." };
   }
-  const store = await loadStore();
-  if (store.members.some((m) => m.email === email)) {
-    return { error: `A member already exists with ${email}.` };
-  }
-  const { hash, salt } = hashPassword(input.password);
-  const member: Member = {
-    id: randomBytes(8).toString("hex"),
-    name: input.name.trim() || email.split("@")[0],
-    email,
-    passwordHash: hash,
-    salt,
-    role: input.role === "admin" ? "admin" : "member",
-    createdAt: new Date().toISOString(),
-  };
-  store.members.push(member);
-  await writeStore(store);
-  return toPublic(member);
+  return withStoreWrite(async () => {
+    const store = await loadStore();
+    if (store.members.some((m) => m.email === email)) {
+      return { error: `A member already exists with ${email}.` };
+    }
+    const { hash, salt } = hashPassword(input.password);
+    const member: Member = {
+      id: randomBytes(8).toString("hex"),
+      name: input.name.trim() || email.split("@")[0],
+      email,
+      passwordHash: hash,
+      salt,
+      role: input.role === "admin" ? "admin" : "member",
+      createdAt: new Date().toISOString(),
+      sessionVersion: 0,
+    };
+    store.members.push(member);
+    await writeStore(store);
+    return toPublic(member);
+  });
 }
 
 export async function deleteMember(id: string): Promise<{ error?: string }> {
-  const store = await loadStore();
-  const target = store.members.find((m) => m.id === id);
-  if (!target) return { error: "Member not found." };
-  if (target.role === "admin" && store.members.filter((m) => m.role === "admin").length <= 1) {
-    return { error: "Cannot remove the last admin." };
-  }
-  store.members = store.members.filter((m) => m.id !== id);
-  await writeStore(store);
-  return {};
+  return withStoreWrite(async () => {
+    const store = await loadStore();
+    const target = store.members.find((m) => m.id === id);
+    if (!target) return { error: "Member not found." };
+    if (target.role === "admin" && store.members.filter((m) => m.role === "admin").length <= 1) {
+      return { error: "Cannot remove the last admin." };
+    }
+    store.members = store.members.filter((m) => m.id !== id);
+    await writeStore(store);
+    return {};
+  });
 }
 
 export async function setMemberPassword(id: string, password: string): Promise<{ error?: string }> {
-  const store = await loadStore();
-  const member = store.members.find((m) => m.id === id);
-  if (!member) return { error: "Member not found." };
-  if (password.length < 6) return { error: "Password must be at least 6 characters." };
-  const { hash, salt } = hashPassword(password);
-  member.passwordHash = hash;
-  member.salt = salt;
-  await writeStore(store);
-  return {};
+  return withStoreWrite(async () => {
+    const store = await loadStore();
+    const member = store.members.find((m) => m.id === id);
+    if (!member) return { error: "Member not found." };
+    if (password.length < 6) return { error: "Password must be at least 6 characters." };
+    const { hash, salt } = hashPassword(password);
+    member.passwordHash = hash;
+    member.salt = salt;
+    // Kill all existing sessions for this member.
+    member.sessionVersion = (member.sessionVersion ?? 0) + 1;
+    await writeStore(store);
+    return {};
+  });
 }
 
 export async function getSessionSecret(): Promise<string> {
@@ -197,8 +231,23 @@ export async function getSessionSecret(): Promise<string> {
     await writeBlob(BLOB_SECRET_PATH, secret, "text/plain");
     return secret;
   }
-  if (!existsSync(secretPath)) {
-    writeFileAtomic(secretPath, randomBytes(32).toString("hex"));
+  try {
+    if (!existsSync(secretPath)) {
+      writeFileAtomic(secretPath, randomBytes(32).toString("hex"));
+    }
+    return readFileSync(secretPath, "utf8").trim();
+  } catch {
+    // Read-only filesystem without Blob (e.g. Vercel with no store): fall back
+    // to an ephemeral in-memory secret. Sessions won't survive a restart, but
+    // requests keep working instead of 500ing.
+    console.warn("[auth] Secret file not writable — using an ephemeral session secret.");
+    return getEphemeralSecret();
   }
-  return readFileSync(secretPath, "utf8").trim();
+}
+
+let ephemeralSecret: string | null = null;
+// Lazily created so importing this module never throws.
+function getEphemeralSecret(): string {
+  if (!ephemeralSecret) ephemeralSecret = randomBytes(32).toString("hex");
+  return ephemeralSecret;
 }

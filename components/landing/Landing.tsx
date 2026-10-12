@@ -178,7 +178,7 @@ const featureCards = [
     label: "AUDIO SYNTHESIS SUITE",
     labelClass: "text-primary",
     title: "1–90 Dynamic Caller Engine",
-    body: "Crystal-clear synthetic Indian English, Hindi, and Telugu real-time caller voices. Select from 4 voice tones (Classic British Club, Mumbai Street Nicknames, Royal VIP Salon, and Fast Esports Announcer) with configurable tempo pacing from 3s to 12s per pull.",
+    body: "Crystal-clear synthetic Indian English, Hindi, and Telugu real-time caller voices. Select from 4 voice tones (Natural, Deep, Bright, and Quick) with configurable tempo pacing at 8s, 6s, 4s, or 2.5s per pull.",
     chips: ["3 Languages", "4 Voice Tones", "Traditional Slang HUD", "Offline Voice Fallback"],
   },
   {
@@ -187,8 +187,8 @@ const featureCards = [
     label: "PRINT & PDF EXPORTER",
     labelClass: "text-secondary",
     title: "Ticket Studio with Watermarking",
-    body: "Generate 15 high-density, mathematical-certified unique tickets per batch across 11 designer themes (including Obsidian Noir, Royal Velvet, Emerald Glow, and Festival Gold). Stamp custom watermark identity signatures like \"NAVEEN CHERRY\" to completely halt counterfeit claims.",
-    chips: ["15 Per PDF Sheet", "11 Color Themes", "Custom Club Brand Watermarks", "Vector Print Quality"],
+    body: "Generate high-density, mathematical-certified unique tickets per batch across 29 designer themes. Export to PDF with one ticket per page. Stamp custom watermark identity signatures like \"NAVEEN CHERRY\" to completely halt counterfeit claims.",
+    chips: ["One Ticket Per PDF Page", "29 Color Themes", "Custom Club Brand Watermarks", "Vector Print Quality"],
   },
   {
     icon: "groups",
@@ -249,7 +249,7 @@ export default function Landing() {
               Classic Housie. <span className="bg-gradient-to-r from-primary-fixed via-primary to-primary-container bg-clip-text text-transparent">Midnight Thrills.</span> Real-Time Celebrations.
             </h1>
           <p className="mt-6 font-body-lg text-body-lg text-on-surface-variant max-w-3xl leading-relaxed reveal-up [animation-delay:80ms]">
-            Host live games with custom voice calling, generate 15 designer print tickets in 11 themes with custom watermarks, or launch synchronized 50-player Razorpay party rooms with instant automated pattern verification.
+            Host live games with custom voice calling, generate designer print tickets in 29 themes with custom watermarks (one ticket per PDF page), or launch synchronized 50-player Razorpay party rooms with instant automated pattern verification.
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4 w-full max-w-3xl reveal-up [animation-delay:120ms]">
             <Link

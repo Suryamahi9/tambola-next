@@ -47,6 +47,19 @@ export type TicketDesign =
 /** Back-compat: `style` is the theme selector. */
 export type TicketStyle = TicketTheme;
 
+export interface CustomStyles {
+  card?: CSSProperties;
+  band?: CSSProperties;
+  rule?: CSSProperties;
+  brand?: CSSProperties;
+  serial?: CSSProperties;
+  serialMuted?: CSSProperties;
+  gridText?: CSSProperties;
+  num?: CSSProperties;
+  filled?: CSSProperties;
+  called?: CSSProperties;
+}
+
 interface Props {
   grid: Grid;
   name?: string;
@@ -56,6 +69,7 @@ interface Props {
   style?: TicketStyle;
   design?: TicketDesign;
   customTheme?: ThemeSpec;
+  customStyles?: CustomStyles;
   /** Watermark / header text. Defaults to "NAVEEN CHERRY". */
   watermarkText?: string;
   /** Optional image logo (data URL) painted into the watermark. */
@@ -718,15 +732,17 @@ function TicketGrid({
   grid,
   called,
   t,
+  customStyles,
 }: {
   grid: Grid;
   called?: ReadonlySet<number>;
   t: ThemeSpec;
+  customStyles?: CustomStyles;
 }) {
   return (
     <div
       className={`ticket-grid ${t.gridText}`}
-      style={{ ["--ticket-line" as string]: t.line } as CSSProperties}
+      style={{ ["--ticket-line" as string]: t.line, ...customStyles?.gridText } as CSSProperties}
     >
       {grid.flatMap((row, r) =>
         row.map((v, c) => (
@@ -738,6 +754,13 @@ function TicketGrid({
                 : called?.has(v)
                   ? `${t.called} font-bold`
                   : `${t.filled} ${t.num}`
+            }
+            style={
+              v === null
+                ? undefined
+                : called?.has(v)
+                  ? customStyles?.called
+                  : { ...customStyles?.filled, ...customStyles?.num }
             }
           >
             {v ?? ""}
@@ -805,6 +828,7 @@ function ClassicCard({
   total,
   called,
   t,
+  customStyles,
   watermarkText,
   logo,
   logoWidth,
@@ -818,33 +842,34 @@ function ClassicCard({
   const wm = watermarkText?.trim() || DEFAULT_WATERMARK;
   const foil = t.foilDark ? "ticket-foil-deep" : "ticket-foil";
   return (
-    <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
+    <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`} style={customStyles?.card}>
       <Watermark color={watermarkColor || t.watermark} className="z-0" text={wm} logo={logo} logoWidth={logoWidth} logoHeight={logoHeight} logoFit={logoFit} logoOpacity={logoOpacity} opacityScale={watermarkOpacity} />
 
-      <div className={`relative z-[2] flex items-center gap-2 ${t.band ? t.band : ""} px-2.5 py-1`}>
+      <div className={`relative z-[2] flex items-center gap-2 ${t.band ? t.band : ""} px-2.5 py-1`} style={customStyles?.band}>
         <span
           className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[15px] ${t.rule ? t.rule : ""} text-white shadow`}
+          style={customStyles?.rule}
         >
           <span className="material-symbols-outlined text-[15px]">military_tech</span>
         </span>
-        <span className={`font-vintage-display min-w-0 shrink truncate text-[12px] font-bold uppercase leading-none tracking-[0.2em] ${foil}`}>
+        <span className={`font-vintage-display min-w-0 shrink truncate text-[12px] font-bold uppercase leading-none tracking-[0.2em] ${foil}`} style={customStyles?.brand}>
           ✦ {brand}
         </span>
         <HeaderName className={foil} text={wm} />
-        <span className={`font-vintage-display shrink-0 text-[11px] font-bold italic tracking-wide ${foil}`}>
+        <span className={`font-vintage-display shrink-0 text-[11px] font-bold italic tracking-wide ${foil}`} style={customStyles?.serial}>
           No. {String(index + 1).padStart(2, "0")}
-          <span className={t.serialMuted}> / {String(total).padStart(2, "0")}</span>
+          <span className={t.serialMuted} style={customStyles?.serialMuted}> / {String(total).padStart(2, "0")}</span>
         </span>
       </div>
 
-      {t.rule && <div className={`relative z-[2] mx-2.5 mt-0 h-[3px] ${t.rule}`} />}
+      {t.rule && <div className={`relative z-[2] mx-2.5 mt-0 h-[3px] ${t.rule}`} style={customStyles?.rule} />}
 
       <div className="relative z-[2] p-1.5 pt-1">
         <div
           className="rounded-[4px] border p-[3px]"
           style={{ borderColor: t.line }}
         >
-          <TicketGrid grid={grid} called={called} t={t} />
+          <TicketGrid grid={grid} called={called} t={t} customStyles={customStyles} />
         </div>
       </div>
     </div>
@@ -858,6 +883,7 @@ function StubCard({
   total,
   called,
   t,
+  customStyles,
   watermarkText,
   logo,
   logoWidth,
@@ -871,15 +897,15 @@ function StubCard({
   const wm = watermarkText?.trim() || DEFAULT_WATERMARK;
   const foil = t.foilDark ? "ticket-foil-deep" : "ticket-foil";
   return (
-    <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
+    <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`} style={customStyles?.card}>
       <Watermark color={watermarkColor || t.watermark} className="z-0" text={wm} logo={logo} logoWidth={logoWidth} logoHeight={logoHeight} logoFit={logoFit} logoOpacity={logoOpacity} opacityScale={watermarkOpacity} />
 
       <div className="relative z-[2] flex items-center justify-between gap-2 px-2.5 py-1">
-        <span className={`font-vintage-display min-w-0 shrink truncate text-[12px] font-bold uppercase tracking-[0.18em] ${foil}`}>
+        <span className={`font-vintage-display min-w-0 shrink truncate text-[12px] font-bold uppercase tracking-[0.18em] ${foil}`} style={customStyles?.brand}>
           ✦ {brand}
         </span>
         <HeaderName className={foil} text={wm} />
-        <span className={`font-mono shrink-0 text-[9px] font-bold tracking-[0.18em] ${t.serial}`}>
+        <span className={`font-mono shrink-0 text-[9px] font-bold tracking-[0.18em] ${t.serial}`} style={customStyles?.serial}>
           NO. {String(index + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
         </span>
       </div>
@@ -888,7 +914,7 @@ function StubCard({
 
       <div className="relative z-[2] p-1.5 pt-1.5">
         <div className="rounded-[4px] border p-[3px]" style={{ borderColor: `${t.line}88` }}>
-          <TicketGrid grid={grid} called={called} t={t} />
+          <TicketGrid grid={grid} called={called} t={t} customStyles={customStyles} />
         </div>
       </div>
 
@@ -901,8 +927,10 @@ function MetroCard({
   grid,
   name,
   index,
+  total,
   called,
   t,
+  customStyles,
   watermarkText,
   logo,
   logoWidth,
@@ -917,29 +945,30 @@ function MetroCard({
   const foil = t.foilDark ? "ticket-foil-deep" : "ticket-foil";
   const stripes = `repeating-linear-gradient(-45deg, ${t.line}33 0 8px, transparent 8px 16px)`;
   return (
-    <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
+    <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`} style={customStyles?.card}>
       <Watermark color={watermarkColor || t.watermark} className="z-0" text={wm} logo={logo} logoWidth={logoWidth} logoHeight={logoHeight} logoFit={logoFit} logoOpacity={logoOpacity} opacityScale={watermarkOpacity} />
 
       <div className="relative z-[2] h-2" style={{ backgroundImage: stripes }} />
 
       <div className="relative z-[2] flex items-center justify-between gap-3 px-3 py-1">
-        <span className={`font-vintage-display min-w-0 shrink truncate text-[14px] font-black uppercase tracking-[0.28em] ${foil}`}>
+        <span className={`font-vintage-display min-w-0 shrink truncate text-[14px] font-black uppercase tracking-[0.28em] ${foil}`} style={customStyles?.brand}>
           ✦ {brand}
         </span>
         <HeaderName className={foil} text={wm} />
         <span
           className={`shrink-0 rounded-sm border px-2 py-0.5 font-mono text-[9px] font-bold ${t.serial}`}
-          style={{ borderColor: `${t.line}88` }}
+          style={{ borderColor: `${t.line}88`, ...customStyles?.serial }}
         >
           No. {String(index + 1).padStart(2, "0")}
+          <span className={t.serialMuted} style={customStyles?.serialMuted}> / {String(total).padStart(2, "0")}</span>
         </span>
       </div>
 
-      {t.rule && <div className={`relative z-[2] mx-4 h-[3px] ${t.rule}`} />}
+      {t.rule && <div className={`relative z-[2] mx-4 h-[3px] ${t.rule}`} style={customStyles?.rule} />}
 
       <div className="relative z-[2] p-1.5 pt-1.5">
         <div className="rounded-[2px] border-2 p-[2px]" style={{ borderColor: t.line }}>
-          <TicketGrid grid={grid} called={called} t={t} />
+          <TicketGrid grid={grid} called={called} t={t} customStyles={customStyles} />
         </div>
       </div>
 
@@ -951,8 +980,11 @@ function MetroCard({
 function AuraCard({
   grid,
   name,
+  index,
+  total,
   called,
   t,
+  customStyles,
   watermarkText,
   logo,
   logoWidth,
@@ -965,18 +997,22 @@ function AuraCard({
   const brand = name || "Tambola";
   const wm = watermarkText?.trim() || DEFAULT_WATERMARK;
   return (
-    <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
+    <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`} style={customStyles?.card}>
       <Watermark color={watermarkColor || t.watermark} className="z-0" text={wm} logo={logo} logoWidth={logoWidth} logoHeight={logoHeight} logoFit={logoFit} logoOpacity={logoOpacity} opacityScale={watermarkOpacity} />
 
       <div className="relative z-[2] flex items-center justify-start gap-2 px-2.5 py-1">
-        <span className={`font-vintage-display min-w-0 shrink truncate text-[11px] font-bold uppercase tracking-[0.3em] ${t.serial}`}>
+        <span className={`font-vintage-display min-w-0 shrink truncate text-[11px] font-bold uppercase tracking-[0.3em] ${t.serial}`} style={customStyles?.brand ?? customStyles?.serial}>
           ✦ {brand}
         </span>
         <HeaderName className={t.serialMuted} text={wm} />
+        <span className={`font-vintage-display ml-auto shrink-0 text-[11px] font-bold italic tracking-wide ${t.serial}`} style={customStyles?.serial}>
+          No. {String(index + 1).padStart(2, "0")}
+          <span className={t.serialMuted} style={customStyles?.serialMuted}> / {String(total).padStart(2, "0")}</span>
+        </span>
       </div>
 
       <div className="relative z-[2] mx-2.5 rounded-[6px] p-[3px]" style={{ border: `1px solid ${t.line}44` }}>
-        <TicketGrid grid={grid} called={called} t={t} />
+        <TicketGrid grid={grid} called={called} t={t} customStyles={customStyles} />
       </div>
     </div>
   );
@@ -989,6 +1025,7 @@ function BlueprintCard({
   total,
   called,
   t,
+  customStyles,
   watermarkText,
   logo,
   logoWidth,
@@ -1002,18 +1039,18 @@ function BlueprintCard({
   const wm = watermarkText?.trim() || DEFAULT_WATERMARK;
   const foil = t.foilDark ? "ticket-foil-deep" : "ticket-foil";
   return (
-    <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`}>
+    <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`} style={customStyles?.card}>
       <Watermark color={watermarkColor || t.watermark} className="z-0" text={wm} logo={logo} logoWidth={logoWidth} logoHeight={logoHeight} logoFit={logoFit} logoOpacity={logoOpacity} opacityScale={watermarkOpacity} />
 
       <div className="relative z-[2] flex items-center justify-between gap-2 px-2.5 pt-1.5">
         <span className="shrink-0 font-mono text-[8px] font-bold uppercase tracking-[0.2em]" style={{ color: t.line }}>
           DWG-{String(index + 1).padStart(3, "0")}
         </span>
-        <span className={`font-vintage-display min-w-0 shrink truncate text-[13px] font-bold uppercase tracking-[0.24em] ${foil}`}>
+        <span className={`font-vintage-display min-w-0 shrink truncate text-[13px] font-bold uppercase tracking-[0.24em] ${foil}`} style={customStyles?.brand}>
           ✦ {brand}
         </span>
         <HeaderName className={foil} text={wm} />
-        <span className="shrink-0 font-mono text-[8px] font-bold" style={{ color: t.line }}>
+        <span className="shrink-0 font-mono text-[8px] font-bold" style={{ color: t.line, ...customStyles?.serial }}>
           SH.{index + 1}/{total}
         </span>
       </div>
@@ -1027,7 +1064,7 @@ function BlueprintCard({
           <span className="pointer-events-none absolute -bottom-1 -left-1 z-[1] text-[10px] font-bold leading-none" style={{ color: t.line }}>+</span>
           <span className="pointer-events-none absolute -bottom-1 -right-1 z-[1] text-[10px] font-bold leading-none" style={{ color: t.line }}>+</span>
           <div className="rounded-[2px] border p-[3px]" style={{ borderColor: t.line }}>
-            <TicketGrid grid={grid} called={called} t={t} />
+            <TicketGrid grid={grid} called={called} t={t} customStyles={customStyles} />
           </div>
         </div>
       </div>
