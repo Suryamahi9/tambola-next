@@ -608,8 +608,8 @@ function Watermark({
         <img
           src={logo}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover"
-          style={{ opacity: 0.18, mixBlendMode: "multiply", filter: "grayscale(40%) contrast(110%)" }}
+          className="absolute inset-0 h-full w-full object-contain"
+          style={{ opacity: 0.28, mixBlendMode: "soft-light", filter: "grayscale(0%) contrast(120%) drop-shadow(0 4px 24px rgba(0,0,0,0.12))" }}
         />
         {text && (
           <span
