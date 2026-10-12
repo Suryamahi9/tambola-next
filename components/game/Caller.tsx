@@ -740,6 +740,20 @@ export default function Caller() {
                 </span>
               </div>
 
+              {/* Fullscreen board */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (document.fullscreenElement) document.exitFullscreen?.();
+                  else document.documentElement.requestFullscreen?.();
+                }}
+                className="flex items-center gap-1.5 bg-surface-container-lowest/80 px-2.5 py-1.5 rounded-xl text-on-surface-variant hover:text-on-surface transition-colors"
+                title="Fullscreen board (TV/Projector)"
+              >
+                <span className="material-symbols-outlined text-base text-secondary">fullscreen</span>
+                <span className="font-label-sm text-[10px] uppercase tracking-widest">Fullscreen</span>
+              </button>
+
               {/* Mode segmented control */}
               <div className="flex items-center bg-surface-container-low p-1.5 rounded-xl">
                 <button
