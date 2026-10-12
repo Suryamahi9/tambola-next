@@ -36,6 +36,7 @@ interface GameState {
   tone: VoiceTone;
   speed: number;
   calledNumbers: number[];
+  calledAt: number[];
   lastNumber: number | null;
   nickname: string;
   tag: string;
@@ -56,6 +57,7 @@ const DEFAULT_STATE: GameState = {
   tone: "natural",
   speed: 4000,
   calledNumbers: [],
+  calledAt: [],
   lastNumber: null,
   nickname: "Host",
   // Empty on the server; a random session tag is assigned after mount so the
@@ -106,6 +108,7 @@ function loadState(): GameState | null {
       ...DEFAULT_STATE,
       ...data,
       voiceCuesOn: false,
+      calledAt: Array.isArray(data.calledAt) ? data.calledAt : [],
       lastNumber: data.lastNumber ?? null,
     };
   } catch {
@@ -326,9 +329,10 @@ export default function Caller() {
     const newLen = s.calledNumbers.length + 1;
     setState((prev) => ({
       ...prev,
-      calledNumbers: [...prev.calledNumbers, num],
-      lastNumber: num,
-    }));
+        calledNumbers: [...prev.calledNumbers, num],
+        calledAt: [...(prev.calledAt || []), Date.now()],
+        lastNumber: num,
+      }));
     setLastKey((k) => k + 1);
     setParticles(makeBurst(num));
     if (!speakNumber(num, s.language, s.tone, s.voiceURI, s.pitch)) setAudioOk(false);
@@ -486,6 +490,7 @@ export default function Caller() {
     setState((p) => ({
       ...p,
       calledNumbers: prev,
+      calledAt: s.calledAt.slice(0, -1),
       lastNumber: newLast,
     }));
     showToast("Undid last call");
@@ -651,6 +656,7 @@ export default function Caller() {
       tone: stateRef.current.tone,
       speed: stateRef.current.speed,
       tag: randomTag(),
+      calledAt: [],
     });
     setParticles([]);
     setConfirmReset(false);
