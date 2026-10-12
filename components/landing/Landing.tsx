@@ -239,22 +239,22 @@ export default function Landing() {
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-gradient-to-tr from-primary-container/20 via-tertiary-container/15 to-transparent blur-[120px] pointer-events-none rounded-full"></div>
         <div className="absolute top-1/3 -left-48 w-96 h-96 bg-secondary/10 blur-[140px] pointer-events-none rounded-full"></div>
         <div className="absolute top-1/2 -right-48 w-96 h-96 bg-primary/10 blur-[130px] pointer-events-none rounded-full"></div>
-        <div className="relative max-w-7xl w-full min-w-0 mx-auto flex flex-col items-center text-center">
-          <div className="inline-flex flex-wrap items-center justify-center gap-1.5 max-w-full px-3 sm:px-4 py-1.5 rounded-full bg-surface-container-high/70 backdrop-blur-md shadow-md mb-6 cursor-default">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-            <span className="font-label-md text-[10px] sm:text-label-md uppercase tracking-[0.14em] sm:tracking-widest text-primary-fixed font-bold">✦ INDIA&apos;S #1 SOCIAL TAMBOLA EXPERIENCE</span>
-            <span className="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-mono">v4.8 VIP</span>
-          </div>
-          <h1 className="font-display-hero w-full min-w-0 text-[2.5rem] leading-[1.05] sm:text-6xl sm:leading-[64px] md:text-[76px] md:leading-[82px] text-on-surface tracking-tight max-w-5xl font-extrabold">
-            Classic Housie. <span className="bg-gradient-to-r from-primary-fixed via-primary to-primary-container bg-clip-text text-transparent">Midnight Thrills.</span> Real-Time Celebrations.
-          </h1>
-          <p className="mt-6 font-body-lg text-body-lg text-on-surface-variant max-w-3xl leading-relaxed">
+          <div className="relative max-w-7xl w-full min-w-0 mx-auto flex flex-col items-center text-center">
+            <div className="inline-flex flex-wrap items-center justify-center gap-1.5 max-w-full px-3 sm:px-4 py-1.5 rounded-full bg-surface-container-high/70 backdrop-blur-md shadow-md mb-6 cursor-default reveal-up">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+              <span className="font-label-md text-[10px] sm:text-label-md uppercase tracking-[0.14em] sm:tracking-widest text-primary-fixed font-bold">✦ INDIA&apos;S #1 SOCIAL TAMBOLA EXPERIENCE</span>
+              <span className="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-mono">v4.8 VIP</span>
+            </div>
+            <h1 className="font-display-hero w-full min-w-0 text-[2.5rem] leading-[1.05] sm:text-6xl sm:leading-[64px] md:text-[76px] md:leading-[82px] text-on-surface tracking-tight max-w-5xl font-extrabold reveal-up [animation-delay:40ms]">
+              Classic Housie. <span className="bg-gradient-to-r from-primary-fixed via-primary to-primary-container bg-clip-text text-transparent">Midnight Thrills.</span> Real-Time Celebrations.
+            </h1>
+          <p className="mt-6 font-body-lg text-body-lg text-on-surface-variant max-w-3xl leading-relaxed reveal-up [animation-delay:80ms]">
             Host live games with custom voice calling, generate 15 designer print tickets in 11 themes with custom watermarks, or launch synchronized 50-player Razorpay party rooms with instant automated pattern verification.
           </p>
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4 w-full max-w-3xl">
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-4 w-full max-w-3xl reveal-up [animation-delay:120ms]">
             <Link
               href="/game"
-              className="group relative px-7 py-3.5 rounded-xl bg-gradient-to-r from-primary-container via-primary to-primary-fixed text-on-primary-container font-headline-sm text-headline-sm flex items-center gap-3 shadow-[0_0_32px_rgba(245,158,11,0.35)] hover:shadow-[0_0_42px_rgba(245,158,11,0.55)] transition-all duration-300 active:scale-95"
+              className="group relative px-7 py-3.5 rounded-xl bg-gradient-to-r from-primary-container via-primary to-primary-fixed text-on-primary-container font-headline-sm text-headline-sm flex items-center gap-3 shadow-[0_0_32px_rgba(245,158,11,0.35)] hover:shadow-[0_0_42px_rgba(245,158,11,0.55)] transition-all duration-300 active:scale-[0.995]"
             >
               <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: `"FILL" 1` }}>campaign</span>
               <span>Launch Live Caller</span>
@@ -282,12 +282,12 @@ export default function Landing() {
               <span>View Rules & Patterns</span>
             </Link>
           </div>
-          <div className="mt-14 w-full grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl p-4 rounded-2xl bg-surface-container-low/70 backdrop-blur-xl shadow-xl">
+            <div className="mt-14 w-full grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl p-4 rounded-2xl bg-surface-container-low/70 backdrop-blur-xl shadow-xl reveal-scale [animation-delay:160ms]">
             {statCards.map((s) => (
-              <div key={s.label} className="flex flex-col items-center justify-center p-3 text-center">
-                <span className={`font-headline-lg text-headline-lg font-bold font-ticket-digit ${s.color}`}>{s.value}</span>
-                <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant mt-1">{s.label}</span>
-              </div>
+            <div key={s.label} className="flex flex-col items-center justify-center p-3 text-center reveal-up">
+              <span className={`font-headline-lg text-headline-lg font-bold font-ticket-digit ${s.color}`}>{s.value}</span>
+              <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant mt-1">{s.label}</span>
+            </div>
             ))}
           </div>
         </div>
@@ -309,7 +309,7 @@ export default function Landing() {
             {engineCards.map((card) => (
               <div
                 key={card.id}
-                className="group relative rounded-2xl bg-surface-container-low/90 backdrop-blur-2xl p-6 shadow-2xl flex flex-col justify-between overflow-hidden"
+                className="group relative rounded-2xl bg-surface-container-low/90 backdrop-blur-2xl p-6 shadow-2xl flex flex-col justify-between overflow-hidden reveal-scale"
               >
                 <div className={`absolute -right-12 -top-12 w-48 h-48 rounded-full blur-3xl pointer-events-none transition-all duration-500 ${card.glow}`}></div>
                 <div>
@@ -349,7 +349,7 @@ export default function Landing() {
             {featureCards.map((f) => (
               <div
                 key={f.title}
-                className="p-8 rounded-2xl bg-surface-container-low shadow-xl flex flex-col justify-between group hover:bg-surface-container transition-colors duration-300"
+                className="p-8 rounded-2xl bg-surface-container-low shadow-xl flex flex-col justify-between group hover:bg-surface-container transition-colors duration-300 reveal-scale"
               >
                 <div>
                   <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-inner ${f.iconClass}`}>

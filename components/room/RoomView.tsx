@@ -712,16 +712,17 @@ export default function RoomView({ roomId }: { roomId: string }) {
       {/* Win popup */}
       {room.status === "finished" && room.winner && (
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-surface-container-lowest/80 backdrop-blur-2xl p-4">
-          <div className="relative w-full max-w-lg rounded-3xl bg-surface-container-low/95 backdrop-blur-2xl p-6 sm:p-8 shadow-2xl overflow-hidden">
+          <div className="relative w-full max-w-lg rounded-3xl bg-surface-container-low/95 backdrop-blur-2xl p-6 sm:p-8 shadow-2xl overflow-hidden reveal-scale">
             <div className="absolute -top-24 left-1/2 w-80 h-80 bg-primary-container/30 rounded-full blur-3xl pointer-events-none -translate-x-1/2" aria-hidden="true" />
             <div className="relative z-[1] flex flex-col items-center text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-tr from-primary to-primary-container text-on-primary-container shadow-2xl shadow-primary-container/50 animate-bounce">
+              <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-tr from-primary to-primary-container text-on-primary-container shadow-2xl shadow-primary-container/50 pop-halo">
+                <span className="pop-halo-ring border border-primary/40" aria-hidden="true" />
                 <span className="material-symbols-outlined text-4xl">emoji_events</span>
               </div>
-              <h2 className="mt-4 font-headline-md text-headline-md font-bold text-primary-fixed-dim">
+              <h2 className="mt-4 font-headline-md text-headline-md font-bold text-primary-fixed-dim reveal-up">
                 {room.winner.playerName} wins {room.winner.label}!
               </h2>
-              <p className="mt-1 font-body-md text-body-md text-on-surface-variant">
+              <p className="mt-1 font-body-md text-body-md text-on-surface-variant reveal-up [animation-delay:60ms]">
                 Ticket {room.winner.ticketIndex + 1} · {room.calledNumbers.length} numbers called
               </p>
             </div>

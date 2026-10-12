@@ -12,13 +12,13 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="no-print sticky top-0 z-50 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+    <header className="no-print sticky top-0 z-50 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] surface-veil">
       <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 gap-2 sm:gap-4">
-        <Link href="/" aria-label="Grand Tambola home" onClick={() => setOpen(false)}>
+        <Link href="/" aria-label="Grand Tambola home" onClick={() => setOpen(false)} className="reveal-in">
           <Logo />
         </Link>
 
-        <div className="hidden xl:flex items-center gap-1 bg-surface-container-lowest/60 p-1 rounded-xl">
+        <div className="hidden xl:flex items-center gap-1 bg-surface-container-lowest/60 p-1 rounded-xl reveal-in [animation-delay:40ms]">
           {navLinks.map((link) => {
             const active = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
             return (
