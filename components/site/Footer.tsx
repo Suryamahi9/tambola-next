@@ -7,7 +7,6 @@ const footerLinks = [
   { href: "/tickets", label: "Ticket Generator" },
   { href: "/rules", label: "Rules & Patterns" },
   { href: "/history", label: "My Games" },
-  { href: "/dashboard", label: "Members" },
 ];
 
 export default function Footer() {

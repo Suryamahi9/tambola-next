@@ -50,23 +50,13 @@ Online Tambola/Housie app: landing page, live voice caller (`/game`), ticket gen
 
 ## Sessions & storage
 
-- **Two independent auth systems, one shared signer.** `/game` and `/tickets` are public (no gating, no `force-dynamic` — they can be static). The `tambola_player` persona cookie (role `player`) gates `/play`, `/room/[id]`, `/history`. Member accounts are a separate concern: the `tambola_member` cookie (roles `admin`/`member`) gates only `/dashboard` — a browser can hold both cookies at once. See "Members & dashboard" below.
-- `lib/auth/session.ts` — HMAC-SHA256 signed `uid.role.exp` tokens (`signToken`/`verifyToken`) + `secureCookieFlag()` (Secure on Vercel, `COOKIE_SECURE` override), shared by player + member cookies. `SESSION_DAYS=7` (members), `PLAYER_TOKEN_DAYS=30` (players).
+- **One auth system: the player persona.** `/game` and `/tickets` are public (no gating, no `force-dynamic` — they can be static). The `tambola_player` persona cookie (role `player`) gates `/play`, `/room/[id]`, `/history`. There is no member/account system.
+- `lib/auth/session.ts` — HMAC-SHA256 signed `uid.role.exp` tokens (`signToken`/`verifyToken`) + `secureCookieFlag()` (Secure on Vercel, `COOKIE_SECURE` override). `PLAYER_TOKEN_DAYS=30` (players).
 - `lib/auth/secret.ts` — `getSessionSecret()`: prefers `AUTH_SECRET`; otherwise generates + persists the secret once (Blob `tambola/secret.txt` when `BLOB_READ_WRITE_TOKEN` is set, else the gitignored `data/secret`). A read-only FS with no Blob — or an unreachable/suspended Blob — falls back to an ephemeral in-memory secret so requests never 500 (set `AUTH_SECRET` to make it stable).
-- **Storage is dual-backend.** With `BLOB_READ_WRITE_TOKEN` set, members (`tambola/members.json`), the session secret + party rooms live in Vercel Blob (`@vercel/blob` SDK, private store, `useCache:false`, `allowOverwrite:true`). Without it they fall back to the gitignored local `data/` directory (dev). Do NOT write to the filesystem in prod — Vercel's FS is read-only.
-- `lib/store-error.ts` `describeStoreError()` classifies store/Blob failures (suspended store, bad/expired token, 403, rate limit, network, read-only FS) so each reports its real cause. Used by `app/api/rooms/[id]/respond.ts` `roomFailure()` and the members login/setup actions.
-- Every cookie-reading page/route (`/play`, `/room/[id]`, `/history`, `/login`, `/dashboard`, all `/api/rooms/*` + `/api/payments/*`) must `export const dynamic = "force-dynamic"` — omitting it stale-caches room/player/member state.
+- **Storage is dual-backend.** With `BLOB_READ_WRITE_TOKEN` set, the session secret + party rooms live in Vercel Blob (`@vercel/blob` SDK, private store, `useCache:false`, `allowOverwrite:true`). Without it they fall back to the gitignored local `data/` directory (dev). Do NOT write to the filesystem in prod — Vercel's FS is read-only.
+- `lib/store-error.ts` `describeStoreError()` classifies store/Blob failures (suspended store, bad/expired token, 403, rate limit, network, read-only FS) so each reports its real cause. Used by `app/api/rooms/[id]/respond.ts` `roomFailure()`.
+- Every cookie-reading page/route (`/play`, `/room/[id]`, `/history`, all `/api/rooms/*` + `/api/payments/*`) must `export const dynamic = "force-dynamic"` — omitting it stale-caches room/player state.
 - Copy `.env.example` → `.env.local`.
-
-## Members & dashboard
-
-- **`/game` and `/tickets` are NOT gated** — members exist only for the `/dashboard` area (deliberate: the game stays free for everyone).
-- `lib/members/` — `types.ts` (`MemberRole`, `Member`, `MemberPublic`, `MIN_PASSWORD_LENGTH`, `safeMemberPath`; client-safe, no node imports), `password.ts` (scrypt hash/verify), `store.ts` (dual-backend `data/members.json` + Blob `tambola/members.json`, write-serialized, **no** in-memory cache and **no** per-member session version), `auth.ts` (`MEMBER_COOKIE = "tambola_member"`, `getCurrentMember` (React `cache`, store errors → signed out), `signInMember`/`signOutMember`, `requireMember`/`requireAdmin`).
-- Server actions live in `app/actions/members.ts`: `loginAction` (in-memory lockout after 5 bad tries/email), `setupAdminAction` (first-run), `logoutAction`, `addMemberAction`, `deleteMemberAction`, `resetPasswordAction`, `setRoleAction`. All admin actions re-gate via `getCurrentMember()` server-side. `redirect()` is called **after** the try/catch (its control-flow error must not be swallowed).
-- **First-run setup:** with an empty store, `/login` renders `SetupForm` ("Create the first admin") instead of a sign-in form — no `ADMIN_EMAIL`/`ADMIN_PASSWORD` env bootstrap. `createFirstAdmin` refuses once any member exists, so the empty store can't be claimed twice.
-- `/dashboard` (`requireMember`) shows the full management panel + analytics to **admins** and a read-only "Your account" card to plain **members**; `MembersPanel` does add / search / role / reset / remove, `AnalyticsPanel` is room telemetry (revenue, top players, recent games) with CSV exports derived from `getAllRooms()`.
-- Guards in `store.ts`: can't remove the last admin, can't demote the last admin; the UI disables Remove/role-select on your own row. Because there is **no session version**, a password reset does NOT sign that member's existing tabs out — they stay valid until the token expires (an accepted simplification).
-- Navbar/Footer link to `/dashboard` as "Members" (a signed-out visitor is bounced to `/login?next=/dashboard`).
 
 ## Party Rooms (multiplayer)
 
