@@ -360,7 +360,7 @@ export default function RoomView({ roomId }: { roomId: string }) {
         <p className="mt-2 font-body-md text-body-md text-on-surface-variant">The room may have expired or the link is wrong.</p>
         <Link
           href="/play"
-          className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-container via-primary to-primary-fixed px-6 py-2.5 font-headline-sm text-sm font-bold text-on-primary-container shadow-[0_0_24px_rgba(245,158,11,0.3)]"
+          className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-container via-primary to-primary-fixed px-6 py-2.5 font-headline-sm text-sm font-bold text-on-primary-container shadow-[0_0_24px_rgba(212,175,55,0.35)]"
         >
           <span className="material-symbols-outlined text-lg">play_arrow</span>
           Create a room
@@ -388,14 +388,14 @@ export default function RoomView({ roomId }: { roomId: string }) {
       {error && <p className="rounded-lg border border-error/30 bg-error-container/15 px-3 py-2 font-body-sm text-xs text-error">{error}</p>}
 
       {/* Header */}
-      <div className="w-full bg-surface-container-low/95 backdrop-blur-xl rounded-2xl p-4 sm:p-5 shadow-2xl flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-5">
+      <div className="w-full bg-surface-container-low/95 backdrop-blur-xl rounded-2xl p-4 sm:p-5 shadow-2xl flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-5 carnival-glow">
         <div className="flex items-center gap-4 flex-wrap">
           <div className="w-12 h-12 rounded-xl bg-primary-container/20 flex items-center justify-center text-primary-fixed-dim">
             <span className="material-symbols-outlined text-3xl">stars</span>
           </div>
           <div className="flex flex-col">
             <div className="flex items-center gap-3">
-              <h1 className="font-headline-md text-headline-md font-bold text-on-surface tracking-tight">Party Room</h1>
+              <h1 className="font-headline-md text-headline-md font-bold tracking-tight gold-text">Party Room</h1>
               <span className="px-3 py-1 rounded-xl bg-surface-container-high font-mono text-sm font-bold tracking-widest text-primary-fixed-dim">
                 {room.code}
               </span>
@@ -453,7 +453,7 @@ export default function RoomView({ roomId }: { roomId: string }) {
           </label>
           <button
             onClick={() => setInviteOpen(true)}
-            className="rounded-xl bg-secondary-container/20 px-4 py-2 font-label-md text-sm font-semibold text-secondary transition hover:bg-secondary-container/30"
+            className="rounded-xl bg-tertiary-container/20 px-4 py-2 font-label-md text-sm font-semibold text-tertiary transition hover:bg-tertiary-container/30"
           >
             <span className="material-symbols-outlined text-lg align-middle mr-1">person_add</span>
             Invite players
@@ -480,7 +480,7 @@ export default function RoomView({ roomId }: { roomId: string }) {
               return (
                 <span
                   key={p.pattern}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-secondary-container/20 px-3 py-1 font-label-sm text-xs font-semibold text-secondary"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-tertiary-container/20 px-3 py-1 font-label-sm text-xs font-semibold text-tertiary"
                 >
                   <span className="material-symbols-outlined text-sm">check_circle</span>
                   {p.label} — {p.playerName}
@@ -507,7 +507,8 @@ export default function RoomView({ roomId }: { roomId: string }) {
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
         {/* Board + caller */}
         <div className="space-y-4">
-          <div className="rounded-2xl bg-surface-container-low/95 backdrop-blur-xl p-5 shadow-xl">
+          <div className="rounded-2xl bg-surface-container-low/95 backdrop-blur-xl p-5 shadow-xl carnival-glow">
+            <div aria-hidden="true" className="marquee-bulbs mb-4" />
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-label-sm text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Last called</p>
@@ -567,7 +568,7 @@ export default function RoomView({ roomId }: { roomId: string }) {
                   disabled={!canStart}
                   className={`w-full rounded-xl px-5 py-3 font-headline-sm text-sm font-bold transition ${
                     canStart
-                      ? "bg-gradient-to-r from-primary-container via-primary to-primary-fixed text-on-primary-container shadow-[0_0_24px_rgba(245,158,11,0.3)] hover:brightness-110"
+                      ? "bg-gradient-to-r from-primary-container via-primary to-primary-fixed text-on-primary-container shadow-[0_0_24px_rgba(212,175,55,0.35)] hover:brightness-110"
                       : "cursor-not-allowed bg-surface-container-high text-on-surface-variant/60"
                   }`}
                 >
@@ -594,7 +595,7 @@ export default function RoomView({ roomId }: { roomId: string }) {
                     <button
                       onClick={() => void doCall()}
                       disabled={calling}
-                      className="flex-1 rounded-xl bg-secondary-container/25 px-5 py-3 text-sm font-bold text-secondary transition hover:bg-secondary-container/40 disabled:opacity-40"
+                      className="flex-1 rounded-xl bg-tertiary-container/25 px-5 py-3 text-sm font-bold text-tertiary transition hover:bg-tertiary-container/40 disabled:opacity-40"
                     >
                       <span className="material-symbols-outlined text-lg align-middle mr-1">casino</span>
                       {calling ? "Calling…" : "Random draw"}
@@ -618,7 +619,7 @@ export default function RoomView({ roomId }: { roomId: string }) {
                         disabled={claiming || !canClaim}
                         className={`rounded-xl px-5 py-3 text-sm font-bold transition disabled:cursor-not-allowed disabled:opacity-50 ${
                           canClaim
-                            ? "bg-gradient-to-r from-primary to-primary-container text-on-primary-container shadow-[0_0_24px_rgba(245,158,11,0.35)] hover:brightness-110 animate-pulse"
+                            ? "bg-gradient-to-r from-primary to-primary-container text-on-primary-container shadow-[0_0_24px_rgba(212,175,55,0.45)] hover:brightness-110 animate-pulse"
                             : "bg-surface-container-high text-on-surface-variant/60"
                         }`}
                       >
@@ -630,7 +631,7 @@ export default function RoomView({ roomId }: { roomId: string }) {
                         </p>
                       )}
                       {canClaim && (
-                        <p className="text-[11px] font-semibold text-secondary">
+                        <p className="text-[11px] font-semibold text-tertiary">
                           {myComplete.map((h) => h.label).join(", ")} ready on your ticket!
                         </p>
                       )}
@@ -642,7 +643,7 @@ export default function RoomView({ roomId }: { roomId: string }) {
 
             {room.status === "finished" && (
               <div className="mt-5 space-y-3">
-                <p className="rounded-lg border border-secondary/20 bg-secondary/10 px-3 py-2 text-center text-sm font-semibold text-secondary">
+                <p className="rounded-lg border border-primary-container/30 bg-primary-container/10 px-3 py-2 text-center text-sm font-semibold text-primary-fixed-dim">
                   <span className="material-symbols-outlined text-lg align-middle mr-1">emoji_events</span>
                   {room.winner
                     ? `${room.winner.playerName} won ${room.winner.label}!`
@@ -651,7 +652,7 @@ export default function RoomView({ roomId }: { roomId: string }) {
                 {me && (
                   <button
                     onClick={() => void nextRound()}
-                    className="w-full rounded-xl bg-gradient-to-r from-primary-container via-primary to-primary-fixed px-5 py-3 text-sm font-bold text-on-primary-container shadow-[0_0_24px_rgba(245,158,11,0.3)] transition hover:brightness-110"
+                    className="w-full rounded-xl bg-gradient-to-r from-primary-container via-primary to-primary-fixed px-5 py-3 text-sm font-bold text-on-primary-container shadow-[0_0_24px_rgba(212,175,55,0.35)] transition hover:brightness-110"
                   >
                     <span className="material-symbols-outlined text-lg align-middle mr-1">refresh</span>
                     Next round — fresh tickets for everyone
@@ -690,7 +691,7 @@ export default function RoomView({ roomId }: { roomId: string }) {
                     </div>
                     <span className="flex items-center gap-1.5">
                       {wins > 0 && (
-                        <span className="rounded-full bg-secondary-container/20 px-2 py-0.5 text-[11px] font-bold text-secondary">
+                        <span className="rounded-full bg-tertiary-container/20 px-2 py-0.5 text-[11px] font-bold text-tertiary">
                           {wins} win{wins === 1 ? "" : "s"}
                         </span>
                       )}
@@ -711,6 +712,8 @@ export default function RoomView({ roomId }: { roomId: string }) {
 
           <Leaderboard room={room} />
 
+          <div aria-hidden="true" className="stub-divider" />
+
           <ChatPanel roomId={roomId} room={room} me={me} onSent={refresh} />
         </div>
       </div>
@@ -723,7 +726,7 @@ export default function RoomView({ roomId }: { roomId: string }) {
             <p className="font-label-sm text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
               Your active tickets · {me ? room.players.find((p) => p.id === me)?.name ?? "you" : "you"}
             </p>
-            <span className="rounded bg-surface-container-high px-2 py-0.5 font-mono font-label-sm text-[10px] text-secondary-fixed">
+            <span className="rounded bg-surface-container-high px-2 py-0.5 font-mono font-label-sm text-[10px] text-tertiary-fixed">
               {data.myTickets.length} shown
             </span>
           </div>
@@ -739,7 +742,7 @@ export default function RoomView({ roomId }: { roomId: string }) {
                 <button
                   type="button"
                   onClick={() => void shareTicket(grid, gi)}
-                  className="w-full rounded-xl bg-surface-container px-3 py-1.5 font-label-md text-[11px] font-semibold text-secondary transition hover:bg-secondary-container/20"
+                  className="w-full rounded-xl bg-surface-container px-3 py-1.5 font-label-md text-[11px] font-semibold text-tertiary transition hover:bg-tertiary-container/20"
                 >
                   <span className="material-symbols-outlined text-base align-middle mr-1">send</span>
                   Send my ticket on WhatsApp
@@ -754,7 +757,7 @@ export default function RoomView({ roomId }: { roomId: string }) {
             <p className="font-body-md text-body-md text-on-surface-variant">You are not a player in this room yet.</p>
             <Link
               href="/play"
-              className="mt-3 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-container via-primary to-primary-fixed px-5 py-2 text-sm font-bold text-on-primary-container shadow-[0_0_24px_rgba(245,158,11,0.3)]"
+              className="mt-3 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-container via-primary to-primary-fixed px-5 py-2 text-sm font-bold text-on-primary-container shadow-[0_0_24px_rgba(212,175,55,0.35)]"
             >
               <span className="material-symbols-outlined text-lg">person_add</span>
               Join now
@@ -766,14 +769,14 @@ export default function RoomView({ roomId }: { roomId: string }) {
       {/* Win popup */}
       {room.status === "finished" && room.winner && (
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-surface-container-lowest/80 backdrop-blur-2xl p-4">
-          <div className="relative w-full max-w-lg rounded-3xl bg-surface-container-low/95 backdrop-blur-2xl p-6 sm:p-8 shadow-2xl overflow-hidden reveal-scale">
+          <div className="relative w-full max-w-lg rounded-3xl bg-surface-container-low/95 backdrop-blur-2xl p-6 sm:p-8 shadow-2xl overflow-hidden reveal-scale carnival-glow">
             <div className="absolute -top-24 left-1/2 w-80 h-80 bg-primary-container/30 rounded-full blur-3xl pointer-events-none -translate-x-1/2" aria-hidden="true" />
             <div className="relative z-[1] flex flex-col items-center text-center">
               <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-tr from-primary to-primary-container text-on-primary-container shadow-2xl shadow-primary-container/50 pop-halo">
                 <span className="pop-halo-ring border border-primary/40" aria-hidden="true" />
                 <span className="material-symbols-outlined text-4xl">emoji_events</span>
               </div>
-              <h2 className="mt-4 font-headline-md text-headline-md font-bold text-primary-fixed-dim reveal-up">
+              <h2 className="mt-4 font-headline-md text-headline-md font-bold gold-text reveal-up">
                 {room.winner.playerName} wins {room.winner.label}!
               </h2>
               <p className="mt-1 font-body-md text-body-md text-on-surface-variant reveal-up [animation-delay:60ms]">
@@ -791,7 +794,7 @@ export default function RoomView({ roomId }: { roomId: string }) {
                     return (
                       <li key={p.pattern} className="flex items-center justify-between text-sm">
                         <span className="font-medium text-on-surface">
-                          <span className="material-symbols-outlined text-base align-middle mr-1 text-secondary">check_circle</span>
+                          <span className="material-symbols-outlined text-base align-middle mr-1 text-tertiary">check_circle</span>
                           {p.label}
                         </span>
                         <span className="text-xs text-on-surface-variant">
@@ -805,6 +808,7 @@ export default function RoomView({ roomId }: { roomId: string }) {
             )}
 
             <div className="relative z-[1] mt-5">
+              <div aria-hidden="true" className="marquee-bulbs mb-3" />
               <p className="mb-1 font-label-sm text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
                 Winning ticket
               </p>
@@ -843,7 +847,7 @@ export default function RoomView({ roomId }: { roomId: string }) {
               <button
                 type="button"
                 onClick={() => void nextRound()}
-                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-container via-primary to-primary-fixed px-6 py-2.5 text-sm font-bold text-on-primary-container shadow-[0_0_24px_rgba(245,158,11,0.3)]"
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-container via-primary to-primary-fixed px-6 py-2.5 text-sm font-bold text-on-primary-container shadow-[0_0_24px_rgba(212,175,55,0.35)]"
               >
                 <span className="material-symbols-outlined text-lg">refresh</span>
                 Next round
@@ -861,7 +865,7 @@ export default function RoomView({ roomId }: { roomId: string }) {
       )}
 
       {toast && (
-        <div className="no-print fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-surface-container-high px-5 py-3 font-body-md text-sm font-medium text-on-surface shadow-2xl backdrop-blur-2xl">
+        <div className="no-print fixed bottom-6 left-1/2 z-50 -translate-x-1/2 animate-pop rounded-full border border-primary/40 bg-[#0e0e0e]/95 px-5 py-3 font-body-md text-sm font-semibold text-primary-fixed shadow-[0_16px_40px_-14px_rgba(212,175,55,0.5)] backdrop-blur-2xl">
           {toast}
         </div>
       )}

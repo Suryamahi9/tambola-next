@@ -123,7 +123,7 @@ export async function insertRoom(room: Room): Promise<Room> {
   return room;
 }
 
-/** All rooms — used by the admin analytics panel. */
+/** All rooms — used by player history (`/history`). */
 export async function getAllRooms(): Promise<Room[]> {
   return loadAllRooms();
 }

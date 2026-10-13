@@ -71,7 +71,7 @@ export default function RoomSettingsEditor({
   const LINE_NAMES: Record<string, string> = { top: "Top", middle: "Middle", bottom: "Bottom" };
 
   return (
-    <div className="rounded-2xl bg-surface-container-low/90 backdrop-blur-2xl p-5 shadow-xl">
+    <div className="rounded-2xl bg-surface-container-low/90 backdrop-blur-2xl p-5 shadow-xl carnival-glow">
       <div className="flex items-center justify-between">
         <p className="font-label-sm text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
           Prize settings
@@ -109,18 +109,18 @@ export default function RoomSettingsEditor({
               onClick={() => toggle(row.key)}
               className={`flex items-center justify-between rounded-xl border px-4 py-2.5 text-left transition disabled:opacity-60 ${
                 on
-                  ? "border-secondary-container/40 bg-secondary-container/15"
+                  ? "border-tertiary-container/40 bg-tertiary-container/15"
                   : "border-outline-variant/40 bg-surface-container"
               }`}
             >
               <div>
-                <p className={`text-sm font-semibold ${on ? "text-secondary" : "text-on-surface-variant"}`}>
+                <p className={`text-sm font-semibold ${on ? "text-tertiary" : "text-on-surface-variant"}`}>
                   {row.label}
                 </p>
                 <p className="text-[11px] text-on-surface-variant">{row.desc}</p>
               </div>
               <span
-                className={`material-symbols-outlined text-lg ${on ? "text-secondary" : "text-on-surface-variant/60"}`}
+                className={`material-symbols-outlined text-lg ${on ? "text-tertiary" : "text-on-surface-variant/60"}`}
                 aria-hidden="true"
               >
                 {on ? "check_circle" : "radio_button_unchecked"}
@@ -182,7 +182,7 @@ export default function RoomSettingsEditor({
         type="button"
         disabled={disabled || saving}
         onClick={save}
-        className="mt-4 w-full rounded-xl bg-secondary-container/25 px-5 py-2.5 text-sm font-bold text-secondary transition hover:bg-secondary-container/40 disabled:opacity-50"
+        className="mt-4 w-full rounded-xl bg-gradient-to-r from-primary-container via-primary to-primary-fixed px-5 py-2.5 text-sm font-bold text-on-primary-container shadow-[0_0_24px_rgba(212,175,55,0.35)] transition hover:brightness-110 disabled:opacity-50"
       >
         {saving ? "Saving…" : moved ? "Save settings" : "Saved"}
       </button>

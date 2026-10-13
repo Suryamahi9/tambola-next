@@ -133,7 +133,7 @@ export default function RoomInviteCard({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-sm rounded-3xl bg-surface-container-low/95 backdrop-blur-2xl p-6 shadow-2xl overflow-hidden"
+        className="relative w-full max-w-sm rounded-3xl bg-surface-container-low/95 backdrop-blur-2xl p-6 shadow-2xl overflow-hidden carnival-glow"
       >
         <div className="absolute -top-20 left-1/2 w-64 h-64 bg-primary-container/25 rounded-full blur-3xl pointer-events-none -translate-x-1/2" aria-hidden="true" />
         <div className="relative z-[1]">
@@ -155,18 +155,19 @@ export default function RoomInviteCard({
           <div className="mt-4 flex items-center justify-between rounded-2xl border border-outline-variant/40 bg-surface-container-lowest px-4 py-3">
             <div>
               <p className="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant">Room code</p>
-              <p className="font-mono text-2xl font-bold tracking-[0.25em] text-primary-fixed-dim">
+              <p className="font-mono text-2xl font-bold tracking-[0.25em] gold-text">
                 {room.code}
               </p>
             </div>
             <div className="text-right">
               <p className="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant">Status</p>
-              <p className="text-sm font-bold text-secondary">
+              <p className="text-sm font-bold text-tertiary">
                 {paidCount} player{paidCount === 1 ? "" : "s"} in
               </p>
             </div>
           </div>
 
+          <div aria-hidden="true" className="marquee-bulbs mt-4" />
           <div className="mt-4 flex items-center justify-center rounded-2xl border border-white/10 bg-white p-3">
             {qrUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -185,7 +186,7 @@ export default function RoomInviteCard({
             <button
               type="button"
               onClick={copyLink}
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-secondary-container/20 px-4 py-2.5 text-sm font-semibold text-secondary transition hover:bg-secondary-container/30"
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-tertiary-container/20 px-4 py-2.5 text-sm font-semibold text-tertiary transition hover:bg-tertiary-container/30"
             >
               <span className="material-symbols-outlined text-lg">{copied ? "check_circle" : "content_copy"}</span>
               {copied ? "Copied!" : "Copy link"}
@@ -203,7 +204,7 @@ export default function RoomInviteCard({
             type="button"
             disabled={!qrUrl || downloading}
             onClick={() => void downloadCard()}
-            className="mt-2 w-full rounded-xl bg-gradient-to-r from-primary-container via-primary to-primary-fixed px-4 py-2.5 text-sm font-bold text-on-primary-container shadow-[0_0_24px_rgba(245,158,11,0.3)] transition hover:brightness-110 disabled:opacity-50"
+            className="mt-2 w-full rounded-xl bg-gradient-to-r from-primary-container via-primary to-primary-fixed px-4 py-2.5 text-sm font-bold text-on-primary-container shadow-[0_0_24px_rgba(212,175,55,0.35)] transition hover:brightness-110 disabled:opacity-50"
           >
             <span className="material-symbols-outlined text-lg align-middle mr-1">download</span>
             {downloading ? "Building card…" : "Download invite card"}

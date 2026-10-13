@@ -3,306 +3,351 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { generateTicket } from "@/lib/ticket";
 
-const BG = "#070a16";
+const BG = "#080808";
+const GOLD = "#d4af37";
+const GOLD_LIGHT = "#f7e7a1";
 
-const ACCENTS = [
-  "#dc2626",
-  "#2563eb",
-  "#16a34a",
-  "#7c3aed",
-  "#db2777",
-  "#ea580c",
-  "#0891b2",
-  "#9333ea",
-  "#ca8a04",
-  "#e11d48",
-];
-
-const TICKET_COUNT = 10;
-const SPACING = 3.1;
-
-const BASE_FOV = 50;
-const MAX_FOV = 74;
-const BASE_BACK = 2.4;
-const BASE_LOOK = 0.6;
-
-function layoutParams(aspect: number) {
-  const n = Math.min(1, Math.max(0, (1.6 - aspect) / 1.1));
-  return {
-    fov: BASE_FOV + n * (MAX_FOV - BASE_FOV),
-    backZ: BASE_BACK + n * 2.2,
-    lookZ: BASE_LOOK + n * 0.5,
-    xSpread: 1 + n * 0.25,
+/* deterministic PRNG so particle layout is pure across renders */
+function mulberry32(seed: number) {
+  let s = seed >>> 0;
+  return () => {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
 
-function albumPositions(xSpread: number): THREE.Vector3[] {
-  return Array.from({ length: TICKET_COUNT }, (_, i) => {
-    const z = 6 - i * SPACING;
-    const side = i % 2 === 0 ? 1 : -1;
-    const x = side * (1.3 + (i % 3) * 0.22) * xSpread;
-    const y = Math.sin(i * 1.1) * 0.5 + (i % 2 === 0 ? 0.05 : -0.15);
-    return new THREE.Vector3(x, y, z);
-  });
-}
-
-function keyPath(positions: THREE.Vector3[], backZ: number): THREE.Vector3[] {
-  return positions.map((p, i) => {
-    const prev = i > 0 ? positions[i - 1] : p;
-    return new THREE.Vector3(
-      (p.x + prev.x) * 0.35 + 0.4,
-      (p.y + prev.y) * 0.5 + 0.25,
-      p.z + backZ
-    );
-  });
-}
-
-function keyLookPath(
-  positions: THREE.Vector3[],
-  lookZ: number
-): THREE.Vector3[] {
-  return positions.map((p) => new THREE.Vector3(p.x * 0.55, p.y, p.z - lookZ));
-}
-
-const _pos = new THREE.Vector3();
-const _look = new THREE.Vector3();
+/* ── hooks ─────────────────────────────────────────────────────── */
 
 function useReducedMotion() {
   const ref = useRef(false);
   useEffect(() => {
-    ref.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => {
+      ref.current = mq.matches;
+    };
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
   }, []);
   return ref;
 }
 
-function useAspect() {
-  const [aspect, setAspect] = useState(1.6);
+function useViewport() {
+  const [vp, setVp] = useState({ w: 1440, h: 900 });
   useEffect(() => {
-    const update = () => setAspect(window.innerWidth / window.innerHeight);
+    const update = () => setVp({ w: window.innerWidth, h: window.innerHeight });
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
-  return aspect;
+  return vp;
 }
 
-function CameraRig({
-  keyPos,
-  keyLook,
-  fov,
+function usePointer() {
+  const ref = useRef({ x: 0, y: 0 });
+  useEffect(() => {
+    const onMove = (e: PointerEvent) => {
+      ref.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+      ref.current.y = (e.clientY / window.innerHeight) * 2 - 1;
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => window.removeEventListener("pointermove", onMove);
+  }, []);
+  return ref;
+}
+
+/* ── canvas textures ───────────────────────────────────────────── */
+
+function makeDustSprite() {
+  const c = document.createElement("canvas");
+  c.width = 64;
+  c.height = 64;
+  const ctx = c.getContext("2d")!;
+  const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+  g.addColorStop(0, "rgba(255,249,232,1)");
+  g.addColorStop(0.35, "rgba(247,231,161,0.7)");
+  g.addColorStop(1, "rgba(212,175,55,0)");
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 64, 64);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
+function makeGlowTexture() {
+  const s = 256;
+  const c = document.createElement("canvas");
+  c.width = s;
+  c.height = s;
+  const ctx = c.getContext("2d")!;
+  const g = ctx.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+  g.addColorStop(0, "rgba(247,231,161,0.55)");
+  g.addColorStop(0.4, "rgba(212,175,55,0.22)");
+  g.addColorStop(1, "rgba(212,175,55,0)");
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, s, s);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
+/* ── environment (fake studio reflections so gold reads as metal) ── */
+
+function GoldEnvironment() {
+  const { gl, scene } = useThree();
+  useEffect(() => {
+    const c = document.createElement("canvas");
+    c.width = 1024;
+    c.height = 512;
+    const ctx = c.getContext("2d")!;
+    const g = ctx.createLinearGradient(0, 0, 0, 512);
+    g.addColorStop(0, "#1a160c");
+    g.addColorStop(0.5, "#050505");
+    g.addColorStop(1, "#000000");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 1024, 512);
+
+    const spot = (x: number, y: number, r: number, a: number) => {
+      const rg = ctx.createRadialGradient(x, y, 0, x, y, r);
+      rg.addColorStop(0, `rgba(255,249,232,${a})`);
+      rg.addColorStop(0.35, `rgba(212,175,55,${a * 0.5})`);
+      rg.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = rg;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    };
+    spot(170, 150, 230, 0.95);
+    spot(812, 150, 260, 0.8);
+    spot(520, 470, 340, 0.4);
+
+    const tex = new THREE.CanvasTexture(c);
+    tex.mapping = THREE.EquirectangularReflectionMapping;
+    tex.colorSpace = THREE.SRGBColorSpace;
+
+    const pmrem = new THREE.PMREMGenerator(gl);
+    const env = pmrem.fromEquirectangular(tex).texture;
+    // eslint-disable-next-line react-hooks/immutability -- three.js scene is an external system, not React state
+    scene.environment = env;
+
+    return () => {
+      scene.environment = null;
+      env.dispose();
+      tex.dispose();
+      pmrem.dispose();
+    };
+  }, [gl, scene]);
+  return null;
+}
+
+/* ── decorative pieces ─────────────────────────────────────────── */
+
+function GoldRing({
+  radius,
+  tube,
+  position,
+  rotation,
+  speed,
+  reduce,
 }: {
-  keyPos: THREE.Vector3[];
-  keyLook: THREE.Vector3[];
-  fov: number;
+  radius: number;
+  tube: number;
+  position: [number, number, number];
+  rotation: [number, number, number];
+  speed: number;
+  reduce: React.RefObject<boolean>;
+}) {
+  const ref = useRef<THREE.Mesh>(null!);
+  useFrame((_, dt) => {
+    if (reduce.current) return;
+    ref.current.rotation.z += dt * speed;
+    ref.current.rotation.x += dt * speed * 0.35;
+  });
+  return (
+    <mesh ref={ref} position={position} rotation={rotation}>
+      <torusGeometry args={[radius, tube, 20, 140]} />
+      <meshStandardMaterial
+        color={GOLD}
+        metalness={1}
+        roughness={0.14}
+        envMapIntensity={2}
+        emissive={GOLD}
+        emissiveIntensity={0.16}
+      />
+    </mesh>
+  );
+}
+
+function GoldDust({ texture, count }: { texture: THREE.Texture; count: number }) {
+  const ref = useRef<THREE.Points>(null!);
+  const positions = useMemo(() => {
+    const rand = mulberry32(count * 7919 + 13);
+    const arr = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      arr[i * 3] = (rand() - 0.5) * 26;
+      arr[i * 3 + 1] = (rand() - 0.5) * 16;
+      arr[i * 3 + 2] = -rand() * 18 + 2;
+    }
+    return arr;
+  }, [count]);
+
+  useFrame((state, dt) => {
+    if (!ref.current) return;
+    ref.current.rotation.y += dt * 0.02;
+    const t = state.clock.elapsedTime;
+    ref.current.position.y = Math.sin(t * 0.25) * 0.4;
+  });
+
+  return (
+    <points ref={ref}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+      </bufferGeometry>
+      <pointsMaterial
+        map={texture}
+        color={GOLD_LIGHT}
+        size={0.16}
+        sizeAttenuation
+        transparent
+        opacity={0.75}
+        depthWrite={false}
+        blending={THREE.AdditiveBlending}
+      />
+    </points>
+  );
+}
+
+/* ── camera rig ────────────────────────────────────────────────── */
+
+function CameraRig({
+  pointer,
+  reduce,
+  narrow,
+}: {
+  pointer: React.RefObject<{ x: number; y: number }>;
+  reduce: React.RefObject<boolean>;
+  narrow: boolean;
 }) {
   const { camera } = useThree();
-  const reduce = useReducedMotion();
-  const prevFov = useRef(0);
+  const baseZ = narrow ? 12.5 : 9.4;
 
-  // eslint-disable-next-line react-hooks/immutability -- R3F RAF loop: imperative camera updates are the documented pattern (rule false positive)
-  useFrame((state) => {
-    const t = state.clock.elapsedTime;
-    if (prevFov.current !== fov) {
-      // eslint-disable-next-line react-hooks/immutability -- same RAF-loop false positive as above
-      (camera as THREE.PerspectiveCamera).fov = fov;
-      (camera as THREE.PerspectiveCamera).updateProjectionMatrix();
-      prevFov.current = fov;
-    }
-    const docEl = document.documentElement;
-    const max = Math.max(1, docEl.scrollHeight - window.innerHeight);
-    const raw = Math.min(1, Math.max(0, window.scrollY / max));
-    const e = raw * raw * (3 - 2 * raw);
-    const seg = e * (keyPos.length - 1);
-    const i = Math.min(keyPos.length - 2, Math.floor(seg));
-    const f = seg - i;
-    const sf = f * f * (3 - 2 * f);
-    _pos.lerpVectors(keyPos[i], keyPos[i + 1], sf);
-    _look.lerpVectors(keyLook[i], keyLook[i + 1], sf);
-    if (!reduce.current) {
-      _pos.x += Math.sin(t * 0.3 + i) * 0.05;
-      _pos.y += Math.sin(t * 0.4 + 1.2) * 0.04;
-    }
-    camera.position.copy(_pos);
-    camera.lookAt(_look);
+  useFrame(() => {
+    const px = reduce.current ? 0 : pointer.current.x;
+    const py = reduce.current ? 0 : pointer.current.y;
+    const targetX = px * 0.6;
+    const targetY = -py * 0.4;
+    // eslint-disable-next-line react-hooks/immutability -- same RAF-loop false positive as above
+    camera.position.x += (targetX - camera.position.x) * 0.04;
+    camera.position.y += (targetY - camera.position.y) * 0.04;
+    camera.position.z += (baseZ - camera.position.z) * 0.06;
+    camera.lookAt(0, 0, -1);
   });
 
   return null;
 }
 
-function makeTicketTexture(index: number) {
-  const grid = generateTicket();
-  const accent = ACCENTS[index % ACCENTS.length];
-  const canvas = document.createElement("canvas");
-  canvas.width = 480;
-  canvas.height = 330;
-  const ctx = canvas.getContext("2d")!;
+/* ── world ─────────────────────────────────────────────────────── */
 
-  const darken = (hex: string) => {
-    const n = parseInt(hex.slice(1), 16);
-    const r = Math.round(((n >> 16) & 255) * 0.55);
-    const g = Math.round(((n >> 8) & 255) * 0.55);
-    const b = Math.round((n & 255) * 0.55);
-    return `rgb(${r},${g},${b})`;
-  };
-
-  const paper = ["#fdf8ec", "#f1e6cd"];
-  const ink = "#2a211a";
-
-  const bgGrad = ctx.createLinearGradient(0, 0, 0, 330);
-  bgGrad.addColorStop(0, paper[0]);
-  bgGrad.addColorStop(1, paper[1]);
-  ctx.fillStyle = bgGrad;
-  ctx.fillRect(0, 0, 480, 330);
-
-  // accent identity ribbon on the left
-  const ribbon = ctx.createLinearGradient(0, 0, 14, 0);
-  ribbon.addColorStop(0, accent);
-  ribbon.addColorStop(1, darken(accent));
-  ctx.fillStyle = ribbon;
-  ctx.fillRect(0, 0, 14, 330);
-
-  // header: brand wordmark + accent serial
-  ctx.fillStyle = ink;
-  ctx.font = "bold 22px 'Playfair Display', Georgia, serif";
-  ctx.textAlign = "left";
-  ctx.fillText("✦ TAMBOLA", 30, 34);
-  ctx.textAlign = "right";
-  ctx.font = "italic bold 16px 'Playfair Display', Georgia, serif";
-  ctx.fillStyle = accent;
-  ctx.fillText(`No. ${String(index + 1).padStart(2, "0")}`, 460, 34);
-
-  // accent underline
-  ctx.fillStyle = accent;
-  ctx.fillRect(24, 48, 436, 3);
-
-  const x0 = 30;
-  const y0 = 60;
-  const cw = 48;
-  const ch = 86;
-  ctx.strokeStyle = ink;
-  ctx.lineWidth = 1.5;
-  for (let c = 0; c < 9; c++) {
-    for (let r = 0; r < 3; r++) {
-      ctx.strokeRect(x0 + c * cw, y0 + r * ch, cw, ch);
-    }
-  }
-  ctx.fillStyle = ink;
-  ctx.font = "bold 22px 'Lora', Georgia, serif";
-  grid.forEach((row, r) =>
-    row.forEach((v, c) => {
-      if (v !== null) {
-        ctx.fillText(String(v), x0 + c * cw + cw / 2, y0 + r * ch + ch / 2 + 8);
-      }
-    })
-  );
-
-  ctx.strokeStyle = accent;
-  ctx.lineWidth = 3;
-  ctx.strokeRect(1.5, 1.5, 477, 327);
-
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.anisotropy = 4;
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
-}
-
-function TicketCard({
-  index,
-  position,
-}: {
-  index: number;
-  position: THREE.Vector3;
-}) {
-  const group = useRef<THREE.Group>(null!);
+function World({ narrow }: { narrow: boolean }) {
   const reduce = useReducedMotion();
-  const tex = useMemo(() => makeTicketTexture(index), [index]);
+  const pointer = usePointer();
+  const dustTex = useMemo(() => makeDustSprite(), []);
+  const glowTex = useMemo(() => makeGlowTexture(), []);
 
-  useFrame((state) => {
-    const t = state.clock.elapsedTime;
-    group.current.position.y =
-      position.y + Math.sin(t * 0.5 + index * 1.1) * 0.12;
-    group.current.rotation.y =
-      (index % 2 === 0 ? 0.18 : -0.18) +
-      Math.sin(t * 0.35 + index) * (reduce.current ? 0 : 0.07);
-  });
+  const ringProps = narrow
+    ? ([
+        { radius: 3.1, tube: 0.06, position: [0, 0.4, -4] as [number, number, number], rotation: [0.4, 0.2, 0] as [number, number, number], speed: 0.09 },
+        { radius: 2.0, tube: 0.045, position: [0.8, 1.9, -7] as [number, number, number], rotation: [0.6, 0.25, 0.1] as [number, number, number], speed: -0.07 },
+        { radius: 1.4, tube: 0.04, position: [-1.2, -1.9, -3.2] as [number, number, number], rotation: [-0.3, 0.5, 0.4] as [number, number, number], speed: 0.11 },
+      ] as const)
+    : ([
+        { radius: 4.2, tube: 0.07, position: [-2.6, 1.1, -5] as [number, number, number], rotation: [0.5, 0.25, 0] as [number, number, number], speed: 0.08 },
+        { radius: 3.0, tube: 0.05, position: [3.4, -1.4, -3.5] as [number, number, number], rotation: [-0.3, 0.6, 0.3] as [number, number, number], speed: -0.11 },
+        { radius: 2.2, tube: 0.04, position: [-0.4, 2.6, -6] as [number, number, number], rotation: [0.9, -0.2, 0.2] as [number, number, number], speed: 0.06 },
+        { radius: 6.4, tube: 0.05, position: [1.4, -0.2, -12] as [number, number, number], rotation: [0.42, 0.15, 0] as [number, number, number], speed: 0.04 },
+        { radius: 2.6, tube: 0.045, position: [5.2, -2.4, -6.5] as [number, number, number], rotation: [-0.5, 0.7, 0.4] as [number, number, number], speed: -0.09 },
+        { radius: 1.5, tube: 0.055, position: [2.3, 2.1, -2.6] as [number, number, number], rotation: [0.7, -0.5, 0.2] as [number, number, number], speed: 0.13 },
+        { radius: 1.9, tube: 0.045, position: [-4.8, -2.2, -4.2] as [number, number, number], rotation: [-0.2, 0.4, 0.6] as [number, number, number], speed: 0.1 },
+        { radius: 1.1, tube: 0.035, position: [-5.8, 2.6, -9] as [number, number, number], rotation: [0.6, 0.3, 0.1] as [number, number, number], speed: -0.12 },
+        { radius: 2.2, tube: 0.045, position: [6.2, 2.9, -8] as [number, number, number], rotation: [0.55, -0.35, 0.25] as [number, number, number], speed: -0.08 },
+        { radius: 1.7, tube: 0.04, position: [6.6, 0.4, -5.5] as [number, number, number], rotation: [0.2, -0.5, 0.45] as [number, number, number], speed: 0.1 },
+      ] as const);
 
   return (
-    <group ref={group} position={position}>
-      <mesh position={[0, 0, -0.045]}>
-        <boxGeometry args={[2.08, 1.43, 0.09]} />
-        <meshStandardMaterial color="#111318" roughness={0.4} metalness={0.2} />
-      </mesh>
-      <mesh position={[0, 0, -0.02]}>
-        <planeGeometry args={[2.35, 1.7]} />
-        <meshStandardMaterial
-          color={ACCENTS[index % ACCENTS.length]}
+    <>
+      <GoldEnvironment />
+      <ambientLight intensity={0.28} />
+      <spotLight
+        position={[5, 9, 5]}
+        angle={0.6}
+        penumbra={0.85}
+        intensity={2.4}
+        color="#ffe9b0"
+        distance={40}
+        decay={0}
+      />
+      <pointLight position={[-7, 2, -3]} intensity={1.3} color={GOLD} distance={30} decay={0} />
+      <pointLight position={[7, -3, -6]} intensity={0.6} color="#8fa0c0" distance={30} decay={0} />
+
+      {/* warm ambient pool so the obsidian canvas reads as lit, not empty */}
+      <mesh position={[narrow ? 0 : -0.6, narrow ? 1.4 : 0.15, -5.5]}>
+        <planeGeometry args={[narrow ? 9 : 12.5, narrow ? 9 : 12.5]} />
+        <meshBasicMaterial
+          map={glowTex}
           transparent
-          opacity={0.1}
-          side={THREE.DoubleSide}
+          opacity={narrow ? 0.3 : 0.24}
           depthWrite={false}
+          blending={THREE.AdditiveBlending}
         />
       </mesh>
-      <mesh position={[0, 0, 0]}>
-        <planeGeometry args={[2, 1.35]} />
-        <meshStandardMaterial
-          map={tex}
-          side={THREE.DoubleSide}
-          roughness={0.55}
-        />
-      </mesh>
-    </group>
+
+      {ringProps.map((r, i) => (
+        <GoldRing key={i} {...r} reduce={reduce} />
+      ))}
+
+      <GoldDust texture={dustTex} count={narrow ? 90 : 220} />
+
+      <CameraRig pointer={pointer} reduce={reduce} narrow={narrow} />
+    </>
   );
 }
 
-function Album({ positions }: { positions: THREE.Vector3[] }) {
-  return (
-    <group>
-      {positions.map((p, i) => (
-        <TicketCard key={i} index={i} position={p} />
-      ))}
-    </group>
-  );
-}
+/* ── root ──────────────────────────────────────────────────────── */
 
 export default function TambolaScene() {
-  const aspect = useAspect();
-  const params = useMemo(() => layoutParams(aspect), [aspect]);
-  const positions = useMemo(
-    () => albumPositions(params.xSpread),
-    [params.xSpread]
-  );
-  const keyPos = useMemo(
-    () => keyPath(positions, params.backZ),
-    [positions, params.backZ]
-  );
-  const keyLook = useMemo(
-    () => keyLookPath(positions, params.lookZ),
-    [positions, params.lookZ]
-  );
+  const vp = useViewport();
+  const narrow = vp.w < 900;
+  const [idle, setIdle] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setIdle(window.scrollY > window.innerHeight * 1.15);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#070a16]"
+      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+      style={{ background: BG }}
     >
       <Canvas
         flat
-        dpr={[1, 1.75]}
-        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-        camera={{ fov: params.fov, near: 0.1, far: 90, position: [0, 0.3, 8.3] }}
+        frameloop={idle ? "never" : "always"}
+        dpr={[1, narrow ? 1.4 : 1.8]}
+        gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
+        camera={{ fov: 46, near: 0.1, far: 80, position: [0, 0, narrow ? 12.5 : 9.4] }}
         className="pointer-events-none"
       >
-        <fogExp2 attach="fog" args={[BG, 0.045]} />
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[5, 6, 4]} intensity={1.4} />
-        <directionalLight position={[-4, 2, -3]} intensity={0.7} color="#8b5cf6" />
-        <pointLight position={[0, 0, -8]} intensity={0.6} decay={0} color="#f59e0b" />
+        <color attach="background" args={[BG]} />
+        <fogExp2 attach="fog" args={[BG, 0.03]} />
         <Suspense fallback={null}>
-          <Album positions={positions} />
+          <World narrow={narrow} />
         </Suspense>
-        <CameraRig keyPos={keyPos} keyLook={keyLook} fov={params.fov} />
       </Canvas>
     </div>
   );

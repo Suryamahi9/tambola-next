@@ -70,13 +70,13 @@ const DEFAULT_STATE: GameState = {
 };
 
 const BURST_COLORS = [
-  "#7c3aed",
-  "#d946ef",
-  "#22d3ee",
-  "#34d399",
-  "#facc15",
-  "#fb7185",
-  "#60a5fa",
+  "#f7e7a1",
+  "#d4af37",
+  "#a9832a",
+  "#fff9e8",
+  "#087a52",
+  "#8c6a18",
+  "#ffe9b0",
 ];
 
 function makeBurst(seed: number): Particle[] {
@@ -857,7 +857,7 @@ export default function Caller() {
       <div className="flex min-w-0 flex-col gap-6">
 
         {/* ── COMMAND DECK ── */}
-        <section className="relative w-full bg-surface-container/90 backdrop-blur-2xl rounded-2xl p-5 shadow-2xl overflow-hidden">
+        <section className="relative w-full carnival-glow bg-surface-container/90 backdrop-blur-2xl rounded-2xl p-5 shadow-2xl overflow-hidden">
           {/* ambient glow */}
           <div className="absolute -top-24 -left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -bottom-24 right-1/4 w-80 h-80 bg-secondary/10 rounded-full blur-3xl pointer-events-none" />
@@ -980,7 +980,7 @@ export default function Caller() {
                 }
                 className="relative group px-5 sm:px-8 py-3.5 rounded-xl bg-gradient-to-r from-primary-container via-primary-fixed-dim to-primary text-on-primary-container font-headline-sm text-headline-sm font-bold shadow-2xl hover:brightness-110 active:scale-95 transition-all flex items-center gap-2.5 disabled:opacity-40"
               >
-                <span className="absolute inset-0 rounded-xl bg-primary/40 blur-xl group-hover:blur-2xl transition-all -z-10" />
+                <span className="absolute inset-0 rounded-xl bg-primary/50 blur-xl group-hover:blur-2xl transition-all -z-10" />
                 <span className="material-symbols-outlined text-2xl text-on-primary-container">
                   {state.mode === "auto"
                     ? autoRunning
@@ -1133,7 +1133,7 @@ export default function Caller() {
                   onClick={() => setState((p) => ({ ...p, wheelMode: !p.wheelMode }))}
                   className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${
                     state.wheelMode
-                      ? "bg-primary-container/25 text-on-primary-container ring-1 ring-primary-fixed-dim/50"
+                      ? "bg-primary-container text-on-primary-container ring-1 ring-primary-fixed-dim/50"
                       : "bg-surface-container-low hover:bg-surface-container-high text-on-surface"
                   }`}
                   title="Wheel / raffle draw mode"
@@ -1146,8 +1146,10 @@ export default function Caller() {
           </div>
         </section>
 
+        <div className="marquee-bulbs" aria-hidden="true" />
+
         {/* ── SHOWCASE: last number + stats + reel ── */}
-        <div className="w-full bg-surface-container-low rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="w-full carnival-glow bg-surface-container-low rounded-2xl p-6 shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="absolute -right-16 -top-16 w-60 h-60 bg-primary-container/10 rounded-full blur-3xl pointer-events-none" />
 
           {/* Left: glowing sphere */}
@@ -1180,21 +1182,21 @@ export default function Caller() {
                 </>
               )}
               {/* 3D sphere card */}
-              <div className="relative w-32 h-32 rounded-full bg-gradient-to-br from-primary-fixed via-primary-container to-amber-900 shadow-2xl flex flex-col items-center justify-center text-center p-2 pop-halo">
+              <div className="relative w-32 h-32 rounded-full bg-[radial-gradient(circle_at_34%_26%,#fff9e8_0%,#f7e7a1_18%,#d4af37_46%,#8c6a18_76%,#4a3506_100%)] shadow-2xl flex flex-col items-center justify-center text-center p-2 pop-halo">
                 {/* specular highlight */}
-                <div className="absolute top-2 left-6 w-10 h-5 bg-white/40 rounded-full blur-[2px] transform -rotate-45 pointer-events-none" />
+                <div className="absolute top-2 left-6 w-10 h-5 bg-white/50 rounded-full blur-[2px] transform -rotate-45 pointer-events-none" />
                 <span className="pop-halo-ring border border-primary/40" aria-hidden="true" />
                 <p
                   key={spinNum ?? state.lastNumber ?? "none"}
-                  className="animate-slot-flip font-caller-announcement text-caller-announcement text-on-primary-container font-black tracking-tight drop-shadow-md leading-none select-none"
+                  className="animate-slot-flip font-caller-announcement text-caller-announcement text-[#241a02] font-black tracking-tight drop-shadow-[0_1px_0_rgba(255,249,232,0.45)] leading-none select-none"
                 >
                   {spinNum ?? state.lastNumber ?? "–"}
                 </p>
                 <span
                   className={`font-label-sm text-[9px] font-bold tracking-widest uppercase mt-0.5 ${
                     spinNum !== null
-                      ? "text-amber-200 animate-pulse"
-                      : "text-on-primary-container/80"
+                      ? "text-[#4a3506] animate-pulse"
+                      : "text-[#4a3506]/80"
                   }`}
                 >
                   {spinNum !== null ? "WHEEL SPINNING…" : "BALL DRAWN"}
@@ -1213,7 +1215,7 @@ export default function Caller() {
                   #{state.calledNumbers.length}
                 </span>
               </div>
-              <h2 className="font-headline-lg text-headline-lg font-extrabold text-on-surface leading-tight tracking-tight">
+              <h2 className="font-headline-lg text-headline-lg font-extrabold leading-tight tracking-tight gold-text">
                 Last Number
               </h2>
               <p className="font-body-sm text-body-sm text-on-surface-variant">
@@ -1291,8 +1293,10 @@ export default function Caller() {
           </div>
         </div>
 
+        <div className="stub-divider" aria-hidden="true" />
+
         {/* ── MASTER BOARD ── */}
-        <div className="w-full bg-surface-container/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl flex flex-col gap-4">
+        <div className="w-full carnival-glow bg-surface-container/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl flex flex-col gap-4">
           {/* Header */}
           <div className="flex flex-wrap items-center justify-between gap-3 pb-2">
             <div className="flex items-center gap-3">
@@ -1303,7 +1307,7 @@ export default function Caller() {
             </div>
             <div className="flex items-center gap-4 text-xs font-label-sm text-label-sm">
               <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded bg-gradient-to-br from-primary via-primary-container to-amber-700 shadow-sm" />
+                <span className="w-3 h-3 rounded bg-gradient-to-br from-[#f7e7a1] via-[#d4af37] to-[#8c6a18] shadow-sm" />
                 <span className="text-on-surface-variant">Drawn</span>
               </div>
               <div className="flex items-center gap-1.5">
@@ -1335,7 +1339,7 @@ export default function Caller() {
                   style={
                     state.heatmap && !called && !isLast
                       ? {
-                          backgroundColor: `rgba(245,158,11,${(0.03 + heat * 0.4).toFixed(3)})`,
+                          backgroundColor: `rgba(212,175,55,${(0.03 + heat * 0.4).toFixed(3)})`,
                         }
                       : undefined
                   }
@@ -1343,7 +1347,7 @@ export default function Caller() {
                     isLast
                       ? "animate-board-pop bg-secondary text-on-secondary-container shadow-lg shadow-secondary/30 scale-105 z-10 ring-2 ring-white/50"
                       : called
-                        ? "bg-gradient-to-br from-primary-fixed via-primary-container to-amber-700 text-on-primary-container shadow-sm"
+                        ? "bg-gradient-to-br from-[#f7e7a1] via-[#d4af37] to-[#8c6a18] text-[#241a02] shadow-sm"
                         : state.heatmap
                           ? "bg-surface-container-high/60 text-on-surface-variant/50"
                           : "bg-surface-container-high/60 text-on-surface-variant/40 hover:bg-surface-container-highest hover:text-on-surface"
@@ -1412,9 +1416,9 @@ export default function Caller() {
                     key={i}
                     className={`h-5 w-8 rounded flex items-center justify-center font-ticket-digit text-[11px] font-bold ${
                       h >= 0.8
-                        ? "bg-gradient-to-br from-amber-300 to-amber-500 text-amber-950"
+                        ? "bg-gradient-to-br from-[#f7e7a1] to-[#d4af37] text-[#241a02]"
                         : h >= 0.5
-                          ? "bg-gradient-to-br from-amber-400/80 to-amber-600/80 text-amber-50"
+                          ? "bg-gradient-to-br from-[#d4af37]/80 to-[#8c6a18]/80 text-[#fff9e8]"
                           : h > 0
                             ? "bg-gradient-to-br from-surface-container-highest to-surface-container-high text-on-surface-variant"
                             : "bg-surface-container-lowest text-on-surface-variant/40"
@@ -1503,6 +1507,8 @@ export default function Caller() {
           </div>
         </div>
 
+        <div className="stub-divider" aria-hidden="true" />
+
         <div className="w-full bg-surface-container/90 backdrop-blur-xl rounded-2xl p-5 shadow-xl">
           <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold flex items-center gap-2">
             <span className="material-symbols-outlined text-secondary text-lg">keyboard</span>
@@ -1534,11 +1540,11 @@ export default function Caller() {
       {/* ── RESET MODAL ── */}
       {confirmReset && (
         <div
-          className="no-print fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+          className="no-print fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
           onClick={() => setConfirmReset(false)}
         >
           <div
-            className="glass w-full max-w-sm rounded-2xl p-6 shadow-xl"
+            className="glass reveal-scale w-full max-w-sm rounded-2xl p-6 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold">
@@ -1569,7 +1575,7 @@ export default function Caller() {
 
       {/* ── TOAST ── */}
       {toast && (
-        <div className="no-print fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-surface-container-high px-5 py-3 text-sm font-medium text-on-surface shadow-2xl backdrop-blur-xl border border-outline-variant/30">
+        <div className="no-print fixed bottom-6 left-1/2 z-50 -translate-x-1/2 animate-pop rounded-full border border-primary/40 bg-[#0e0e0e]/95 px-5 py-3 font-label-md text-label-md font-semibold text-primary-fixed shadow-[0_16px_40px_-14px_rgba(212,175,55,0.5)] backdrop-blur-xl">
           {toast}
         </div>
       )}

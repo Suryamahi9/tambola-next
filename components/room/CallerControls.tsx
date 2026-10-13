@@ -31,6 +31,7 @@ export default function CallerControls({
 
   return (
     <div className="mt-4 rounded-2xl bg-surface-container/90 backdrop-blur-2xl p-4 shadow-xl">
+      <div aria-hidden="true" className="stub-divider mb-3" />
       <div className="flex items-center justify-between">
         <p className="font-label-sm text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
           Draw controls
@@ -55,7 +56,7 @@ export default function CallerControls({
               onClick={() => onSpeedChange(ms)}
               className={`rounded-full px-3 py-1 text-[11px] font-bold transition ${
                 speedMs === ms
-                  ? "bg-secondary-container text-on-secondary-container shadow-md"
+                  ? "bg-primary-container text-on-primary-container shadow-md"
                   : "bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface"
               }`}
             >

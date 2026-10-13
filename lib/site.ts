@@ -1,7 +1,7 @@
 export const siteConfig = {
-  name: "Tambola Zone",
+  name: "Golden Tambola",
   shortName: "Tambola",
-  tagline: "The complete house party Tambola / Housie experience",
+  tagline: "Where every number feels like a win",
   description:
     "Play Tambola online with a professional number caller, auto-call mode, Hindi & Telugu voice, and a certified 3x9 ticket generator that follows official Housie rules. Free, no sign-up.",
   url: "https://tambola.vercel.app",

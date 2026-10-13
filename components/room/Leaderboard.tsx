@@ -62,7 +62,7 @@ export default function Leaderboard({ room }: { room: PublicRoom }) {
             </div>
             <span className="flex items-center gap-1.5">
               {p.wins > 0 && (
-                <span className="rounded-full bg-secondary-container/20 px-2 py-0.5 text-[11px] font-bold text-secondary">
+                <span className="rounded-full bg-tertiary-container/20 px-2 py-0.5 text-[11px] font-bold text-tertiary">
                   {p.wins} win{p.wins === 1 ? "" : "s"}
                 </span>
               )}
@@ -77,7 +77,7 @@ export default function Leaderboard({ room }: { room: PublicRoom }) {
 
       {/* Per-round history */}
       {history.length > 0 && (
-        <div className="mt-4 border-t border-outline-variant/40 pt-3">
+        <div className="mt-4 stub-divider pt-3">
           <p className="font-label-sm text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
             Past rounds
           </p>

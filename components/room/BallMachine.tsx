@@ -15,11 +15,11 @@ export default function BallMachine({
       <div className="relative flex-shrink-0">
         <div
           key={number ?? "none"}
-          className={`relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-tr from-primary-fixed to-primary-container shadow-2xl shadow-primary-container/40 animate-pop ${
+          className={`relative flex h-16 w-16 items-center justify-center rounded-full bg-[radial-gradient(circle_at_34%_26%,#fff9e8_0%,#f7e7a1_18%,#d4af37_46%,#8c6a18_76%,#4a3506_100%)] shadow-2xl shadow-primary-container/40 animate-pop ${
             live ? "" : "opacity-70"
           }`}
         >
-          <span className="font-caller-announcement text-2xl font-black text-on-primary-container leading-none">
+          <span className="font-caller-announcement text-2xl font-black text-[#241a02] leading-none drop-shadow-[0_1px_0_rgba(255,249,232,0.45)]">
             {number ?? "?"}
           </span>
         </div>
@@ -33,9 +33,9 @@ export default function BallMachine({
 
       {/* Drum */}
       <div className="tambola-drum flex items-center justify-center gap-1.5" aria-hidden="true">
-        <span className="drum-ball drum-ball-pink" />
-        <span className="drum-ball drum-ball-amber" />
-        <span className="drum-ball drum-ball-blue" />
+        <span className="drum-ball drum-ball-champagne" />
+        <span className="drum-ball drum-ball-gold" />
+        <span className="drum-ball drum-ball-bronze" />
         <span className="drum-ball drum-ball-emerald" />
       </div>
     </div>

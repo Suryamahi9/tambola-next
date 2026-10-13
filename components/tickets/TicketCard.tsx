@@ -42,7 +42,11 @@ export type TicketDesign =
   | "stub"
   | "metro"
   | "aura"
-  | "blueprint";
+  | "blueprint"
+  | "royal"
+  | "neon"
+  | "postage"
+  | "boarding";
 
 /** Back-compat: `style` is the theme selector. */
 export type TicketStyle = TicketTheme;
@@ -133,6 +137,10 @@ const DESIGN_LABELS: Record<TicketDesign, string> = {
   metro: "🚇 Retro Metro",
   aura: "✨ Glass Aura",
   blueprint: "📏 Blueprint",
+  royal: "👑 Royal Wedding",
+  neon: "💡 Neon Nights",
+  postage: "✉️ Postage Stamp",
+  boarding: "✈️ Boarding Pass",
 };
 
 export { THEME_LABELS, DESIGN_LABELS };
@@ -1072,6 +1080,189 @@ function BlueprintCard({
   );
 }
 
+type CardProps = Omit<Props, "style" | "design"> & { t: ThemeSpec };
+
+/** Wedding/shagun envelope: double gold frame, crown header, corner diamonds. */
+function RoyalCard({ grid, name, index, total, called, t, customStyles, watermarkText, logo, logoWidth, logoHeight, logoFit, logoOpacity, watermarkOpacity, watermarkColor }: CardProps) {
+  const brand = name || "Tambola";
+  const wm = watermarkText?.trim() || DEFAULT_WATERMARK;
+  const foil = t.foilDark ? "ticket-foil-deep" : "ticket-foil";
+  const frame = { borderColor: t.line };
+  return (
+    <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`} style={customStyles?.card}>
+      <Watermark color={watermarkColor || t.watermark} className="z-0" text={wm} logo={logo} logoWidth={logoWidth} logoHeight={logoHeight} logoFit={logoFit} logoOpacity={logoOpacity} opacityScale={watermarkOpacity} />
+      <div className="relative z-[2] m-1 rounded-[4px] border-2 p-1" style={frame}>
+        <div className="rounded-[2px] border px-2 pb-1.5 pt-1" style={{ borderColor: `${t.line}66` }}>
+          <div className="flex items-center justify-center gap-2">
+            <span className={`font-vintage-display text-[13px] ${foil}`} style={customStyles?.brand} aria-hidden>♛</span>
+            <span className={`font-vintage-display min-w-0 shrink truncate text-center text-[13px] font-bold uppercase tracking-[0.24em] ${foil}`} style={customStyles?.brand}>
+              {brand}
+            </span>
+            <span className={`font-vintage-display text-[13px] ${foil}`} style={customStyles?.brand} aria-hidden>♛</span>
+          </div>
+          <div className="mt-0.5 flex items-center justify-center gap-2">
+            <HeaderName className={t.serialMuted} text={wm} />
+          </div>
+          <div className="mx-auto my-1 flex max-w-[70%] items-center gap-1.5" aria-hidden>
+            <span className="h-px flex-1" style={{ background: `${t.line}88` }} />
+            <span className="text-[8px] font-bold" style={{ color: t.line }}>❖</span>
+            <span className={`font-vintage-display shrink-0 text-[10px] font-bold italic tracking-wide ${t.serial}`} style={customStyles?.serial}>
+              No. {String(index + 1).padStart(2, "0")}
+              <span className={t.serialMuted} style={customStyles?.serialMuted}> / {String(total).padStart(2, "0")}</span>
+            </span>
+            <span className="text-[8px] font-bold" style={{ color: t.line }}>❖</span>
+            <span className="h-px flex-1" style={{ background: `${t.line}88` }} />
+          </div>
+          <TicketGrid grid={grid} called={called} t={t} customStyles={customStyles} />
+        </div>
+      </div>
+      {(["-left-0.5 -top-0.5", "-right-0.5 -top-0.5", "-bottom-0.5 -left-0.5", "-bottom-0.5 -right-0.5"] as const).map((pos) => (
+        <span key={pos} aria-hidden className={`pointer-events-none absolute z-[2] text-[9px] font-bold leading-none ${pos}`} style={{ color: t.line }}>✦</span>
+      ))}
+    </div>
+  );
+}
+
+/** Night-club glow: forced dark glass shell, neon edge + header halo driven
+ *  by the theme line colour (like Carnival, numbers are design-owned so they
+ *  stay legible on black). */
+function NeonCard({ grid, name, index, total, called, t, customStyles, watermarkText, logo, logoWidth, logoHeight, logoFit, logoOpacity, watermarkOpacity, watermarkColor }: CardProps) {
+  const brand = (name || "Tambola").toUpperCase();
+  const wm = watermarkText?.trim() || DEFAULT_WATERMARK;
+  const glow = t.line;
+  return (
+    <div
+      className="ticket-3d relative break-inside-avoid overflow-hidden rounded-[6px] bg-gradient-to-b from-[#0d0d1a] to-[#06060f] shadow-[0_10px_28px_rgba(0,0,0,0.5)]"
+      style={{ border: `1px solid ${glow}`, boxShadow: `0 0 16px ${glow}55, inset 0 0 14px ${glow}22`, ...customStyles?.card }}
+    >
+      <Watermark color={watermarkColor || t.watermark} className="z-0" text={wm} logo={logo} logoWidth={logoWidth} logoHeight={logoHeight} logoFit={logoFit} logoOpacity={logoOpacity} opacityScale={watermarkOpacity} />
+
+      <div className="relative z-[2] flex items-center justify-between gap-2 px-2.5 py-1">
+        <span
+          className="font-vintage-display min-w-0 shrink truncate text-[13px] font-black uppercase tracking-[0.3em] text-white"
+          style={{ textShadow: `0 0 8px ${glow}, 0 0 2px #fff` }}
+        >
+          ✦ {brand}
+        </span>
+        <HeaderName className="text-white/70" text={wm} />
+        <span
+          className="shrink-0 rounded border px-1.5 py-0.5 font-mono text-[9px] font-bold text-white"
+          style={{ borderColor: `${glow}aa`, textShadow: `0 0 6px ${glow}` }}
+        >
+          No. {String(index + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
+        </span>
+      </div>
+
+      <div className="relative z-[2] p-1.5 pt-1">
+        <div className="rounded-[4px] p-[3px]" style={{ border: `1px solid ${glow}66` }}>
+          <div className="ticket-grid text-white/90">
+            {grid.flatMap((row, r) =>
+              row.map((v, c) => (
+                <div
+                  key={`${r}-${c}`}
+                  style={v === null ? undefined : called?.has(v) ? { ...customStyles?.called } : { ...customStyles?.filled, ...customStyles?.num }}
+                  className={
+                    v === null
+                      ? "bg-transparent"
+                      : called?.has(v)
+                        ? `${t.called} font-bold`
+                        : "bg-white/[0.07] text-white"
+                  }
+                >
+                  {v ?? ""}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Postage stamp: dashed perforation frame, rotated postmark, denomination tag. */
+function PostageCard({ grid, name, index, total, called, t, customStyles, watermarkText, logo, logoWidth, logoHeight, logoFit, logoOpacity, watermarkOpacity, watermarkColor }: CardProps) {
+  const brand = name || "Tambola";
+  const wm = watermarkText?.trim() || DEFAULT_WATERMARK;
+  const foil = t.foilDark ? "ticket-foil-deep" : "ticket-foil";
+  return (
+    <div className={`ticket-3d relative break-inside-avoid overflow-hidden ${t.card}`} style={customStyles?.card}>
+      <Watermark color={watermarkColor || t.watermark} className="z-0" text={wm} logo={logo} logoWidth={logoWidth} logoHeight={logoHeight} logoFit={logoFit} logoOpacity={logoOpacity} opacityScale={watermarkOpacity} />
+
+      <div className="relative z-[2] m-1.5 rounded-[3px] border-[3px] border-dashed p-1.5" style={{ borderColor: `${t.line}77` }}>
+        <div className="flex items-center justify-between gap-2">
+          <span className={`font-vintage-display min-w-0 shrink truncate text-[12px] font-bold uppercase tracking-[0.2em] ${foil}`} style={customStyles?.brand}>
+            ✦ {brand}
+          </span>
+          <HeaderName className={foil} text={wm} />
+          <span className={`shrink-0 rounded-sm px-1.5 py-0.5 font-mono text-[8px] font-bold ${t.serial}`} style={{ border: `1px solid ${t.line}66`, ...customStyles?.serial }}>
+            15 NUMBERS
+          </span>
+        </div>
+
+        <div className="relative z-[2] mt-1 rounded-[3px] border p-[3px]" style={{ borderColor: `${t.line}55` }}>
+          <TicketGrid grid={grid} called={called} t={t} customStyles={customStyles} />
+        </div>
+
+        <div className="mt-1 flex items-center justify-between">
+          <span className={`font-mono text-[8px] font-bold tracking-[0.18em] ${t.serial}`} style={customStyles?.serial}>
+            NO. {String(index + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
+          </span>
+          <span className={`font-label-sm text-[9px] font-bold uppercase tracking-[0.2em] ${t.serialMuted}`} style={customStyles?.serialMuted}>
+            ★ First-day cover ★
+          </span>
+        </div>
+      </div>
+
+      <span
+        aria-hidden
+        className="font-vintage-display pointer-events-none absolute right-1.5 top-7 z-[2] flex h-11 w-11 rotate-[-12deg] items-center justify-center rounded-full border-2 text-center text-[7px] font-bold uppercase leading-tight tracking-[0.14em]"
+        style={{ borderColor: `${t.line}99`, color: t.line, opacity: 0.75 }}
+      >
+        Lucky post
+      </span>
+    </div>
+  );
+}
+
+/** Boarding pass: main grid + perforated side stub with big seat number,
+ *  barcode and admit-one tag. */
+function BoardingCard({ grid, name, index, total, called, t, customStyles, watermarkText, logo, logoWidth, logoHeight, logoFit, logoOpacity, watermarkOpacity, watermarkColor }: CardProps) {
+  const brand = name || "Tambola";
+  const wm = watermarkText?.trim() || DEFAULT_WATERMARK;
+  const foil = t.foilDark ? "ticket-foil-deep" : "ticket-foil";
+  const barcode = `repeating-linear-gradient(90deg, ${t.line} 0 2px, transparent 2px 5px)`;
+  return (
+    <div className={`ticket-3d relative flex break-inside-avoid overflow-hidden ${t.card}`} style={customStyles?.card}>
+      <Watermark color={watermarkColor || t.watermark} className="z-0" text={wm} logo={logo} logoWidth={logoWidth} logoHeight={logoHeight} logoFit={logoFit} logoOpacity={logoOpacity} opacityScale={watermarkOpacity} />
+
+      <div className="relative z-[2] min-w-0 flex-1 py-1 pl-2.5 pr-2">
+        <div className="flex items-center gap-2">
+          <span className={`font-vintage-display min-w-0 shrink truncate text-[12px] font-bold uppercase tracking-[0.2em] ${foil}`} style={customStyles?.brand}>
+            ✈ {brand}
+          </span>
+          <HeaderName className={foil} text={wm} />
+        </div>
+        <div className="mt-1 rounded-[4px] border p-[3px]" style={{ borderColor: `${t.line}88` }}>
+          <TicketGrid grid={grid} called={called} t={t} customStyles={customStyles} />
+        </div>
+      </div>
+
+      <div className="relative z-[2] flex w-[62px] shrink-0 flex-col items-center justify-between border-l-2 border-dashed py-1.5" style={{ borderColor: `${t.line}66` }}>
+        <span className={`font-vintage-display text-[22px] font-black leading-none ${foil}`} style={customStyles?.brand}>
+          {String(index + 1).padStart(2, "0")}
+        </span>
+        <span className={`font-mono text-[7px] font-bold ${t.serialMuted}`} style={customStyles?.serialMuted}>
+          /{String(total).padStart(2, "0")}
+        </span>
+        <span aria-hidden className="h-9 w-10" style={{ backgroundImage: barcode }} />
+        <span className={`font-label-sm text-[7px] font-bold uppercase tracking-[0.18em] ${t.serial}`} style={customStyles?.serial}>
+          Admit one
+        </span>
+      </div>
+    </div>
+  );
+}
 export default function TicketCard(props: Props) {
   const t = props.customTheme ?? THEMES[props.style ?? "paperwhite"];
   switch (props.design ?? "classic") {
@@ -1085,6 +1276,14 @@ export default function TicketCard(props: Props) {
       return <AuraCard {...props} t={t} />;
     case "blueprint":
       return <BlueprintCard {...props} t={t} />;
+    case "royal":
+      return <RoyalCard {...props} t={t} />;
+    case "neon":
+      return <NeonCard {...props} t={t} />;
+    case "postage":
+      return <PostageCard {...props} t={t} />;
+    case "boarding":
+      return <BoardingCard {...props} t={t} />;
     default:
       return <ClassicCard {...props} t={t} />;
   }

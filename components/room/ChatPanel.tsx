@@ -115,7 +115,7 @@ export default function ChatPanel({
     <div className="flex flex-col rounded-2xl bg-surface-container-low/95 backdrop-blur-xl p-5 shadow-xl">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <span className="material-symbols-outlined text-secondary text-xl">forum</span>
+          <span className="material-symbols-outlined text-tertiary text-xl">forum</span>
           <div className="flex flex-col">
             <p className="font-headline-sm text-base font-bold leading-tight text-on-surface">Salon chat &amp; bot</p>
             <span className="font-label-sm text-[10px] text-on-surface-variant font-mono">Room {room.code} • {room.players.length} connected</span>
@@ -126,6 +126,7 @@ export default function ChatPanel({
           live · 2s sync
         </span>
       </div>
+      <div aria-hidden="true" className="stub-divider mt-3" />
 
       <div
         ref={listRef}

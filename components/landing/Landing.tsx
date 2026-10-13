@@ -1,428 +1,330 @@
 import Link from "next/link";
+import TambolaSceneLoader from "./TambolaSceneLoader";
+import Reveal from "@/components/site/Reveal";
+import CursorGlow from "@/components/site/CursorGlow";
 
-function SectionLabel({ children, color = "text-primary" }: { children: React.ReactNode; color?: string }) {
-  return (
-    <span className={`font-label-sm text-label-sm uppercase tracking-widest font-bold ${color}`}>{children}</span>
-  );
-}
-
-const statCards = [
-  { value: "250,000+", label: "Games Hosted", color: "text-primary" },
-  { value: "₹1.4 Cr", label: "Pools Awarded", color: "text-secondary" },
-  { value: "99.98%", label: "Sync Uptime", color: "text-tertiary-fixed" },
-  { value: "0.02s", label: "Claim Verification", color: "text-on-surface" },
-];
-
-const engineCards = [
+const games = [
   {
-    id: "visual",
-    eyebrow: "Visual Engine",
-    chip: "11 Gloss Themes",
-    chipClass: "text-primary-fixed",
-    title: "Designer 3D Tambola Slips",
-    body: "Alternating ticket shells rendered with deep iridescent finishes, crisp foil numbering, and responsive micro-dab animations.",
-    glow: "bg-primary/10 group-hover:bg-primary/20",
-    footerLeft: "Watermark: NAVEEN CHERRY",
-    footerRight: (
-      <>
-        Custom Foil <span className="material-symbols-outlined text-sm">verified</span>
-      </>
-    ),
-    children: (
-      <div className="mt-6 space-y-3">
-        <div className="p-3.5 rounded-xl bg-surface-container-lowest/80 backdrop-blur-md shadow-inner">
-          <div className="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm mb-2">
-            <span className="text-primary font-bold">TICKET #TK-4821 • CREAM CARNIVAL</span>
-            <span className="text-secondary font-mono">EARLY 5 READY</span>
-          </div>
-          <div className="grid grid-cols-9 gap-1.5">
-            {["7", "•", "24", "•", "49", "•", "•", "77", "88"].map((d, i) =>
-              d === "•" ? (
-                <div key={i} className="h-9 rounded-lg bg-surface-container/30 flex items-center justify-center text-outline/30">
-                  •
-                </div>
-              ) : i === 7 ? (
-                <div
-                  key={i}
-                  className="h-9 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center font-ticket-digit text-ticket-digit font-bold shadow-[0_0_14px_rgba(245,158,11,0.5)]"
-                >
-                  {d}
-                </div>
-              ) : (
-                <div
-                  key={i}
-                  className="h-9 rounded-lg bg-surface-container-highest flex items-center justify-center font-ticket-digit text-ticket-digit text-on-surface font-bold"
-                >
-                  {d}
-                </div>
-              )
-            )}
-          </div>
-        </div>
-        <div className="p-3.5 rounded-xl bg-surface-container-lowest/50 backdrop-blur-md shadow-inner opacity-85">
-          <div className="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm mb-2">
-            <span className="text-tertiary font-bold">TICKET #TK-4822 • ROSE GOLD VIP</span>
-            <span className="text-on-surface-variant font-mono">1/5 DABBED</span>
-          </div>
-          <div className="grid grid-cols-9 gap-1.5">
-            {["•", "12", "•", "36", "•", "54", "63", "•", "82"].map((d, i) =>
-              d === "•" ? (
-                <div key={i} className="h-8 rounded-lg bg-surface-container/30 flex items-center justify-center text-outline/30">
-                  •
-                </div>
-              ) : d === "12" ? (
-                <div
-                  key={i}
-                  className="h-8 rounded-lg bg-secondary-container text-on-secondary-container flex items-center justify-center font-ticket-digit text-ticket-digit text-xs font-bold shadow-[0_0_10px_rgba(0,165,114,0.4)]"
-                >
-                  {d}
-                </div>
-              ) : (
-                <div
-                  key={i}
-                  className="h-8 rounded-lg bg-surface-container-highest flex items-center justify-center font-ticket-digit text-ticket-digit text-xs text-on-surface"
-                >
-                  {d}
-                </div>
-              )
-            )}
-          </div>
-        </div>
-      </div>
-    ),
+    id: "party",
+    icon: "groups",
+    badge: "Multiplayer",
+    title: "Party Rooms",
+    body: "Create a private room, buy 1–5 tickets each, and play together in real time. The host starts the round once 15 tickets are in.",
+    href: "/play",
+    cta: "Enter Room",
+    accent: "text-primary",
+    ring: "group-hover:border-primary/70",
+    halo: "bg-primary/10 group-hover:bg-primary/20",
   },
   {
     id: "caller",
-    eyebrow: "Live Caller HUD",
-    chip: (
-      <>
-        <span className="w-2 h-2 rounded-full bg-secondary animate-ping"></span> AUTOCALL: 5.0s
-      </>
-    ),
-    chipClass: "text-secondary font-mono",
-    title: "Dynamic 90-Ball Cage",
-    body: "Real-time number flip with multi-lingual audio callouts (Hindi, English, Telugu) and automatic board lighting.",
-    glow: "bg-secondary/10 group-hover:bg-secondary/20",
-    footerLeft: "Drawn: 42 / 90 Numbers",
-    footerRight: <span className="text-secondary font-mono">Last 5: 14, 82, 09, 33, 77</span>,
-    children: (
-      <div className="mt-6 p-4 rounded-xl bg-surface-container-lowest/90 backdrop-blur-md shadow-inner flex flex-col items-center">
-        <div className="relative flex items-center justify-center my-2">
-          <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-primary via-primary-container to-primary-fixed p-1 shadow-[0_0_36px_rgba(245,158,11,0.4)] flex items-center justify-center">
-            <div className="w-full h-full rounded-full bg-surface-container-lowest flex flex-col items-center justify-center">
-              <span className="font-label-sm text-[10px] text-primary uppercase font-bold tracking-widest leading-none">CURRENT</span>
-              <span className="font-caller-announcement text-[56px] text-primary-fixed leading-none mt-1">77</span>
-            </div>
-          </div>
-          <div className="absolute -inset-2 rounded-full bg-primary/10 animate-pulse pointer-events-none"></div>
-        </div>
-        <div className="text-center mt-2">
-          <span className="font-headline-sm text-headline-sm text-on-surface font-bold">“Sunset Strip — Double Lucky 77”</span>
-          <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Telugu: “Ebbadi Yedu” • Hindi: “Satattar”</p>
-        </div>
-        <div className="w-full mt-4 flex items-center justify-between px-3 py-2 rounded-lg bg-surface-container-high text-on-surface">
-          <span className="font-label-sm text-label-sm font-bold">Speed: 5s / Ball</span>
-          <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded bg-surface-container text-xs font-mono">3s</span>
-            <span className="px-2 py-0.5 rounded bg-primary-container text-on-primary-container text-xs font-mono font-bold">5s</span>
-            <span className="px-2 py-0.5 rounded bg-surface-container text-xs font-mono">8s</span>
-          </div>
-        </div>
-      </div>
-    ),
+    icon: "campaign",
+    badge: "Voice Caller",
+    title: "Number Caller",
+    body: "Run a live Housie session with automatic draws and a natural caller voice in English, Hindi or Telugu.",
+    href: "/game",
+    cta: "Open Caller",
+    accent: "text-secondary",
+    ring: "group-hover:border-secondary/70",
+    halo: "bg-secondary/10 group-hover:bg-secondary/20",
   },
   {
-    id: "party",
-    eyebrow: "Multiplayer Sync",
-    chip: "ROOM #482",
-    chipClass: "text-primary font-mono font-bold",
-    title: "Razorpay Party Arena",
-    body: "Zero-stall 2-second HTTP polling cluster with automated instant prize payouts directly linked to game claims.",
-    glow: "bg-tertiary-container/15 group-hover:bg-tertiary-container/30",
-    footerLeft: "Razorpay Fast Checkout",
-    footerRight: <span className="text-secondary font-semibold">100% Tamper Proof</span>,
-    children: (
-      <div className="mt-6 p-4 rounded-xl bg-surface-container-lowest/90 backdrop-blur-md shadow-inner space-y-3.5">
-        <div className="flex items-center justify-between">
-          <div>
-            <span className="font-label-sm text-[10px] uppercase text-on-surface-variant tracking-wider">Total Prize Pool</span>
-            <div className="font-headline-md text-headline-md font-bold text-primary font-ticket-digit">₹12,500</div>
-          </div>
-          <div className="text-right">
-            <span className="font-label-sm text-[10px] uppercase text-on-surface-variant tracking-wider">Capacity</span>
-            <div className="font-headline-sm text-headline-sm font-bold text-secondary font-ticket-digit">38 / 50 TIX</div>
-          </div>
-        </div>
-        <div className="w-full bg-surface-container-highest rounded-full h-2 overflow-hidden">
-          <div className="bg-gradient-to-r from-secondary-container to-secondary h-full rounded-full w-[76%] transition-all"></div>
-        </div>
-        <div className="p-2.5 rounded-lg bg-surface-container-high/60 flex flex-col gap-1.5 font-body-sm text-body-sm">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-semibold text-tertiary-fixed">@HostViktor:</span>
-            <span className="text-on-surface-variant font-mono">14:02:18</span>
-          </div>
-          <p className="text-on-surface text-xs leading-snug">“Call 77 locked. Any claims for Early 5? 3 players sitting at 4 numbers!”</p>
-          <div className="flex items-center gap-1 text-[11px] text-secondary font-medium">
-            <span className="material-symbols-outlined text-xs">bolt</span> Bot Announcer: Priya M. verified Early 5!
-          </div>
-        </div>
-      </div>
-    ),
+    id: "tickets",
+    icon: "local_activity",
+    badge: "Generator",
+    title: "Ticket Generator",
+    body: "Generate certified 3×9 tickets in 29 designer themes, add your own watermark, and export a clean print-ready PDF.",
+    href: "/tickets",
+    cta: "Generate Tickets",
+    accent: "text-tertiary",
+    ring: "group-hover:border-tertiary/70",
+    halo: "bg-tertiary/10 group-hover:bg-tertiary/20",
   },
 ];
 
-const featureCards = [
+const steps = [
   {
-    icon: "volume_up",
-    iconClass: "bg-primary-container/20 text-primary",
-    label: "AUDIO SYNTHESIS SUITE",
-    labelClass: "text-primary",
-    title: "1–90 Dynamic Caller Engine",
-    body: "Crystal-clear synthetic Indian English, Hindi, and Telugu real-time caller voices. Select from 4 voice tones (Natural, Deep, Bright, and Quick) with configurable tempo pacing at 8s, 6s, 4s, or 2.5s per pull.",
-    chips: ["3 Languages", "4 Voice Tones", "Traditional Slang HUD", "Offline Voice Fallback"],
+    n: "01",
+    icon: "group_add",
+    title: "Join or create a room",
+    body: "Start a private party room and share the code, or jump into the free number caller.",
   },
   {
-    icon: "print",
-    iconClass: "bg-secondary-container/20 text-secondary",
-    label: "PRINT & PDF EXPORTER",
-    labelClass: "text-secondary",
-    title: "Ticket Studio with Watermarking",
-    body: "Generate high-density, mathematical-certified unique tickets per batch across 29 designer themes. Export to PDF with one ticket per page. Stamp custom watermark identity signatures like \"NAVEEN CHERRY\" to completely halt counterfeit claims.",
-    chips: ["One Ticket Per PDF Page", "29 Color Themes", "Custom Club Brand Watermarks", "Vector Print Quality"],
+    n: "02",
+    icon: "confirmation_number",
+    title: "Get your tickets",
+    body: "Every player receives unique tickets — no two tickets in a room share numbers.",
   },
   {
-    icon: "groups",
-    iconClass: "bg-tertiary-container/20 text-tertiary",
-    label: "MULTIPLAYER RELIABILITY",
-    labelClass: "text-tertiary",
-    title: "Tamper-Proof Party Rooms",
-    body: "Our ultra-stable 2-second HTTP polling cluster delivers zero WebSocket socket-dropouts even on fluctuating 4G mobile links. Features synchronized 5-second automatic ball draws, server-side tamper verification, and integrated Razorpay cash entry ticketing for up to 50 concurrent players per salon.",
-    chips: ["2s HTTP Polling Sync", "50-Seat VIP Cap", "Zero Dropped Draws", "Razorpay Fast Settlement"],
+    n: "03",
+    icon: "campaign",
+    title: "Follow the numbers",
+    body: "Numbers are drawn by the server and announced live. Watch your ticket light up.",
   },
   {
-    icon: "verified_user",
-    iconClass: "bg-error-container/20 text-primary-fixed",
-    label: "ARBITRATION ENGINE",
-    labelClass: "text-primary-fixed",
-    title: "Instant Auto-Claim Prizes",
-    body: "Eliminate shouting and false claim debates. When a player hits Early 5, Top Line, Middle Line, Bottom Line, 4 Corners, Star, or Full House, our server-side engine validates the ticket against drawn history in 20 milliseconds. Valid claims trigger jewel fireworks; bad claims get flagged without stopping game flow.",
-    chips: ["Early 5 / Jaldi 5", "Top / Mid / Bottom Lines", "Four Corners & Star", "Full House 1st & 2nd"],
+    n: "04",
+    icon: "emoji_events",
+    title: "Claim your prize",
+    body: "Complete a pattern and the win is verified automatically — Full House ends the round.",
   },
 ];
 
-const trustCards = [
+const features = [
   {
-    icon: "diversity_3",
-    iconClass: "text-primary",
-    title: "100% Social Friendly",
-    body: "Designed for family reunions, club kitty parties, corporate offsites, and community festival stages.",
+    icon: "record_voice_over",
+    title: "Multi-language voice caller",
+    body: "Natural English, Hindi and Telugu callouts with four voice tones and adjustable pace.",
+  },
+  {
+    icon: "bolt",
+    title: "Hands-free auto-call",
+    body: "Let the board run on a timer, or call the next number yourself at any moment.",
+  },
+  {
+    icon: "draw",
+    title: "Designer print tickets",
+    body: "29 themes, 10 layouts, custom watermarks and one-ticket-per-page PDF export.",
   },
   {
     icon: "verified",
-    iconClass: "text-secondary",
-    title: "RNG Algorithm Certified",
-    body: "Non-repeating true random seeds prevent biased sequences. Independent shuffle ledger logged for every match.",
+    title: "Honest, server-drawn numbers",
+    body: "Every number is picked by the server, so the board can never be tampered with.",
+  },
+  {
+    icon: "emoji_events",
+    title: "Instant prize checks",
+    body: "Full House, all three lines, Four Corners and Early Five — validated the moment they land.",
   },
   {
     icon: "devices",
-    iconClass: "text-tertiary",
-    title: "Any Device Instant Play",
-    body: "No app installation required. Tap room invite link or scan QR code to immediately mark tickets on any mobile browser.",
+    title: "Any device, no install",
+    body: "Rooms stay in sync and tickets stay readable on a phone, tablet or desktop.",
   },
 ];
+
+function Eyebrow({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center gap-2 font-label-sm text-label-sm uppercase tracking-[0.3em] text-primary/85">
+      <span className="h-px w-6 bg-primary/60" aria-hidden />
+      {children}
+    </span>
+  );
+}
 
 export default function Landing() {
   return (
     <>
-      {/* ── HERO ───────────────────────────────────────────── */}
-      <section className="relative w-full overflow-hidden bg-gradient-to-b from-surface via-surface-container-lowest to-surface pt-12 pb-24 px-6 md:px-12 xl:px-20">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-gradient-to-tr from-primary-container/20 via-tertiary-container/15 to-transparent blur-[120px] pointer-events-none rounded-full"></div>
-        <div className="absolute top-1/3 -left-48 w-96 h-96 bg-secondary/10 blur-[140px] pointer-events-none rounded-full"></div>
-        <div className="absolute top-1/2 -right-48 w-96 h-96 bg-primary/10 blur-[130px] pointer-events-none rounded-full"></div>
-          <div className="relative max-w-7xl w-full min-w-0 mx-auto flex flex-col items-center text-center">
-            <div className="inline-flex flex-wrap items-center justify-center gap-1.5 max-w-full px-3 sm:px-4 py-1.5 rounded-full bg-surface-container-high/70 backdrop-blur-md shadow-md mb-6 cursor-default reveal-up">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-              <span className="font-label-md text-[10px] sm:text-label-md uppercase tracking-[0.14em] sm:tracking-widest text-primary-fixed font-bold">✦ INDIA&apos;S #1 SOCIAL TAMBOLA EXPERIENCE</span>
-              <span className="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-mono">v4.8 VIP</span>
+      <CursorGlow />
+      <TambolaSceneLoader />
+
+      {/* ── HERO ─────────────────────────────────────────── */}
+      <section className="relative -mt-20 flex min-h-[100svh] items-center overflow-hidden px-5 pb-24 pt-32 sm:px-8 lg:px-12">
+        <div aria-hidden className="pointer-events-none absolute inset-0 canvas-vignette" />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-b from-transparent to-[#080808]"
+        />
+        <div className="relative mx-auto w-full max-w-7xl">
+          <div className="max-w-2xl text-center lg:text-left">
+            <div className="reveal-up mb-7 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-white/[0.03] px-4 py-1.5 backdrop-blur-md">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden />
+              <span className="font-label-sm text-label-sm uppercase tracking-[0.24em] text-primary-fixed">
+                Online Tambola &amp; Housie
+              </span>
             </div>
-            <h1 className="font-display-hero w-full min-w-0 text-[2.5rem] leading-[1.05] sm:text-6xl sm:leading-[64px] md:text-[76px] md:leading-[82px] text-on-surface tracking-tight max-w-5xl font-extrabold reveal-up [animation-delay:40ms]">
-              Classic Housie. <span className="bg-gradient-to-r from-primary-fixed via-primary to-primary-container bg-clip-text text-transparent">Midnight Thrills.</span> Real-Time Celebrations.
+
+            <h1 className="font-display-hero text-[2.6rem] font-bold uppercase leading-[1.02] tracking-[0.01em] text-on-surface reveal-up [animation-delay:60ms] sm:text-6xl md:text-[76px] md:leading-[78px]">
+              The <span className="gold-text">Golden</span>
+              <br />
+              Game Night
             </h1>
-          <p className="mt-6 font-body-lg text-body-lg text-on-surface-variant max-w-3xl leading-relaxed reveal-up [animation-delay:80ms]">
-            Host live games with custom voice calling, generate designer print tickets in 29 themes with custom watermarks (one ticket per PDF page), or launch synchronized 50-player Razorpay party rooms with instant automated pattern verification.
-          </p>
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4 w-full max-w-3xl reveal-up [animation-delay:120ms]">
-            <Link
-              href="/game"
-              className="group relative px-7 py-3.5 rounded-xl bg-gradient-to-r from-primary-container via-primary to-primary-fixed text-on-primary-container font-headline-sm text-headline-sm flex items-center gap-3 shadow-[0_0_32px_rgba(245,158,11,0.35)] hover:shadow-[0_0_42px_rgba(245,158,11,0.55)] transition-all duration-300 active:scale-[0.995]"
-            >
-              <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: `"FILL" 1` }}>campaign</span>
-              <span>Launch Live Caller</span>
-              <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
-            </Link>
-            <Link
-              href="/play"
-              className="px-7 py-3.5 rounded-xl bg-surface-container-high/90 hover:bg-surface-container-highest text-secondary-fixed font-headline-sm text-headline-sm flex items-center gap-2.5 backdrop-blur-xl shadow-lg transition-all duration-300"
-            >
-              <span className="material-symbols-outlined text-secondary text-xl">stadia_controller</span>
-              <span>Enter Party Room</span>
-            </Link>
-            <Link
-              href="/tickets"
-              className="px-6 py-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high text-on-surface font-body-lg text-body-lg flex items-center gap-2 shadow-md transition-all duration-200"
-            >
-              <span className="material-symbols-outlined text-primary text-lg">local_activity</span>
-              <span>Generate Designer Tickets</span>
-            </Link>
-            <Link
-              href="/rules"
-              className="px-5 py-3.5 rounded-xl bg-surface-container-lowest/80 hover:bg-surface-container-low text-on-surface-variant hover:text-on-surface font-label-lg text-label-lg flex items-center gap-2 transition-all duration-200"
-            >
-              <span className="material-symbols-outlined text-base">rule</span>
-              <span>View Rules & Patterns</span>
-            </Link>
-          </div>
-            <div className="mt-14 w-full grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl p-4 rounded-2xl bg-surface-container-low/70 backdrop-blur-xl shadow-xl reveal-scale [animation-delay:160ms]">
-            {statCards.map((s) => (
-            <div key={s.label} className="flex flex-col items-center justify-center p-3 text-center reveal-up">
-              <span className={`font-headline-lg text-headline-lg font-bold font-ticket-digit ${s.color}`}>{s.value}</span>
-              <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant mt-1">{s.label}</span>
-            </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* ── LIVE STAGE ARCHITECTURE ─────────────────────────── */}
-      <section className="w-full px-6 md:px-12 xl:px-20 -mt-10 pb-20 z-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <SectionLabel>LIVE STAGE ARCHITECTURE</SectionLabel>
-              <h2 className="font-headline-lg text-headline-lg text-on-surface tracking-tight mt-1">Engine Showcases in Action</h2>
-            </div>
-            <span className="hidden md:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container text-on-surface-variant font-label-md text-label-md">
-              <span className="w-2 h-2 rounded-full bg-secondary"></span> Auto-Sync Cluster Active
-            </span>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {engineCards.map((card) => (
-              <div
-                key={card.id}
-                className="group relative rounded-2xl bg-surface-container-low/90 backdrop-blur-2xl p-6 shadow-2xl flex flex-col justify-between overflow-hidden reveal-scale"
-              >
-                <div className={`absolute -right-12 -top-12 w-48 h-48 rounded-full blur-3xl pointer-events-none transition-all duration-500 ${card.glow}`}></div>
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className={`px-3 py-1 rounded-full bg-surface-container-high font-label-sm text-label-sm font-bold uppercase tracking-wider ${card.chipClass}`}>
-                      {card.eyebrow}
-                    </span>
-                    <span className="font-label-sm text-label-sm text-on-surface-variant font-mono">{card.chip}</span>
-                  </div>
-                  <h3 className="font-headline-md text-headline-md text-on-surface font-bold">{card.title}</h3>
-                  <p className="font-body-md text-body-md text-on-surface-variant mt-2">{card.body}</p>
-                  {card.children}
-                </div>
-                <div className="mt-6 pt-4 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
-                  <span>{card.footerLeft}</span>
-                  <span className="text-primary font-semibold flex items-center gap-1">{card.footerRight}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── FEATURES ────────────────────────────────────────── */}
-      <section className="w-full overflow-hidden py-20 px-6 md:px-12 xl:px-20 bg-surface-container-lowest/60" id="features">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <SectionLabel>BUILT FOR PRO CLUB HOSTS & FESTIVALS</SectionLabel>
-            <h2 className="font-headline-lg text-headline-lg md:text-[40px] md:leading-[48px] text-on-surface font-extrabold tracking-tight mt-2">
-              Engineered for High-Stakes Thrill. Perfected for Fair Play.
-            </h2>
-            <p className="font-body-lg text-body-lg text-on-surface-variant mt-3">
-              Every layer of the Grand Tambola stack was rebuilt from ground zero to eliminate caller confusion, duplicate claims, and ticket fraud.
+            <p className="mx-auto mt-6 max-w-xl font-body-lg text-body-lg leading-relaxed text-on-surface-variant reveal-up [animation-delay:120ms] lg:mx-0">
+              Experience Housie in a whole new light. Gather your players, claim your tickets, and enjoy
+              unforgettable moments in a world of golden excitement.
             </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {featureCards.map((f) => (
-              <div
-                key={f.title}
-                className="p-8 rounded-2xl bg-surface-container-low shadow-xl flex flex-col justify-between group hover:bg-surface-container transition-colors duration-300 reveal-scale"
+
+            <div className="mt-10 flex flex-col items-center gap-3.5 reveal-up [animation-delay:180ms] sm:flex-row lg:justify-start sm:justify-center">
+              <Link
+                href="/play"
+                className="gold-face gold-sheen relative inline-flex w-full items-center justify-center overflow-hidden rounded-xl px-8 py-4 font-headline-sm text-headline-sm transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0 sm:w-auto"
               >
-                <div>
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-inner ${f.iconClass}`}>
-                    <span className="material-symbols-outlined text-3xl">{f.icon}</span>
-                  </div>
-                  <SectionLabel color={f.labelClass}>{f.label}</SectionLabel>
-                  <h3 className="font-headline-md text-headline-md text-on-surface font-bold mt-1">{f.title}</h3>
-                  <p className="font-body-md text-body-md text-on-surface-variant mt-3 leading-relaxed">{f.body}</p>
+                <span className="relative z-10 inline-flex items-center gap-2.5">
+                  <span className="material-symbols-outlined text-xl">stadia_controller</span>
+                  Play Housie
+                </span>
+              </Link>
+              <Link
+                href="#games"
+                className="inline-flex w-full items-center justify-center gap-2.5 rounded-xl border border-primary/45 bg-white/[0.02] px-8 py-4 font-headline-sm text-headline-sm text-primary-fixed backdrop-blur-sm transition hover:border-primary hover:bg-primary/10 sm:w-auto"
+              >
+                <span className="material-symbols-outlined text-xl">explore</span>
+                Explore Games
+              </Link>
+            </div>
+
+            <dl className="mt-14 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 reveal-up [animation-delay:240ms] lg:justify-start">
+              {[
+                { v: "1–90", l: "Server-drawn balls" },
+                { v: "3", l: "Caller languages" },
+                { v: "50", l: "Tickets per room" },
+              ].map((s) => (
+                <div key={s.l} className="text-center lg:text-left">
+                  <dt className="font-ticket-digit text-2xl font-bold text-primary-fixed">{s.v}</dt>
+                  <dd className="font-label-sm text-label-sm uppercase tracking-[0.16em] text-on-surface-variant">
+                    {s.l}
+                  </dd>
                 </div>
-                <div className="mt-8 pt-6 flex flex-wrap gap-2">
-                  {f.chips.map((c) => (
-                    <span key={c} className="px-3 py-1 rounded-full bg-surface-container-high text-xs font-mono text-on-surface">
-                      {c}
+              ))}
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FEATURED GAMES ───────────────────────────────── */}
+      <section id="games" className="relative scroll-mt-24 border-t border-primary/10 bg-background px-5 py-20 sm:px-8 lg:px-12">
+        <div aria-hidden className="pointer-events-none absolute inset-0 canvas-vignette opacity-60" />
+        <div className="relative mx-auto max-w-7xl">
+          <Reveal className="mx-auto max-w-2xl text-center">
+            <Eyebrow>Choose your table</Eyebrow>
+            <h2 className="mt-4 font-headline-lg text-headline-lg tracking-tight text-on-surface sm:text-[40px] sm:leading-[48px]">
+              Three ways to <span className="gold-text">play</span>
+            </h2>
+            <p className="mt-3 font-body-lg text-body-lg text-on-surface-variant">
+              Free practice, printable tickets, or a paid private room with your friends.
+            </p>
+          </Reveal>
+
+          <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-3">
+            {games.map((g, i) => (
+              <Reveal key={g.id} delay={i * 90}>
+                <Link
+                  href={g.href}
+                  className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border border-primary/20 bg-[#0e0e0e]/90 p-7 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.9)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 ${g.ring}`}
+                >
+                  <div
+                    aria-hidden
+                    className={`pointer-events-none absolute -right-14 -top-14 h-48 w-48 rounded-full blur-3xl transition-all duration-500 ${g.halo}`}
+                  />
+                  <div className="relative flex items-center justify-between">
+                    <span className="inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/25 bg-white/[0.03]">
+                      <span className={`material-symbols-outlined text-3xl ${g.accent}`}>{g.icon}</span>
                     </span>
-                  ))}
-                </div>
-              </div>
+                    <span className="rounded-full border border-primary/20 bg-white/[0.03] px-3 py-1 font-label-sm text-label-sm uppercase tracking-[0.14em] text-on-surface-variant">
+                      {g.badge}
+                    </span>
+                  </div>
+                  <h3 className="relative mt-6 font-headline-md text-headline-md text-on-surface">{g.title}</h3>
+                  <p className="relative mt-2 flex-1 font-body-md text-body-md leading-relaxed text-on-surface-variant">
+                    {g.body}
+                  </p>
+                  <span className="relative mt-6 inline-flex items-center gap-2 font-headline-sm text-headline-sm text-primary-fixed">
+                    {g.cta}
+                    <span className="material-symbols-outlined text-lg transition-transform duration-300 group-hover:translate-x-1">
+                      arrow_forward
+                    </span>
+                  </span>
+                </Link>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── VIP HOST CLEARANCE ──────────────────────────────── */}
-      <section className="w-full py-20 px-6 md:px-12 xl:px-20 bg-surface">
-        <div className="max-w-7xl mx-auto">
-          <div className="rounded-3xl bg-gradient-to-r from-surface-container-low via-surface-container to-surface-container-low p-8 md:p-12 shadow-2xl relative overflow-hidden">
-            <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
-              <div className="lg:col-span-8">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-container/20 text-primary font-label-sm text-label-sm uppercase font-bold tracking-wider mb-4">
-                  <span className="material-symbols-outlined text-sm">lock_open</span> VIP HOST CLEARANCE
+      {/* ── HOW TO PLAY ──────────────────────────────────── */}
+      <section className="relative border-t border-primary/10 bg-[#0a0a0a] px-5 py-20 sm:px-8 lg:px-12">
+        <div className="mx-auto max-w-7xl">
+          <Reveal className="mx-auto max-w-2xl text-center">
+            <Eyebrow>How to play</Eyebrow>
+            <h2 className="mt-4 font-headline-lg text-headline-lg tracking-tight text-on-surface sm:text-[40px] sm:leading-[48px]">
+              From lobby to <span className="gold-text">Full House</span>
+            </h2>
+          </Reveal>
+
+          <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {steps.map((s, i) => (
+              <Reveal key={s.n} delay={i * 80}>
+                <div className="relative h-full rounded-2xl border border-primary/15 bg-[#0e0e0e] p-7 transition-colors duration-300 hover:border-primary/40">
+                  <span className="font-display text-4xl font-bold text-primary/25">{s.n}</span>
+                  <span className="material-symbols-outlined mt-4 block text-3xl text-primary">{s.icon}</span>
+                  <h3 className="mt-4 font-headline-sm text-headline-sm text-on-surface">{s.title}</h3>
+                  <p className="mt-2 font-body-md text-body-md leading-relaxed text-on-surface-variant">{s.body}</p>
                 </div>
-                <h2 className="font-headline-lg text-headline-lg text-on-surface font-extrabold tracking-tight">
-                  Host Live Clubs, Gated Tournaments & Kitty Parties
-                </h2>
-                <p className="font-body-lg text-body-lg text-on-surface-variant mt-2 max-w-2xl">
-                  Invite-only member access for authorized callers & club hosts. Get access to customized branded ticket
-                  templates, auto-payout routing, audio voice customizers, and deep match analytical exports.
-                </p>
-              </div>
-              <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3 justify-center">
-                <Link
-                  href="/login"
-                  className="w-full px-6 py-4 rounded-xl bg-gradient-to-r from-primary via-primary-fixed-dim to-primary text-on-primary font-headline-sm text-headline-sm flex items-center justify-center gap-2 shadow-[0_0_24px_rgba(255,185,95,0.3)] hover:shadow-[0_0_32px_rgba(255,185,95,0.5)] transition-all"
-                >
-                  <span className="material-symbols-outlined">badge</span>
-                  <span>Caller & Host Sign In</span>
-                </Link>
-                <Link
-                  href="/game"
-                  className="w-full px-6 py-3.5 rounded-xl bg-surface-container-highest/80 hover:bg-surface-bright text-on-surface font-body-md text-body-md flex items-center justify-center gap-2 transition-colors"
-                >
-                  <span className="material-symbols-outlined text-sm">play_circle</span>
-                  <span>Test Free Practice Caller</span>
-                </Link>
-              </div>
-            </div>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── TRUST ROW ───────────────────────────────────────── */}
-      <section className="w-full pb-20 px-6 md:px-12 xl:px-20">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-          {trustCards.map((t) => (
-            <div key={t.title} className="p-6 rounded-2xl bg-surface-container-lowest/80 shadow-lg flex items-start gap-4">
-              <span className={`material-symbols-outlined text-3xl ${t.iconClass}`}>{t.icon}</span>
-              <div>
-                <h4 className="font-headline-sm text-headline-sm text-on-surface font-bold">{t.title}</h4>
-                <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">{t.body}</p>
+      {/* ── FEATURES ─────────────────────────────────────── */}
+      <section className="relative border-t border-primary/10 bg-background px-5 py-20 sm:px-8 lg:px-12">
+        <div aria-hidden className="pointer-events-none absolute inset-0 gold-glow opacity-70" />
+        <div className="relative mx-auto max-w-7xl">
+          <Reveal className="mx-auto max-w-2xl text-center">
+            <Eyebrow>Built for real game nights</Eyebrow>
+            <h2 className="mt-4 font-headline-lg text-headline-lg tracking-tight text-on-surface sm:text-[40px] sm:leading-[48px]">
+              Polished where it <span className="gold-text">matters</span>
+            </h2>
+            <p className="mt-3 font-body-lg text-body-lg text-on-surface-variant">
+              Everything below is already live in the game — no placeholders.
+            </p>
+          </Reveal>
+
+          <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map((f, i) => (
+              <Reveal key={f.title} delay={(i % 3) * 80}>
+                <div className="flex h-full items-start gap-4 rounded-2xl border border-primary/15 bg-white/[0.02] p-6 transition-colors duration-300 hover:border-primary/40 hover:bg-primary/[0.04]">
+                  <span className="mt-0.5 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-primary/25 bg-primary/10">
+                    <span className="material-symbols-outlined text-2xl text-primary">{f.icon}</span>
+                  </span>
+                  <div>
+                    <h3 className="font-headline-sm text-headline-sm text-on-surface">{f.title}</h3>
+                    <p className="mt-1.5 font-body-md text-body-md leading-relaxed text-on-surface-variant">
+                      {f.body}
+                    </p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA ──────────────────────────────────────────── */}
+      <section className="relative border-t border-primary/10 px-5 py-20 sm:px-8 lg:px-12">
+        <div className="mx-auto max-w-5xl">
+          <Reveal>
+            <div className="marble relative overflow-hidden rounded-3xl border border-primary/25 p-9 text-center shadow-[0_30px_90px_-40px_rgba(212,175,55,0.5)] sm:p-14">
+              <div aria-hidden className="pointer-events-none absolute inset-0 gold-glow" />
+              <div className="relative">
+                <Eyebrow>Your table is ready</Eyebrow>
+                <h2 className="mx-auto mt-5 max-w-2xl font-headline-lg text-headline-lg tracking-tight text-on-surface sm:text-[40px] sm:leading-[48px]">
+                  Host a golden round <span className="gold-text">tonight</span>
+                </h2>
+                <p className="mx-auto mt-4 max-w-xl font-body-lg text-body-lg text-on-surface-variant">
+                  Set up a private room in seconds, share the code, and let the caller do the rest.
+                </p>
+                <div className="mt-9 flex flex-col items-center justify-center gap-3.5 sm:flex-row">
+                  <Link
+                    href="/play"
+                    className="gold-face gold-sheen relative inline-flex w-full items-center justify-center overflow-hidden rounded-xl px-8 py-4 font-headline-sm text-headline-sm transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0 sm:w-auto"
+                  >
+                    <span className="relative z-10 inline-flex items-center gap-2.5">
+                      <span className="material-symbols-outlined text-xl">add_circle</span>
+                      Create a Room
+                    </span>
+                  </Link>
+                  <Link
+                    href="/game"
+                    className="inline-flex w-full items-center justify-center gap-2.5 rounded-xl border border-primary/45 bg-white/[0.02] px-8 py-4 font-headline-sm text-headline-sm text-primary-fixed transition hover:border-primary hover:bg-primary/10 sm:w-auto"
+                  >
+                    <span className="material-symbols-outlined text-xl">play_circle</span>
+                    Try the Caller
+                  </Link>
+                </div>
               </div>
             </div>
-          ))}
+          </Reveal>
         </div>
       </section>
     </>

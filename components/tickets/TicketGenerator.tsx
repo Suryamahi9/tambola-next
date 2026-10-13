@@ -63,7 +63,7 @@ function rgba(hex: string, a: number): string {
 }
 const THEME_OPTIONS = Object.entries(THEME_LABELS) as [TicketTheme, string][]; 
 const DESIGN_OPTIONS = Object.entries(DESIGN_LABELS) as [TicketDesign, string][];
-const DESIGN_ORDER: TicketDesign[] = ["classic", "carnival", "stub", "metro", "aura", "blueprint"];
+const DESIGN_ORDER: TicketDesign[] = ["classic", "carnival", "stub", "metro", "aura", "blueprint", "royal", "neon", "postage", "boarding"];
 const SET_LABELS = [
   "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
   "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", "AN",
@@ -568,7 +568,7 @@ export default function TicketGenerator() {
   return (
     <div>
       {/* Master Customizer Panel */}
-      <div className="no-print w-full bg-surface-container-low rounded-2xl p-6 lg:p-8 space-y-8 shadow-xl">
+      <div className="no-print carnival-glow w-full bg-surface-container-low rounded-2xl p-6 lg:p-8 space-y-8 shadow-xl">
         {/* Upper config row */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end">
           <div className="md:col-span-5 space-y-2">
@@ -924,7 +924,7 @@ export default function TicketGenerator() {
             <button
               type="button"
               onClick={generate}
-              className="px-5 py-3 rounded-xl bg-primary-container text-on-primary-container font-headline-sm text-headline-sm font-black flex items-center gap-2 hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-primary-container/20"
+              className="px-5 py-3 rounded-xl bg-primary-container text-on-primary-container font-headline-sm text-headline-sm font-black flex items-center gap-2 hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-primary/30"
             >
               <span className="material-symbols-outlined text-xl">casino</span>
               Generate {mode === "random" ? "Unique" : mode === "fullset" ? "Full Set" : "Half Set"} Grids
@@ -973,12 +973,14 @@ export default function TicketGenerator() {
         )}
       </div>
 
+      <div className="marquee-bulbs no-print mt-8" aria-hidden="true" />
+
       {/* Live batch showcase */}
       <div className="print-area mt-8 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2.5">
             <span className="w-3 h-3 rounded-full bg-secondary-fixed animate-pulse"></span>
-            <h2 className="font-headline-md text-headline-md text-on-surface font-bold">
+            <h2 className="font-headline-md text-headline-md font-bold gold-text">
               Live Batch Showcase &amp; Verification Deck
             </h2>
             <span className="text-on-surface-variant font-label-sm text-label-sm uppercase bg-surface-container-high px-2 py-0.5 rounded-full">
@@ -1065,7 +1067,7 @@ export default function TicketGenerator() {
         )}
 
         {tickets.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-surface-container-highest p-16 text-center bg-surface-container-low/40">
+          <div className="rounded-2xl carnival-glow border border-dashed border-surface-container-highest p-16 text-center bg-surface-container-low/40">
             <span className="material-symbols-outlined text-5xl text-primary">local_activity</span>
             <p className="mt-3 font-headline-sm text-headline-sm text-on-surface font-bold">No tickets yet</p>
             <p className="mt-1 font-body-sm text-body-sm text-on-surface-variant">
@@ -1116,7 +1118,7 @@ export default function TicketGenerator() {
       </div>
 
       {toast && (
-        <div className="no-print fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-primary-container px-5 py-3 font-label-md text-label-md font-bold text-on-primary-container shadow-lg">
+        <div className="no-print pointer-events-none fixed bottom-6 left-1/2 z-50 -translate-x-1/2 animate-pop rounded-full border border-primary/40 bg-[#0e0e0e]/95 px-5 py-3 font-label-md text-label-md font-bold text-primary-fixed shadow-[0_16px_40px_-14px_rgba(212,175,55,0.5)] backdrop-blur-xl">
           {toast}
         </div>
       )}

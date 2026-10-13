@@ -1,7 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { getSessionSecret } from "./store";
+import { getSessionSecret } from "./secret";
 
-export const SESSION_COOKIE = "tambola_session";
 export const SESSION_DAYS = 7;
 /** Player persona cookies live as long as their token (tournament rooms run weeks). */
 export const PLAYER_TOKEN_DAYS = 30;
@@ -17,8 +16,6 @@ export interface SessionPayload {
   uid: string;
   role: string;
   exp: number;
-  /** Member session version — bumped on password reset to kill old tokens. */
-  sv?: number;
 }
 
 function base64url(input: string | Buffer): string {
@@ -34,21 +31,12 @@ async function signPayload(payload: SessionPayload): Promise<string> {
   return `${body}.${await hmac(body)}`;
 }
 
+/** Sign a persona token (currently role "player") with an HMAC-SHA256 signature. */
 export async function signToken(uid: string, role: string, expDays = SESSION_DAYS): Promise<string> {
   return signPayload({
     uid,
     role,
     exp: Date.now() + expDays * 24 * 60 * 60 * 1000,
-  });
-}
-
-/** Member tokens carry the session version so password resets kill old logins. */
-export async function signMemberToken(member: { id: string; role: string; sessionVersion?: number }): Promise<string> {
-  return signPayload({
-    uid: member.id,
-    role: member.role,
-    exp: Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000,
-    sv: member.sessionVersion ?? 0,
   });
 }
 
@@ -67,7 +55,7 @@ export async function verifyToken(token: string | undefined | null): Promise<Ses
     return payload;
   } catch {
     // Bad encoding, or the signing secret itself is unreachable — either way
-    // the token can't be trusted, and callers treat null as logged out.
+    // the token can't be trusted, and callers treat null as invalid.
     return null;
   }
 }

@@ -14,7 +14,7 @@ export default function CashPool({ room }: { room: PublicRoom }) {
   const pending = room.players.filter((p) => !p.paid);
 
   return (
-    <div className="rounded-2xl bg-surface-container-low/90 backdrop-blur-2xl p-4 shadow-xl">
+    <div className="rounded-2xl bg-surface-container-low/90 backdrop-blur-2xl p-4 shadow-xl carnival-glow">
       <div className="flex items-center gap-2">
         <span className="material-symbols-outlined text-primary text-lg">savings</span>
         <p className="font-label-sm text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
@@ -24,7 +24,7 @@ export default function CashPool({ room }: { room: PublicRoom }) {
 
       <div className="mt-3 flex flex-wrap items-end gap-x-6 gap-y-2">
         <div>
-          <p className="font-headline-md text-headline-md font-bold text-primary-fixed-dim">
+          <p className="font-headline-md text-headline-md font-bold gold-text">
             {formatRupees(potPaise)}
           </p>
           <p className="text-[11px] text-on-surface-variant">
@@ -47,7 +47,7 @@ export default function CashPool({ room }: { room: PublicRoom }) {
             className="inline-flex items-center gap-1.5 rounded-full bg-surface-container-high px-2.5 py-1 text-[11px]"
           >
             <span className="font-semibold text-on-surface">{p.name}</span>
-            <span className="font-mono text-secondary-fixed-dim">
+            <span className="font-mono text-primary-fixed-dim">
               {formatRupees(p.ticketCount * room.pricePerTicket)}
             </span>
           </span>

@@ -110,7 +110,7 @@ export default function Onboarding({
           });
           if (ok) router.push(`/room/${create.roomId}`);
         },
-        theme: { color: "#f59e0b" },
+        theme: { color: "#d4af37" },
         modal: { ondismiss: () => setPending(false) },
       });
       rzp.open();
