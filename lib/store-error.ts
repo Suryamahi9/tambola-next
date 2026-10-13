@@ -15,7 +15,7 @@ export function describeStoreError(err: unknown): string {
   // Order matters: a suspended store's read failure also says
   // "Failed to fetch blob: 403 Forbidden", so check suspension first.
   if (/suspend/i.test(hay)) {
-    return "This project's Blob store has been suspended, so the session secret and party rooms can't be read or written. Restore it (or create a new Blob store and connect it) in Vercel → Storage, then update BLOB_READ_WRITE_TOKEN.";
+    return "This project's Blob store has been suspended, so members, the session secret and party rooms can't be read or written. Restore it (or create a new Blob store and connect it) in Vercel → Storage, then update BLOB_READ_WRITE_TOKEN.";
   }
   if (/BlobStoreNotFound|store .*not found/i.test(hay)) {
     return "The Blob store for this project no longer exists. Create a new Blob store in Vercel → Storage, connect it, and update BLOB_READ_WRITE_TOKEN.";
@@ -35,5 +35,5 @@ export function describeStoreError(err: unknown): string {
   if (/ECONN|ENOTFOUND|ETIMEDOUT|network|fetch failed|socket hang|ServiceNotAvailable|ServiceUnavailable/i.test(hay)) {
     return "Couldn't reach the Blob store just now (network) — try again in a moment.";
   }
-  return "The session and room store is unavailable right now. On Vercel, check that a Blob store is connected (Dashboard → Storage) and BLOB_READ_WRITE_TOKEN is set, then try again.";
+  return "The member, session and room store is unavailable right now. On Vercel, check that a Blob store is connected (Dashboard → Storage) and BLOB_READ_WRITE_TOKEN is set, then try again.";
 }

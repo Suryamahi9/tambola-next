@@ -69,6 +69,13 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-3 xl:flex">
           <Link
+            href="/dashboard"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-primary/25 px-4 py-2.5 font-label-md text-label-md uppercase tracking-wider text-on-surface-variant transition hover:border-primary hover:text-primary"
+          >
+            <span className="material-symbols-outlined text-base">shield_person</span>
+            Members
+          </Link>
+          <Link
             href="/play"
             className="gold-face gold-sheen relative inline-flex items-center gap-2 overflow-hidden rounded-xl px-5 py-2.5 font-headline-sm text-headline-sm transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0"
           >
@@ -136,9 +143,17 @@ export default function Navbar() {
             })}
           </div>
           <Link
+            href="/dashboard"
+            onClick={() => setOpen(false)}
+            className="mt-5 flex items-center justify-center gap-2 rounded-xl border border-primary/25 px-5 py-3 text-center font-headline-sm text-headline-sm text-on-surface transition hover:border-primary hover:text-primary"
+          >
+            <span className="material-symbols-outlined text-lg">shield_person</span>
+            Members
+          </Link>
+          <Link
             href="/play"
             onClick={() => setOpen(false)}
-            className="gold-face mt-5 block rounded-xl px-5 py-3 text-center font-headline-sm text-headline-sm"
+            className="gold-face mt-3 block rounded-xl px-5 py-3 text-center font-headline-sm text-headline-sm"
           >
             Play Now
           </Link>
